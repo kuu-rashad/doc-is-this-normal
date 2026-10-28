@@ -1,0 +1,507 @@
+{
+  "game_title": "Doc, is this normal?",
+  "placeholder_format": "{{slot_id}}",
+  "categories": [
+    {
+      "id": "mild",
+      "name": "Mild: Everyday weirdness",
+      "risk_level": 1,
+      "templates": [
+        {
+          "id": "mild_01",
+          "text": "Whenever I {{trigger_action}}, I get an uncontrollable urge to {{urge_action}}.",
+          "slots": {
+            "trigger_action": {
+              "hint": "Something you do, e.g. open my inbox",
+              "options": [
+                "open my inbox",
+                "hear my alarm",
+                "see a pigeon",
+                "smell fresh bread",
+                "check my bank account",
+                "step into an elevator",
+                "get a group chat notification",
+                "walk past a mirror"
+              ]
+            },
+            "urge_action": {
+              "hint": "An action, e.g. sing opera",
+              "options": [
+                "sing opera",
+                "lick a battery",
+                "do a cartwheel",
+                "speak like a pirate",
+                "hug a stranger",
+                "eat a raw onion",
+                "moonwalk",
+                "apologize to the furniture"
+              ]
+            }
+          }
+        },
+        {
+          "id": "mild_02",
+          "text": "Every time I hear {{sound}}, my {{body_part}} starts twitching.",
+          "slots": {
+            "sound": {
+              "hint": "A sound, word, or phrase",
+              "options": [
+                "a microwave beep",
+                "the word “synergy”",
+                "a duck quack",
+                "someone chewing loudly",
+                "my mother-in-law’s laugh",
+                "a ringtone from 2007",
+                "bagpipes",
+                "the Windows startup sound"
+              ]
+            },
+            "body_part": {
+              "hint": "A singular body part",
+              "options": [
+                "left eyebrow",
+                "pinky toe",
+                "nose",
+                "right buttock",
+                "earlobe",
+                "kneecap",
+                "upper lip",
+                "belly button"
+              ]
+            }
+          }
+        },
+        {
+          "id": "mild_03",
+          "text": "I can’t fall asleep unless I {{bedtime_action}} while holding {{object}}.",
+          "slots": {
+            "bedtime_action": {
+              "hint": "Something you do before bed",
+              "options": [
+                "count backwards from 1000",
+                "whisper my grocery list",
+                "brush my teeth twice",
+                "check under the bed three times",
+                "say goodnight to every houseplant",
+                "watch cooking shows",
+                "hum the national anthem",
+                "do ten squats"
+              ]
+            },
+            "object": {
+              "hint": "Something you can hold, including a or an if needed",
+              "options": [
+                "a frozen fish",
+                "a rubber duck",
+                "my passport",
+                "a single sock",
+                "the TV remote",
+                "a spoon",
+                "a potted cactus",
+                "my phone charger"
+              ]
+            }
+          }
+        },
+        {
+          "id": "mild_04",
+          "text": "Ever since I ate {{food}}, everything smells like {{smell}}.",
+          "slots": {
+            "food": {
+              "hint": "Something you ate",
+              "options": [
+                "gas station sushi",
+                "a suspicious kebab",
+                "my grandma’s casserole",
+                "a whole jar of pickles",
+                "expired yogurt",
+                "a ghost pepper",
+                "cat food (by accident)",
+                "airplane lasagna"
+              ]
+            },
+            "smell": {
+              "hint": "Something with a distinctive smell",
+              "options": [
+                "wet dog",
+                "burnt popcorn",
+                "old coins",
+                "a new car",
+                "grandma’s perfume",
+                "gym socks",
+                "vanilla candles",
+                "the ocean"
+              ]
+            }
+          }
+        },
+        {
+          "id": "mild_05",
+          "text": "When someone mentions {{topic}}, I suddenly forget how to {{forgotten_action}}.",
+          "slots": {
+            "topic": {
+              "hint": "A topic, person, or thing",
+              "options": [
+                "taxes",
+                "crypto",
+                "my ex",
+                "the weather",
+                "pineapple pizza",
+                "LinkedIn",
+                "the Roman Empire",
+                "IKEA furniture"
+              ]
+            },
+            "forgotten_action": {
+              "hint": "An action, e.g. tie my shoes",
+              "options": [
+                "tie my shoes",
+                "blink",
+                "use a fork",
+                "spell my own name",
+                "walk in a straight line",
+                "breathe through my nose",
+                "open doors",
+                "whistle"
+              ]
+            }
+          }
+        }
+      ],
+      "premade_symptoms": [
+        {
+          "id": "premade_mild_01",
+          "template_id": "mild_01",
+          "slots": {
+            "trigger_action": "see a pigeon",
+            "urge_action": "speak like a pirate"
+          }
+        },
+        {
+          "id": "premade_mild_02",
+          "template_id": "mild_02",
+          "slots": {
+            "sound": "a microwave beep",
+            "body_part": "left eyebrow"
+          }
+        },
+        {
+          "id": "premade_mild_03",
+          "template_id": "mild_03",
+          "slots": {
+            "bedtime_action": "say goodnight to every houseplant",
+            "object": "a frozen fish"
+          }
+        },
+        {
+          "id": "premade_mild_04",
+          "template_id": "mild_04",
+          "slots": {
+            "food": "gas station sushi",
+            "smell": "grandma’s perfume"
+          }
+        },
+        {
+          "id": "premade_mild_05",
+          "template_id": "mild_05",
+          "slots": {
+            "topic": "IKEA furniture",
+            "forgotten_action": "use a fork"
+          }
+        },
+        {
+          "id": "premade_mild_06",
+          "template_id": "mild_01",
+          "slots": {
+            "trigger_action": "check my bank account",
+            "urge_action": "moonwalk"
+          }
+        },
+        {
+          "id": "premade_mild_07",
+          "template_id": "mild_02",
+          "slots": {
+            "sound": "bagpipes",
+            "body_part": "right buttock"
+          }
+        },
+        {
+          "id": "premade_mild_08",
+          "template_id": "mild_05",
+          "slots": {
+            "topic": "the Roman Empire",
+            "forgotten_action": "blink"
+          }
+        }
+      ]
+    },
+    {
+      "id": "awkward",
+      "name": "Awkward: Office malfunctions",
+      "risk_level": 2,
+      "templates": [
+        {
+          "id": "awkward_01",
+          "text": "Whenever my boss says {{boss_phrase}}, my mouth automatically blurts out {{blurted_phrase}}.",
+          "slots": {
+            "boss_phrase": {
+              "hint": "Something your boss says"
+            },
+            "blurted_phrase": {
+              "hint": "A word or phrase you blurt out"
+            }
+          }
+        },
+        {
+          "id": "awkward_02",
+          "text": "During meetings, I can’t stop {{compulsion}} whenever someone {{trigger_action}}.",
+          "slots": {
+            "compulsion": {
+              "hint": "An action ending in -ing, e.g. giggling"
+            },
+            "trigger_action": {
+              "hint": "Something someone does, e.g. says synergy"
+            }
+          }
+        },
+        {
+          "id": "awkward_03",
+          "text": "My work voice sounds like {{voice}} whenever I talk about {{topic}}.",
+          "slots": {
+            "voice": {
+              "hint": "A person, creature, or distinctive sound"
+            },
+            "topic": {
+              "hint": "A topic you discuss"
+            }
+          }
+        },
+        {
+          "id": "awkward_04",
+          "text": "I keep signing my emails with {{wrong_signoff}} instead of {{intended_signoff}}.",
+          "slots": {
+            "wrong_signoff": {
+              "hint": "An inappropriate or unusual email sign-off"
+            },
+            "intended_signoff": {
+              "hint": "The sign-off you meant to use"
+            }
+          }
+        },
+        {
+          "id": "awkward_05",
+          "text": "Every time I open my calendar, my {{body_part}} makes a noise like {{noise}}.",
+          "slots": {
+            "body_part": {
+              "hint": "A singular body part"
+            },
+            "noise": {
+              "hint": "Something noisy, e.g. a broken printer"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "gross",
+      "name": "Gross: Bodies behaving badly",
+      "risk_level": 3,
+      "templates": [
+        {
+          "id": "gross_01",
+          "text": "Every time I sneeze, {{substance}} comes out of my {{body_part}}.",
+          "slots": {
+            "substance": {
+              "hint": "A substance or singular object"
+            },
+            "body_part": {
+              "hint": "A body part"
+            }
+          }
+        },
+        {
+          "id": "gross_02",
+          "text": "My burps smell like {{smell}} and sound like {{sound}}.",
+          "slots": {
+            "smell": {
+              "hint": "Something with a distinctive smell"
+            },
+            "sound": {
+              "hint": "Something with a distinctive sound"
+            }
+          }
+        },
+        {
+          "id": "gross_03",
+          "text": "My belly button keeps producing {{substance}} whenever I {{trigger_action}}.",
+          "slots": {
+            "substance": {
+              "hint": "An object or substance"
+            },
+            "trigger_action": {
+              "hint": "Something you do"
+            }
+          }
+        },
+        {
+          "id": "gross_04",
+          "text": "I can’t use the bathroom unless I {{bathroom_ritual}} while thinking about {{thought}}.",
+          "slots": {
+            "bathroom_ritual": {
+              "hint": "An action, e.g. hum the national anthem"
+            },
+            "thought": {
+              "hint": "A person, topic, or thing"
+            }
+          }
+        },
+        {
+          "id": "gross_05",
+          "text": "I keep finding {{object}} in my underwear after I {{prior_action}}.",
+          "slots": {
+            "object": {
+              "hint": "Something unexpected"
+            },
+            "prior_action": {
+              "hint": "Something you do"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "spicy",
+      "name": "Spicy: Flirting malfunctions",
+      "risk_level": 4,
+      "templates": [
+        {
+          "id": "spicy_01",
+          "text": "Whenever someone flirts with me, I start {{reaction}} and accidentally call them {{name}}.",
+          "slots": {
+            "reaction": {
+              "hint": "An action ending in -ing, e.g. hiccupping"
+            },
+            "name": {
+              "hint": "A name, nickname, or title"
+            }
+          }
+        },
+        {
+          "id": "spicy_02",
+          "text": "Whenever I lean in for a kiss, I accidentally {{accidental_action}} instead of {{intended_action}}.",
+          "slots": {
+            "accidental_action": {
+              "hint": "An action, e.g. sneeze"
+            },
+            "intended_action": {
+              "hint": "An action ending in -ing, e.g. kissing"
+            }
+          }
+        },
+        {
+          "id": "spicy_03",
+          "text": "The moment someone touches my {{body_part}}, I forget how to {{forgotten_action}}.",
+          "slots": {
+            "body_part": {
+              "hint": "A body part"
+            },
+            "forgotten_action": {
+              "hint": "An action, e.g. speak"
+            }
+          }
+        },
+        {
+          "id": "spicy_04",
+          "text": "Every time I try to look sexy, I end up looking like {{comparison}} doing {{activity}}.",
+          "slots": {
+            "comparison": {
+              "hint": "A person or creature, e.g. a confused penguin"
+            },
+            "activity": {
+              "hint": "An activity, e.g. yoga"
+            }
+          }
+        },
+        {
+          "id": "spicy_05",
+          "text": "I get butterflies in my {{body_part}} whenever someone whispers {{whispered_phrase}}.",
+          "slots": {
+            "body_part": {
+              "hint": "A body part"
+            },
+            "whispered_phrase": {
+              "hint": "A word or phrase"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "after_hours",
+      "name": "After hours: Questionable bedroom behavior",
+      "risk_level": 5,
+      "templates": [
+        {
+          "id": "after_hours_01",
+          "text": "Whenever I try to talk dirty, I accidentally recite {{quotation}} in the voice of {{voice}}.",
+          "slots": {
+            "quotation": {
+              "hint": "A quote, text, or speech"
+            },
+            "voice": {
+              "hint": "A person or character"
+            }
+          }
+        },
+        {
+          "id": "after_hours_02",
+          "text": "I can’t get in the mood unless my partner is wearing {{clothing}} and holding {{held_object}}.",
+          "slots": {
+            "clothing": {
+              "hint": "Clothing or an unusual outfit"
+            },
+            "held_object": {
+              "hint": "Something you can hold, including a or an if needed"
+            }
+          }
+        },
+        {
+          "id": "after_hours_03",
+          "text": "My {{body_part}} goes numb whenever my partner suggests {{suggestion}}.",
+          "slots": {
+            "body_part": {
+              "hint": "A singular body part"
+            },
+            "suggestion": {
+              "hint": "An activity or idea"
+            }
+          }
+        },
+        {
+          "id": "after_hours_04",
+          "text": "My safe word is {{safe_word}}, but I keep accidentally shouting {{accidental_word}}.",
+          "slots": {
+            "safe_word": {
+              "hint": "A word or short phrase"
+            },
+            "accidental_word": {
+              "hint": "A different word or short phrase"
+            }
+          }
+        },
+        {
+          "id": "after_hours_05",
+          "text": "Whenever I try to undress seductively, I get {{trapped_object}} stuck in {{obstacle}}.",
+          "slots": {
+            "trapped_object": {
+              "hint": "A body part, garment, or object"
+            },
+            "obstacle": {
+              "hint": "Something it could get stuck in"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

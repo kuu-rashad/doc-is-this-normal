@@ -161,33 +161,200 @@
       color: #c0392b;
     }
 
-    .player-avatar {
-      display: block;
-      width: 200px;
-      max-width: 70%;
-      margin: 0 auto;
-    }
-
-    .player-name {
-      margin: 8px 0 4px;
-      font-size: 28px;
-      font-weight: 700;
-      overflow-wrap: anywhere;
-    }
-
     .status {
       margin: 0;
       font-size: 18px;
       font-weight: 500;
     }
+
+    .link-button {
+      width: auto;
+      margin-top: 12px;
+      padding: 4px 8px;
+      font-size: 16px;
+      font-weight: 500;
+      background: none;
+      border: 0;
+      box-shadow: none;
+      text-decoration: underline;
+    }
+
+    .link-button:active:not(:disabled) {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .notice {
+      margin: 14px 0 0;
+      font-weight: 500;
+    }
+
+    /* Menu */
+    .me {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .me img {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+    }
+
+    .me p {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .menu button + button {
+      margin-top: 12px;
+    }
+
+    /* Symptom sentence, used on the symptom, treatment and vote screens */
+    .symptom-text {
+      margin: 0;
+      padding: 14px 16px;
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 1.5;
+      text-align: left;
+      background: var(--white);
+      border: 4px solid var(--navy);
+      border-radius: 18px;
+    }
+
+    .blank {
+      display: inline-block;
+      min-width: 80px;
+      border-bottom: 3px dashed var(--bandage-dark);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .blank.filled {
+      min-width: 0;
+      padding: 0 6px;
+      background: var(--bandage);
+      border-bottom: 0;
+      border-radius: 8px;
+    }
+
+    .slot {
+      margin: 20px 0 0;
+      text-align: left;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chips input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .chips label {
+      margin: 0;
+      padding: 8px 12px;
+      font-size: 16px;
+      font-weight: 500;
+      background: var(--white);
+      border: 3px solid var(--navy);
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .chips input:checked + label {
+      background: var(--bandage);
+      font-weight: 700;
+    }
+
+    .chips input:focus-visible + label {
+      outline: 3px solid var(--white);
+    }
+
+    /* Treatment */
+    .field-label {
+      margin: 18px 0 8px;
+      text-align: left;
+    }
+
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 120px;
+      box-sizing: border-box;
+      padding: 12px 16px;
+      font: 500 18px "Fredoka", system-ui, sans-serif;
+      color: var(--navy);
+      background: var(--white);
+      border: 4px solid var(--navy);
+      border-radius: 16px;
+      resize: none;
+    }
+
+    textarea:focus {
+      outline: 4px solid var(--bandage);
+    }
+
+    .counter {
+      margin: 4px 0 0;
+      font-size: 14px;
+      text-align: right;
+    }
+
+    /* Voting */
+    .vote-option {
+      margin-top: 14px;
+      padding: 14px;
+      text-align: left;
+      background: var(--white);
+      border: 4px solid var(--navy);
+      border-radius: 18px;
+    }
+
+    .vote-option p {
+      margin: 0 0 12px;
+      font-size: 18px;
+      font-weight: 500;
+      overflow-wrap: anywhere;
+    }
+
+    .thumbs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .thumbs button {
+      flex: 1;
+      margin: 0;
+      padding: 8px;
+      font-size: 20px;
+      background: var(--white);
+      border-width: 3px;
+      box-shadow: 0 3px 0 var(--navy);
+    }
+
+    .thumbs button[aria-pressed="true"] {
+      background: var(--bandage);
+    }
   </style>
+  <script src="/play.js" defer></script>
 </head>
 <body>
   <main class="card">
     <p id="loading" class="status">Loading…</p>
 
-    <form id="join-form" hidden>
-      <h1>Who's the patient?</h1>
+    <form id="join-form" class="screen" hidden>
+      <h1>Who are you?</h1>
 
       <label for="nickname">Nickname</label>
       <div class="name-field">
@@ -201,89 +368,50 @@
       </fieldset>
 
       <button type="submit" id="join-button" disabled>Join game</button>
-      <p class="error" id="error" hidden></p>
+      <p class="error" hidden></p>
     </form>
 
-    <section id="joined" hidden>
-      <h1>You're in!</h1>
-      <img class="player-avatar" id="player-avatar" alt="">
-      <p class="player-name" id="player-name"></p>
-      <p class="status">Waiting for the game to start…</p>
-      <button type="button" class="secondary" id="edit-button">Change nickname or avatar</button>
+    <section id="menu" class="screen menu" hidden>
+      <div class="me">
+        <img id="me-avatar" alt="">
+        <p id="me-name"></p>
+      </div>
+      <h1>What next?</h1>
+      <button type="button" id="menu-symptom">Describe a symptom</button>
+      <button type="button" id="menu-treat">Treat a patient</button>
+      <button type="button" id="menu-vote">Vote on treatments</button>
+      <p class="notice" id="menu-notice" hidden></p>
+      <button type="button" class="link-button" id="menu-edit">Change nickname or avatar</button>
     </section>
+
+    <form id="symptom-form" class="screen" hidden>
+      <h1>What's wrong with you?</h1>
+      <p class="symptom-text" id="symptom-preview"></p>
+      <div id="symptom-slots"></div>
+      <button type="submit" id="symptom-submit" disabled>Submit symptom</button>
+      <p class="error" hidden></p>
+      <button type="button" class="link-button" data-back>Back</button>
+    </form>
+
+    <form id="treatment-form" class="screen" hidden>
+      <h1>Your diagnosis, doctor?</h1>
+      <p class="field-label"><strong>The patient says:</strong></p>
+      <p class="symptom-text" id="treatment-symptom"></p>
+      <label class="field-label" for="treatment-text">Your treatment</label>
+      <textarea id="treatment-text" maxlength="150" required></textarea>
+      <p class="counter" id="treatment-counter"></p>
+      <button type="submit" id="treatment-submit" disabled>Prescribe</button>
+      <p class="error" hidden></p>
+      <button type="button" class="link-button" data-back>Back</button>
+    </form>
+
+    <form id="vote-form" class="screen" hidden>
+      <h1>Which treatment works?</h1>
+      <p class="symptom-text" id="vote-symptom"></p>
+      <div id="vote-options"></div>
+      <button type="submit" id="vote-submit">Skip</button>
+      <p class="error" hidden></p>
+    </form>
   </main>
-
-  <script>
-    const AVATARS = ["blue", "brown", "green", "lime", "orange", "pink", "purple", "red", "yellow"];
-
-    let playerId = localStorage.getItem("playerId");
-    if (!playerId) {
-      playerId = crypto.randomUUID();
-      localStorage.setItem("playerId", playerId);
-    }
-
-    const $ = (id) => document.getElementById(id);
-    const form = $("join-form");
-    const nicknameInput = $("nickname");
-    const joinButton = $("join-button");
-    const errorText = $("error");
-
-    $("avatars").innerHTML = AVATARS.map((name) => `
-      <input type="radio" name="avatar" id="avatar-${name}" value="${name}">
-      <label for="avatar-${name}"><img src="/avatars/${name}.png" alt="${name} avatar"></label>
-    `).join("");
-
-    function updateJoinButton() {
-      joinButton.disabled = !nicknameInput.value.trim() || !form.avatar.value;
-    }
-
-    function showForm(player) {
-      nicknameInput.value = player?.nickname ?? "";
-      form.avatar.value = player?.avatar ?? "";
-      updateJoinButton();
-      errorText.hidden = true;
-      $("loading").hidden = true;
-      $("joined").hidden = true;
-      form.hidden = false;
-    }
-
-    function showJoined(player) {
-      $("player-avatar").src = `/avatars/${player.avatar}.png`;
-      $("player-name").textContent = `Dr. ${player.nickname}`;
-      $("loading").hidden = true;
-      form.hidden = true;
-      $("joined").hidden = false;
-      $("edit-button").onclick = () => showForm(player);
-    }
-
-    form.addEventListener("input", updateJoinButton);
-
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      joinButton.disabled = true;
-      errorText.hidden = true;
-
-      const response = await fetch(`/api/players/${playerId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nickname: nicknameInput.value, avatar: form.avatar.value }),
-      }).catch(() => null);
-
-      if (response?.ok) {
-        showJoined(await response.json());
-      } else {
-        const body = await response?.json().catch(() => null);
-        errorText.textContent = body?.error ?? "Couldn't join. Check your connection and try again.";
-        errorText.hidden = false;
-        updateJoinButton();
-      }
-    });
-
-    // Returning device: skip straight to the joined screen.
-    fetch(`/api/players/${playerId}`)
-      .then((response) => (response.ok ? response.json() : null))
-      .catch(() => null)
-      .then((player) => (player ? showJoined(player) : showForm()));
-  </script>
 </body>
 </html>
