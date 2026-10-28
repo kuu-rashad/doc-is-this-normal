@@ -4,10 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Doc, Is This Normal?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&display=swap" rel="stylesheet">
   <style>
     html, body {
       margin: 0;
       height: 100%;
+      overflow: hidden;
     }
 
     body {
@@ -24,7 +28,46 @@
     @media (prefers-reduced-motion: reduce) {
       body { animation: none; }
     }
+
+    /* Bandage hangs off the right edge of the screen, QR code sits on its pad. */
+    .join {
+      position: fixed;
+      right: -8.7vw;
+      bottom: 0.8vw;
+      width: 37vw;
+      aspect-ratio: 1024 / 344;
+      background: url("/bandage.png") center / contain no-repeat;
+    }
+
+    .join img {
+      position: absolute;
+      left: 50.1%;
+      top: 50%;
+      width: 22%;
+      transform: translate(-50%, -50%);
+    }
+
+    .join p {
+      position: absolute;
+      left: 50.1%;
+      bottom: 100%;
+      margin: 0 0 0.3vw;
+      transform: translateX(-50%);
+      font-family: "Fredoka", system-ui, sans-serif;
+      font-size: 3.6vw;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+      color: #fff;
+      -webkit-text-stroke: 0.5vw #0b1433;
+      paint-order: stroke fill;
+    }
   </style>
 </head>
-<body></body>
+<body>
+  <div class="join">
+    <p>SCAN ME!</p>
+    <img src="/qr.svg" alt="QR code to join the game">
+  </div>
+</body>
 </html>
