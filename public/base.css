@@ -1,0 +1,29 @@
+:root {
+  --navy: #0b1433;
+  --bandage: #f6c06e;
+  --bandage-dark: #b98049;
+  --pad: #fbf0cc;
+  --white: #fff;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: "Fredoka", system-ui, sans-serif;
+  color: var(--navy);
+  background: #3f93ef url("/background.png") repeat;
+  background-size: 300px 300px;
+  animation: scroll-bg 15s linear infinite;
+}
+
+@keyframes scroll-bg {
+  from { background-position: 0 0; }
+  to   { background-position: 300px -300px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body { animation: none; }
+}

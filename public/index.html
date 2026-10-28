@@ -7,26 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/base.css">
   <style>
     html, body {
-      margin: 0;
-      height: 100%;
       overflow: hidden;
-    }
-
-    body {
-      background: #3f93ef url("/background.png") repeat;
-      background-size: 300px 300px;
-      animation: scroll-bg 15s linear infinite;
-    }
-
-    @keyframes scroll-bg {
-      from { background-position: 0 0; }
-      to   { background-position: 300px -300px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      body { animation: none; }
     }
 
     /* Bandage hangs off the right edge of the screen, QR code sits on its pad. */
@@ -53,13 +37,12 @@
       bottom: 100%;
       margin: 0 0 0.3vw;
       transform: translateX(-50%);
-      font-family: "Fredoka", system-ui, sans-serif;
       font-size: 3.6vw;
       font-weight: 700;
       line-height: 1;
       white-space: nowrap;
-      color: #fff;
-      -webkit-text-stroke: 0.5vw #0b1433;
+      color: var(--white);
+      -webkit-text-stroke: 0.5vw var(--navy);
       paint-order: stroke fill;
     }
   </style>

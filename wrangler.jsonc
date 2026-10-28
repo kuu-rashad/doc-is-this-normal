@@ -1,8 +1,14 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "doc-is-this-normal",
+  "main": "src/index.js",
   "compatibility_date": "2026-10-28",
   "assets": {
-    "directory": "./public"
-  }
+    "directory": "./public",
+    "run_worker_first": ["/api/*"]
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "GAME", "class_name": "Game" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Game"] }]
 }

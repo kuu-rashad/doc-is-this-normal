@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Join · Doc, Is This Normal?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/base.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100%;
+      height: auto;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    [hidden] { display: none !important; }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      padding: 24px 20px;
+      box-sizing: border-box;
+      background: var(--pad);
+      border: 5px solid var(--navy);
+      border-radius: 28px;
+      box-shadow: 0 6px 0 var(--navy);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--white);
+      -webkit-text-stroke: 6px var(--navy);
+      paint-order: stroke fill;
+    }
+
+    label, legend {
+      display: block;
+      margin: 0 0 8px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    /* Looks like one text box: a fixed "Dr." followed by the actual input. */
+    .name-field {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 16px;
+      font: 500 20px "Fredoka", system-ui, sans-serif;
+      background: var(--white);
+      border: 4px solid var(--navy);
+      border-radius: 16px;
+    }
+
+    .name-field:focus-within {
+      outline: 4px solid var(--bandage);
+    }
+
+    .name-field span {
+      font-weight: 700;
+    }
+
+    .name-field input {
+      flex: 1;
+      min-width: 0;
+      padding: 0;
+      font: inherit;
+      color: var(--navy);
+      background: none;
+      border: 0;
+      outline: none;
+    }
+
+    fieldset {
+      margin: 20px 0 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .avatars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .avatars input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .avatars label {
+      margin: 0;
+      padding: 4px;
+      aspect-ratio: 1;
+      background: var(--white);
+      border: 4px solid var(--navy);
+      border-radius: 18px;
+      cursor: pointer;
+      transition: transform 0.1s, background-color 0.1s;
+    }
+
+    .avatars img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .avatars input:checked + label {
+      background: var(--bandage);
+      transform: scale(1.06);
+    }
+
+    .avatars input:focus-visible + label {
+      outline: 4px solid var(--white);
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      font: 700 22px "Fredoka", system-ui, sans-serif;
+      color: var(--navy);
+      background: var(--bandage);
+      border: 4px solid var(--navy);
+      border-radius: 18px;
+      box-shadow: 0 4px 0 var(--navy);
+      cursor: pointer;
+    }
+
+    button:active:not(:disabled) {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--navy);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    button.secondary {
+      background: var(--white);
+      font-size: 18px;
+      padding: 10px;
+    }
+
+    .error {
+      margin: 12px 0 0;
+      font-weight: 500;
+      color: #c0392b;
+    }
+
+    .player-avatar {
+      display: block;
+      width: 200px;
+      max-width: 70%;
+      margin: 0 auto;
+    }
+
+    .player-name {
+      margin: 8px 0 4px;
+      font-size: 28px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .status {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <p id="loading" class="status">Loading…</p>
+
+    <form id="join-form" hidden>
+      <h1>Who's the patient?</h1>
+
+      <label for="nickname">Nickname</label>
+      <div class="name-field">
+        <span aria-hidden="true">Dr.</span>
+        <input id="nickname" name="nickname" type="text" maxlength="16" autocomplete="off" required>
+      </div>
+
+      <fieldset>
+        <legend>Pick your avatar</legend>
+        <div class="avatars" id="avatars"></div>
+      </fieldset>
+
+      <button type="submit" id="join-button" disabled>Join game</button>
+      <p class="error" id="error" hidden></p>
+    </form>
+
+    <section id="joined" hidden>
+      <h1>You're in!</h1>
+      <img class="player-avatar" id="player-avatar" alt="">
+      <p class="player-name" id="player-name"></p>
+      <p class="status">Waiting for the game to start…</p>
+      <button type="button" class="secondary" id="edit-button">Change nickname or avatar</button>
+    </section>
+  </main>
+
+  <script>
+    const AVATARS = ["blue", "brown", "green", "lime", "orange", "pink", "purple", "red", "yellow"];
+
+    let playerId = localStorage.getItem("playerId");
+    if (!playerId) {
+      playerId = crypto.randomUUID();
+      localStorage.setItem("playerId", playerId);
+    }
+
+    const $ = (id) => document.getElementById(id);
+    const form = $("join-form");
+    const nicknameInput = $("nickname");
+    const joinButton = $("join-button");
+    const errorText = $("error");
+
+    $("avatars").innerHTML = AVATARS.map((name) => `
+      <input type="radio" name="avatar" id="avatar-${name}" value="${name}">
+      <label for="avatar-${name}"><img src="/avatars/${name}.png" alt="${name} avatar"></label>
+    `).join("");
+
+    function updateJoinButton() {
+      joinButton.disabled = !nicknameInput.value.trim() || !form.avatar.value;
+    }
+
+    function showForm(player) {
+      nicknameInput.value = player?.nickname ?? "";
+      form.avatar.value = player?.avatar ?? "";
+      updateJoinButton();
+      errorText.hidden = true;
+      $("loading").hidden = true;
+      $("joined").hidden = true;
+      form.hidden = false;
+    }
+
+    function showJoined(player) {
+      $("player-avatar").src = `/avatars/${player.avatar}.png`;
+      $("player-name").textContent = `Dr. ${player.nickname}`;
+      $("loading").hidden = true;
+      form.hidden = true;
+      $("joined").hidden = false;
+      $("edit-button").onclick = () => showForm(player);
+    }
+
+    form.addEventListener("input", updateJoinButton);
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      joinButton.disabled = true;
+      errorText.hidden = true;
+
+      const response = await fetch(`/api/players/${playerId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nickname: nicknameInput.value, avatar: form.avatar.value }),
+      }).catch(() => null);
+
+      if (response?.ok) {
+        showJoined(await response.json());
+      } else {
+        const body = await response?.json().catch(() => null);
+        errorText.textContent = body?.error ?? "Couldn't join. Check your connection and try again.";
+        errorText.hidden = false;
+        updateJoinButton();
+      }
+    });
+
+    // Returning device: skip straight to the joined screen.
+    fetch(`/api/players/${playerId}`)
+      .then((response) => (response.ok ? response.json() : null))
+      .catch(() => null)
+      .then((player) => (player ? showJoined(player) : showForm()));
+  </script>
+</body>
+</html>
