@@ -220,20 +220,6 @@
       .players-track.scrolling { animation: none; }
     }
 
-    /* Only shown if the browser blocks autoplay until the page is clicked. */
-    .music-hint {
-      position: fixed;
-      top: 1.5vw;
-      left: 1.5vw;
-      margin: 0;
-      padding: 0.6vw 1.2vw;
-      font-size: 1.2vw;
-      font-weight: 700;
-      background: var(--pad);
-      border: 0.25vw solid var(--navy);
-      border-radius: 999px;
-    }
-
     /* Settings */
     .settings-button {
       position: fixed;
@@ -362,8 +348,7 @@
   </style>
 </head>
 <body>
-  <audio id="music" src="/audio/peachtea-somewhere-in-the-elevator.ogg" loop preload="auto"></audio>
-  <p class="music-hint" id="music-hint" hidden>🔇 Click anywhere to start the music</p>
+  <audio id="music" src="/audio/peachtea-somewhere-in-the-elevator.ogg" loop autoplay></audio>
 
   <button type="button" class="settings-button" id="settings-open" aria-label="Settings">
     <!-- "settings" icon from Google Material Symbols (Apache 2.0) -->
@@ -422,10 +407,9 @@
   </div>
 
   <script>
-    // Background music. Browsers usually block sound until the page has been clicked,
-    // so if autoplay fails, start on the first click or key press instead.
+    // Background music starts as soon as the page loads. If the browser blocks autoplay,
+    // it starts on the first click or key press instead.
     const music = document.getElementById("music");
-    const musicHint = document.getElementById("music-hint");
 
     // ---------- Settings ----------
     // Volumes are remembered on this computer (0–100). Sound effects will read
@@ -575,14 +559,10 @@
     }
 
     function startMusic() {
-      music.play().then(
-        () => {
-          musicHint.hidden = true;
-          document.removeEventListener("pointerdown", startMusic);
-          document.removeEventListener("keydown", startMusic);
-        },
-        () => (musicHint.hidden = false),
-      );
+      music.play().then(() => {
+        document.removeEventListener("pointerdown", startMusic);
+        document.removeEventListener("keydown", startMusic);
+      }, () => {});
     }
 
     document.addEventListener("pointerdown", startMusic);
