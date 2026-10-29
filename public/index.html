@@ -880,39 +880,78 @@
       right: calc(1.5vw + 2 * (var(--size) + 1vw));
     }
 
-    /* Scoring rules, opened from the info button. */
+    /* Scoring rules, opened from the info button: bigger than the settings popup, so it reads
+       well from a distance. Points are shown as colour-coded chips. */
+    #info {
+      width: min(640px, calc(100vw - 32px));
+      padding: 30px 34px;
+    }
+
+    #info h2 {
+      font-size: 34px;
+    }
+
     #info h3 {
-      margin: 14px 0 2px;
-      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 20px 0 4px;
+      font-size: 18px;
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--bandage-dark);
     }
 
+    #info .trophy {
+      width: 30px;
+      height: 30px;
+      fill: #f8b84e;
+      stroke: var(--navy);
+      stroke-width: 40;
+      paint-order: stroke fill;
+    }
+
     .rules {
-      margin: 0 0 4px;
+      margin: 0 0 6px;
       padding: 0;
       list-style: none;
     }
 
     .rules li {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      padding: 8px 0;
-      font-size: 18px;
+      gap: 20px;
+      padding: 10px 0;
+      font-size: 22px;
       font-weight: 500;
+      line-height: 1.25;
     }
 
     .rules li + li {
       border-top: 2px solid rgb(185 128 73 / 0.3);
     }
 
-    .rules strong {
+    /* Point chips: small amounts in the phase colours, finals placings in gold, silver, bronze. */
+    .rules .chip {
       flex: none;
+      min-width: 64px;
+      box-sizing: border-box;
+      padding: 4px 12px;
+      font-size: 22px;
       font-weight: 700;
+      text-align: center;
+      background: var(--white);
+      border: 3px solid var(--navy);
+      border-radius: 999px;
     }
+
+    .rules .chip.points-1 { background: #74e3b5; }
+    .rules .chip.points-2 { background: #c7b8ff; }
+    .rules .chip.place-1 { background: #f8b84e; }
+    .rules .chip.place-2 { background: #cfd4dc; }
+    .rules .chip.place-3 { background: #dc9a63; }
 
     .corner-button svg {
       width: 62%;
@@ -1131,7 +1170,11 @@
     <h2>How to score points</h2>
     <h3>Overall</h3>
     <ul class="rules" id="rules-overall"></ul>
-    <h3>Finals</h3>
+    <h3>
+      <!-- "trophy" icon from Google Material Symbols (Apache 2.0) -->
+      <svg class="trophy" viewBox="0 -960 960 960" aria-hidden="true"><path d="M284-526v-166H180v44q0 45 29.5 78.5T284-526Zm392 0q45-10 74.5-43.5T780-648v-44H676v166ZM450-180v-148q-54-11-96-46.5T296-463q-74-8-125-60t-51-125v-44q0-24.75 17.63-42.38Q155.25-752 180-752h104v-28q0-24.75 17.63-42.38Q319.25-840 344-840h272q24.75 0 42.38 17.62Q676-804.75 676-780v28h104q24.75 0 42.38 17.62Q840-716.75 840-692v44q0 73-51 125t-125 60q-16 53-58 88.5T510-328v148h122q12.75 0 21.38 8.68 8.62 8.67 8.62 21.5 0 12.82-8.62 21.32-8.63 8.5-21.38 8.5H328q-12.75 0-21.37-8.68-8.63-8.67-8.63-21.5 0-12.82 8.63-21.32 8.62-8.5 21.37-8.5h122Z"/></svg>
+      Finals
+    </h3>
     <ul class="rules" id="rules-finals"></ul>
     <button type="button" data-close>Close</button>
   </dialog>
@@ -1900,21 +1943,23 @@
 
     function renderRules(scoring) {
       const [first, second, third] = scoring.final_places;
-      const fill = (id, rules) => document.getElementById(id).replaceChildren(...rules.map(([label, points]) => {
+      const fill = (id, rules) => document.getElementById(id).replaceChildren(...rules.map(([label, points, chip]) => {
         const item = el("li", "");
-        item.append(el("span", "", label), el("strong", "", `+${points}`));
+        item.append(el("span", "", label), el("span", `chip ${chip}`, `+${points}`));
         return item;
       }));
+      // Small amounts get a colour per amount (1 and 2 points); anything else stays white.
+      const amount = (points) => (points <= 2 ? `points-${points}` : "");
       fill("rules-overall", [
-        ["Submit a symptom", scoring.symptom],
-        ["Submit a prescription", scoring.prescription],
-        ["Vote (give a thumbs up or pick a finalist)", scoring.vote],
-        ["Your prescription gets a thumbs up", scoring.thumbs_up_received],
+        ["Submit a symptom", scoring.symptom, amount(scoring.symptom)],
+        ["Submit a prescription", scoring.prescription, amount(scoring.prescription)],
+        ["Vote (give a thumbs up or pick a finalist)", scoring.vote, amount(scoring.vote)],
+        ["Your prescription gets a thumbs up", scoring.thumbs_up_received, amount(scoring.thumbs_up_received)],
       ]);
       fill("rules-finals", [
-        ["Your symptom or prescription wins", first],
-        ["…comes 2nd", second],
-        ["…comes 3rd", third],
+        ["Your symptom or prescription wins", first, "place-1"],
+        ["…comes 2nd", second, "place-2"],
+        ["…comes 3rd", third, "place-3"],
       ]);
     }
 
