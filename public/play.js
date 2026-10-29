@@ -132,7 +132,10 @@ function renderHome() {
   $("me-avatar").src = `/avatars/${player.avatar}.png`;
   $("me-name").textContent = player.nickname;
   $("phase-name").textContent = PHASE_NAMES[state.phase];
-  for (const button of document.querySelectorAll("[data-phase]")) button.hidden = button.dataset.phase !== state.phase;
+  // Each button lists the phases it's available in.
+  for (const button of document.querySelectorAll("[data-phases]")) {
+    button.hidden = !button.dataset.phases.split(" ").includes(state.phase);
+  }
   renderTimer();
 }
 
@@ -374,8 +377,8 @@ voteForm.addEventListener("submit", async (event) => {
   const { ok, data } = await api("POST", "/votes", { round: matchup.round, ids: matchup.prescriptions.map((p) => p.id), up: [...thumbsUp] });
   $("vote-submit").disabled = false;
   if (!ok) return showError(voteForm, data.error);
-  // In Clinic open it's one vote per prescription; in Second opinions, keep going.
-  if (voteAfterPrescription || state?.phase !== "second_opinions") showHome();
+  // One vote after each prescription; from the Vote button, keep going until there's nothing left.
+  if (voteAfterPrescription) showHome();
   else startVote();
 });
 
