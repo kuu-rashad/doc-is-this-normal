@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "doc-is-this-normal",
+  "name": "doc",
   "main": "src/index.js",
   "compatibility_date": "2026-10-28",
   "assets": {
@@ -8,7 +8,7 @@
     "run_worker_first": ["/api/*"]
   },
   "durable_objects": {
-    "bindings": [{ "name": "GAME", "class_name": "Game" }]
+    "bindings": [{ "name": "DOC_GAME", "class_name": "DocGame" }]
   },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Game"] }]
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DocGame"] }]
 }

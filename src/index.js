@@ -52,7 +52,7 @@ const PHASE_MESSAGES = {
 
 // There are no rooms: every player belongs to the one shared game, so a single
 // Durable Object instance holds all game state.
-export class Game extends DurableObject {
+export class DocGame extends DurableObject {
   constructor(ctx, env) {
     super(ctx, env);
     this.sql = ctx.storage.sql;
@@ -305,9 +305,9 @@ export class Game extends DurableObject {
     for (const row of this.prescriptionStats()) {
       if (row.shown < config.finalists.min_appearances) continue;
       const current = best.get(row.symptom_id);
-      if (!current || Game.compareStats(row, current) < 0) best.set(row.symptom_id, row);
+      if (!current || DocGame.compareStats(row, current) < 0) best.set(row.symptom_id, row);
     }
-    return [...best.values()].sort(Game.compareStats);
+    return [...best.values()].sort(DocGame.compareStats);
   }
 
   // Finalists also remember who wrote them (for points at the end); those ids stay on the server.
@@ -698,7 +698,7 @@ export default {
       return Response.json({ error: error.message }, { status: error.status });
     }
 
-    const game = env.GAME.get(env.GAME.idFromName("game"));
+    const game = env.DOC_GAME.get(env.DOC_GAME.idFromName("doc-game"));
     const { status, data } = await game.run(action, playerId, body);
     return Response.json(data, { status });
   },
