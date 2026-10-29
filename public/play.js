@@ -184,7 +184,7 @@ $("home-edit").addEventListener("click", () => showJoinForm());
 
 // A template sentence with a text field per blank. The sentence fills in as the player types,
 // and each blank offers a few suggestions from its pool, with a button to draw new ones.
-function createFillIn({ preview, slots, idPrefix, limit, counter, onChange }) {
+function createFillIn({ preview, slots, idPrefix, limit, counter, onChange, showHints = true }) {
   let template = null;
   const input = (key) => $(`${idPrefix}-${key}`);
 
@@ -249,9 +249,6 @@ function createFillIn({ preview, slots, idPrefix, limit, counter, onChange }) {
     for (const [key, slot] of Object.entries(template.slots)) {
       const field = document.createElement("div");
       field.className = "slot";
-      const label = document.createElement("label");
-      label.htmlFor = `${idPrefix}-${key}`;
-      label.textContent = slot.hint;
       const box = document.createElement("input");
       box.type = "text";
       box.id = `${idPrefix}-${key}`;
@@ -260,7 +257,15 @@ function createFillIn({ preview, slots, idPrefix, limit, counter, onChange }) {
       const chips = document.createElement("div");
       chips.className = "chips";
       chips.dataset.slot = key;
-      field.append(label, box, chips);
+      if (showHints) {
+        const label = document.createElement("label");
+        label.htmlFor = box.id;
+        label.textContent = slot.hint;
+        field.append(label);
+      } else {
+        box.setAttribute("aria-label", slot.hint);
+      }
+      field.append(box, chips);
       slots.append(field);
       renderChips(key);
     }
@@ -329,6 +334,7 @@ const prescriptionFill = createFillIn({
   slots: $("rx-slots"),
   idPrefix: "rx-slot",
   limit: PRESCRIPTION_LIMIT,
+  showHints: false,
   counter: $("prescription-counter"),
   onChange: (ready) => {
     if (!writingOwn) $("prescription-submit").disabled = !ready;
@@ -354,7 +360,6 @@ function setWritingOwn(own) {
   writingOwn = own;
   $("rx-fill").hidden = own;
   $("rx-own").hidden = !own;
-  $("rx-other").hidden = own;
   $("rx-mode").textContent = own ? "Use a template" : "Write my own";
   if (own) {
     updateOwnPrescription();

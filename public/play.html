@@ -129,6 +129,53 @@
       font-size: 16px;
     }
 
+    /* The patient's words: a quote to read, not a box to type in. */
+    .patient-quote {
+      margin: 0;
+      padding: 6px 12px;
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.35;
+      text-align: left;
+      overflow-wrap: anywhere;
+      background: rgb(185 128 73 / 0.12);
+      border-left: 4px solid var(--bandage-dark);
+      border-radius: 4px 12px 12px 4px;
+    }
+
+    /* The prescription sentence, with a dice button for another wording: at the right edge on
+       one line, in the bottom-right corner when the sentence wraps. */
+    .rx-frame {
+      position: relative;
+      margin-top: 12px;
+    }
+
+    .rx-frame .symptom-text {
+      padding-right: 48px;
+    }
+
+    .rx-frame .reroll {
+      position: absolute;
+      right: 7px;
+      bottom: 6px;
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      margin: 0;
+      padding: 0;
+      background: var(--bandage);
+      border-width: 2px;
+      border-radius: 9px;
+      box-shadow: none;
+    }
+
+    .rx-frame .reroll svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
     #prescription-form #prescription-submit {
       margin-top: 10px;
       padding: 10px;
@@ -597,10 +644,15 @@
     <form id="prescription-form" class="screen" hidden>
       <h1>Your diagnosis, doctor?</h1>
       <p class="field-label"><strong>The patient says:</strong></p>
-      <p class="symptom-text" id="prescription-symptom"></p>
-      <p class="field-label"><strong>You prescribe:</strong></p>
+      <p class="patient-quote" id="prescription-symptom"></p>
       <div id="rx-fill">
-        <p class="symptom-text" id="rx-preview"></p>
+        <div class="rx-frame">
+          <p class="symptom-text" id="rx-preview"></p>
+          <!-- "casino" icon from Google Material Symbols (Apache 2.0) -->
+          <button type="button" class="reroll" id="rx-other" aria-label="Other wording">
+            <svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M335.5-264.62q14.5-14.62 14.5-35.5 0-20.88-14.62-35.38-14.62-14.5-35.5-14.5-20.88 0-35.38 14.62-14.5 14.62-14.5 35.5 0 20.88 14.62 35.38 14.62 14.5 35.5 14.5 20.88 0 35.38-14.62Zm0-360q14.5-14.62 14.5-35.5 0-20.88-14.62-35.38-14.62-14.5-35.5-14.5-20.88 0-35.38 14.62-14.5 14.62-14.5 35.5 0 20.88 14.62 35.38 14.62 14.5 35.5 14.5 20.88 0 35.38-14.62Zm180 180q14.5-14.62 14.5-35.5 0-20.88-14.62-35.38-14.62-14.5-35.5-14.5-20.88 0-35.38 14.62-14.5 14.62-14.5 35.5 0 20.88 14.62 35.38 14.62 14.5 35.5 14.5 20.88 0 35.38-14.62Zm180 180q14.5-14.62 14.5-35.5 0-20.88-14.62-35.38-14.62-14.5-35.5-14.5-20.88 0-35.38 14.62-14.5 14.62-14.5 35.5 0 20.88 14.62 35.38 14.62 14.5 35.5 14.5 20.88 0 35.38-14.62Zm0-360q14.5-14.62 14.5-35.5 0-20.88-14.62-35.38-14.62-14.5-35.5-14.5-20.88 0-35.38 14.62-14.5 14.62-14.5 35.5 0 20.88 14.62 35.38 14.62 14.5 35.5 14.5 20.88 0 35.38-14.62ZM180-120q-24 0-42-18t-18-42v-600q0-24 18-42t42-18h600q24 0 42 18t18 42v600q0 24-18 42t-42 18H180Z"/></svg>
+          </button>
+        </div>
         <div id="rx-slots"></div>
       </div>
       <div id="rx-own" hidden>
@@ -608,7 +660,6 @@
       </div>
       <p class="counter" id="prescription-counter"></p>
       <div class="row">
-        <button type="button" class="secondary" id="rx-other">Other wording</button>
         <button type="button" class="secondary" id="rx-mode">Write my own</button>
       </div>
       <button type="submit" id="prescription-submit" disabled>Prescribe</button>
