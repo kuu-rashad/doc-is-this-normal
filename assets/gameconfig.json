@@ -1,6 +1,23 @@
 {
   "game_title": "Doc, is this normal?",
   "placeholder_format": "{{slot_id}}",
+  "premade_patient_name": "Walk-in Patient",
+  "timing_minutes": {
+    "first_clinic_open": 45,
+    "clinic_open": 30,
+    "second_opinions": 15,
+    "finals": 15,
+    "reveal": 2
+  },
+  "finalists": {
+    "count": 3,
+    "min_appearances": 3
+  },
+  "limits": {
+    "slot_characters": 40,
+    "symptom_characters": 160,
+    "prescription_characters": 120
+  },
   "categories": [
     {
       "id": "mild",
@@ -275,13 +292,43 @@
           "text": "I accidentally replied-all to {{recipient}} with {{message}}, and now I can't stop {{compulsion}}.",
           "slots": {
             "recipient": {
-              "hint": "A group of people"
+              "hint": "A group of people",
+              "options": [
+                "the whole company",
+                "the client",
+                "the board of directors",
+                "my mom's book club",
+                "the entire Slack workspace",
+                "the CEO and three investors",
+                "every Google Meet invitee",
+                "the HR mailing list"
+              ]
             },
             "message": {
-              "hint": "Something you sent"
+              "hint": "Something you sent",
+              "options": [
+                "a selfie from the bathroom",
+                "my honest opinion of the roadmap",
+                "a single eggplant emoji",
+                "my grocery list",
+                "a love poem meant for my partner",
+                "a four-minute voice memo",
+                "“who even reads these?”",
+                "my secret salary spreadsheet"
+              ]
             },
             "compulsion": {
-              "hint": "An action ending in -ing"
+              "hint": "An action ending in -ing",
+              "options": [
+                "apologizing",
+                "refreshing my inbox",
+                "sweating",
+                "laughing nervously",
+                "writing follow-up emails",
+                "hiding in the stairwell",
+                "drafting my resignation",
+                "whispering “undo send”"
+              ]
             }
           }
         },
@@ -290,7 +337,17 @@
           "text": "My Slack status has been stuck on {{status}} for weeks, and I've started to believe it.",
           "slots": {
             "status": {
-              "hint": "A Slack status"
+              "hint": "A Slack status",
+              "options": [
+                "“In a meeting”",
+                "“Out sick”",
+                "“On vacation 🏖️”",
+                "“Commuting”",
+                "“Do not disturb”",
+                "“Focusing”",
+                "“Away”",
+                "“At lunch”"
+              ]
             }
           }
         },
@@ -299,10 +356,30 @@
           "text": "I physically can't stop calling my manager {{wrong_name}}. It's been going on for {{duration}}.",
           "slots": {
             "wrong_name": {
-              "hint": "A name or title"
+              "hint": "A name or title",
+              "options": [
+                "Mom",
+                "Dad",
+                "Your Majesty",
+                "Coach",
+                "babe",
+                "Captain",
+                "Sensei",
+                "Grandma"
+              ]
             },
             "duration": {
-              "hint": "A length of time"
+              "hint": "A length of time",
+              "options": [
+                "three weeks",
+                "two quarters",
+                "the entire merger",
+                "a whole sprint",
+                "my entire employment",
+                "five years",
+                "the whole fiscal year",
+                "two reorgs"
+              ]
             }
           }
         },
@@ -311,7 +388,17 @@
           "text": "During my performance review I {{embarrassing_action}}. Lucky for me our HR is on leave.",
           "slots": {
             "embarrassing_action": {
-              "hint": "Something embarrassing you did"
+              "hint": "Something embarrassing you did",
+              "options": [
+                "cried a little",
+                "called my manager “Mom”",
+                "fell asleep",
+                "ate a whole rotisserie chicken",
+                "asked for a hug",
+                "negotiated in a pirate accent",
+                "shared my screen with Tinder open",
+                "burped the alphabet"
+              ]
             }
           }
         },
@@ -320,10 +407,30 @@
           "text": "I can only give presentations while {{condition}}. Last quarter's results were presented to {{audience}}.",
           "slots": {
             "condition": {
-              "hint": "A situation or state"
+              "hint": "A situation or state",
+              "options": [
+                "standing on one leg",
+                "wearing a cape",
+                "eating soup",
+                "holding my cat",
+                "lying on the floor",
+                "sitting in a bathtub",
+                "whispering",
+                "wearing sunglasses"
+              ]
             },
             "audience": {
-              "hint": "An audience"
+              "hint": "An audience",
+              "options": [
+                "my houseplants",
+                "the cleaning crew",
+                "a confused delivery driver",
+                "three pigeons",
+                "my reflection",
+                "the wrong Google Meet",
+                "an empty room",
+                "the client's dog"
+              ]
             }
           }
         }
@@ -339,10 +446,30 @@
           "text": "I can't use the bathroom unless I {{bathroom_ritual}} while thinking about {{thought}}.",
           "slots": {
             "bathroom_ritual": {
-              "hint": "An action"
+              "hint": "An action",
+              "options": [
+                "hum the national anthem",
+                "light three candles",
+                "put on a tie",
+                "call my mom",
+                "read the terms and conditions",
+                "do jazz hands",
+                "recite the alphabet backwards",
+                "play whale sounds"
+              ]
             },
             "thought": {
-              "hint": "A person, topic, or thing"
+              "hint": "A person, topic, or thing",
+              "options": [
+                "tax returns",
+                "the CEO",
+                "Excel macros",
+                "my high school gym teacher",
+                "the company retreat",
+                "lukewarm soup",
+                "a pigeon",
+                "the quarterly roadmap"
+              ]
             }
           }
         },
@@ -351,10 +478,30 @@
           "text": "I sweat {{substance}} whenever I'm near {{trigger}}.",
           "slots": {
             "substance": {
-              "hint": "A substance"
+              "hint": "A substance",
+              "options": [
+                "maple syrup",
+                "glitter",
+                "ranch dressing",
+                "cold coffee",
+                "hot sauce",
+                "lukewarm gravy",
+                "olive oil",
+                "liquid cheese"
+              ]
             },
             "trigger": {
-              "hint": "A person, place, or thing"
+              "hint": "A person, place, or thing",
+              "options": [
+                "the CEO",
+                "the office fridge",
+                "a printer",
+                "my ex",
+                "the client",
+                "a Google Meet invite",
+                "a whiteboard",
+                "anyone from HR"
+              ]
             }
           }
         },
@@ -363,10 +510,30 @@
           "text": "Every time I go to the dentist, they find {{object}} in my {{location}}, and they're starting to ask questions.",
           "slots": {
             "object": {
-              "hint": "Something unexpected"
+              "hint": "Something unexpected",
+              "options": [
+                "a LEGO brick",
+                "a tiny umbrella",
+                "last year's Christmas cookie",
+                "a SIM card",
+                "a goldfish",
+                "a USB stick",
+                "a rubber band",
+                "a fortune cookie fortune"
+              ]
             },
             "location": {
-              "hint": "A part of your mouth or body"
+              "hint": "A part of your mouth or body",
+              "options": [
+                "back molars",
+                "gums",
+                "tonsils",
+                "wisdom teeth",
+                "cheek pouch",
+                "sinuses",
+                "left nostril",
+                "fillings"
+              ]
             }
           }
         },
@@ -375,10 +542,30 @@
           "text": "Every time I {{trigger_action}}, I shart a little, and I'm running out of people to blame besides {{scapegoat}}.",
           "slots": {
             "trigger_action": {
-              "hint": "Something you do"
+              "hint": "Something you do",
+              "options": [
+                "sneeze",
+                "laugh",
+                "stand up too fast",
+                "join a Google Meet",
+                "lift a box",
+                "hear a Slack ping",
+                "high-five someone",
+                "do a squat"
+              ]
             },
             "scapegoat": {
-              "hint": "Someone to blame"
+              "hint": "Someone to blame",
+              "options": [
+                "the dog",
+                "the intern",
+                "the office plant",
+                "my desk neighbor",
+                "the radiator",
+                "the guy from Finance",
+                "my chair",
+                "a ghost"
+              ]
             }
           }
         },
@@ -387,10 +574,30 @@
           "text": "I've been saving my {{bodily_substance}} in a jar labeled {{label}}. Is that a hobby?",
           "slots": {
             "bodily_substance": {
-              "hint": "Something your body makes"
+              "hint": "Something your body makes",
+              "options": [
+                "toenail clippings",
+                "earwax",
+                "belly button lint",
+                "baby teeth",
+                "dandruff",
+                "scabs",
+                "eyelashes",
+                "hairballs"
+              ]
             },
             "label": {
-              "hint": "A jar label"
+              "hint": "A jar label",
+              "options": [
+                "“Do not eat”",
+                "“Grandma's jam”",
+                "“Q3 results”",
+                "“Emergency snacks”",
+                "“Souvenirs”",
+                "“Mom”",
+                "“Art supplies”",
+                "“Party mix”"
+              ]
             }
           }
         },
@@ -399,7 +606,17 @@
           "text": "I found {{object}} somewhere it absolutely should not be, and I have no memory of how it got there.",
           "slots": {
             "object": {
-              "hint": "An object"
+              "hint": "An object",
+              "options": [
+                "a TV remote",
+                "a whole lasagna",
+                "my manager's stapler",
+                "a live hamster",
+                "a traffic cone",
+                "my passport",
+                "a Christmas ornament",
+                "a rubber chicken"
+              ]
             }
           }
         },
@@ -408,10 +625,30 @@
           "text": "Whenever a client asks for \"one small change\", I start sweating {{substance}} from my {{body_part}}.",
           "slots": {
             "substance": {
-              "hint": "A substance"
+              "hint": "A substance",
+              "options": [
+                "maple syrup",
+                "glitter",
+                "mayonnaise",
+                "cold brew",
+                "ketchup",
+                "gravy",
+                "soy sauce",
+                "pure panic"
+              ]
             },
             "body_part": {
-              "hint": "A body part"
+              "hint": "A body part",
+              "options": [
+                "elbows",
+                "kneecaps",
+                "ears",
+                "eyebrows",
+                "nostrils",
+                "belly button",
+                "armpits",
+                "scalp"
+              ]
             }
           }
         }
@@ -427,10 +664,30 @@
           "text": "The moment someone touches my {{body_part}}, I forget how to {{forgotten_action}}.",
           "slots": {
             "body_part": {
-              "hint": "A body part"
+              "hint": "A body part",
+              "options": [
+                "elbow",
+                "shoulder",
+                "earlobe",
+                "knee",
+                "hand",
+                "lower back",
+                "ankle",
+                "hair"
+              ]
             },
             "forgotten_action": {
-              "hint": "An action"
+              "hint": "An action",
+              "options": [
+                "speak",
+                "blink",
+                "walk",
+                "breathe normally",
+                "use a fork",
+                "count to three",
+                "spell my own name",
+                "stand up straight"
+              ]
             }
           }
         },
@@ -439,10 +696,30 @@
           "text": "Every time I try to look sexy, I end up looking like {{comparison}} doing {{activity}}.",
           "slots": {
             "comparison": {
-              "hint": "A person or creature"
+              "hint": "A person or creature",
+              "options": [
+                "a confused penguin",
+                "a startled giraffe",
+                "a melting candle",
+                "a malfunctioning robot",
+                "a wet cat",
+                "a nervous flamingo",
+                "a deflating balloon",
+                "my grandpa"
+              ]
             },
             "activity": {
-              "hint": "An activity"
+              "hint": "An activity",
+              "options": [
+                "yoga",
+                "the cha-cha",
+                "my taxes",
+                "a TikTok dance",
+                "CPR",
+                "interpretive dance",
+                "a push-up",
+                "the worm"
+              ]
             }
           }
         },
@@ -451,13 +728,43 @@
           "text": "My crush said {{compliment}}, and my {{body_part}} hasn't stopped {{reaction}} since.",
           "slots": {
             "compliment": {
-              "hint": "Something your crush said"
+              "hint": "Something your crush said",
+              "options": [
+                "“nice spreadsheet”",
+                "“you smell like bread”",
+                "“cool shoes”",
+                "“great camera angle”",
+                "“your code compiles”",
+                "“you have strong elbows”",
+                "“love your Slack status”",
+                "“you're very punctual”"
+              ]
             },
             "body_part": {
-              "hint": "A body part"
+              "hint": "A body part",
+              "options": [
+                "left knee",
+                "eyebrow",
+                "ear",
+                "pinky",
+                "stomach",
+                "cheek",
+                "foot",
+                "eyelid"
+              ]
             },
             "reaction": {
-              "hint": "An action ending in -ing"
+              "hint": "An action ending in -ing",
+              "options": [
+                "twitching",
+                "blushing",
+                "tingling",
+                "glowing",
+                "sweating",
+                "vibrating",
+                "doing the cha-cha",
+                "humming"
+              ]
             }
           }
         },
@@ -466,10 +773,30 @@
           "text": "I keep accidentally sending voice memos of me {{embarrassing_activity}} to {{recipient}}. It's happened four times this week.",
           "slots": {
             "embarrassing_activity": {
-              "hint": "An activity ending in -ing"
+              "hint": "An activity ending in -ing",
+              "options": [
+                "singing in the shower",
+                "practicing my Oscar speech",
+                "flirting with my mirror",
+                "rapping about cheese",
+                "crying at a dog video",
+                "rehearsing a breakup",
+                "snoring",
+                "talking to my plants"
+              ]
             },
             "recipient": {
-              "hint": "A person or group"
+              "hint": "A person or group",
+              "options": [
+                "my manager",
+                "the client",
+                "the company Slack",
+                "my mom",
+                "the CEO",
+                "the whole team",
+                "my dentist",
+                "the HR channel"
+              ]
             }
           }
         },
@@ -478,10 +805,30 @@
           "text": "I get way too excited whenever I {{innocent_activity}}. I've already been banned from {{place}}.",
           "slots": {
             "innocent_activity": {
-              "hint": "An innocent activity"
+              "hint": "An innocent activity",
+              "options": [
+                "see a cucumber",
+                "hear a saxophone",
+                "fold laundry",
+                "watch a cooking show",
+                "assemble IKEA furniture",
+                "smell fresh bread",
+                "play Twister",
+                "peel a banana"
+              ]
             },
             "place": {
-              "hint": "A place"
+              "hint": "A place",
+              "options": [
+                "the farmers' market",
+                "IKEA",
+                "the bakery",
+                "the zoo",
+                "my yoga class",
+                "the library",
+                "the car wash",
+                "the public pool"
+              ]
             }
           }
         },
@@ -490,10 +837,30 @@
           "text": "I get weirdly turned on whenever {{coworker}} shares their screen, especially when they open {{app_or_file}}.",
           "slots": {
             "coworker": {
-              "hint": "A coworker"
+              "hint": "A coworker",
+              "options": [
+                "my manager",
+                "the CEO",
+                "the intern",
+                "someone from Finance",
+                "the client",
+                "my team lead",
+                "IT support",
+                "the new hire"
+              ]
             },
             "app_or_file": {
-              "hint": "An app or file"
+              "hint": "An app or file",
+              "options": [
+                "a pivot table",
+                "Jira",
+                "the Q3 budget",
+                "Photoshop",
+                "a Gantt chart",
+                "the expense report",
+                "a 200-slide deck",
+                "Excel"
+              ]
             }
           }
         },
@@ -502,10 +869,30 @@
           "text": "I keep sending flirty Slack DMs meant for {{intended_recipient}} to the client channel. The client keeps replying {{client_reply}}.",
           "slots": {
             "intended_recipient": {
-              "hint": "Who the messages were for"
+              "hint": "Who the messages were for",
+              "options": [
+                "my partner",
+                "my crush",
+                "my gym buddy",
+                "my barber",
+                "my dentist",
+                "my landlord",
+                "my yoga instructor",
+                "my therapist"
+              ]
             },
             "client_reply": {
-              "hint": "The client's reply"
+              "hint": "The client's reply",
+              "options": [
+                "“Noted.”",
+                "“Per my last email…”",
+                "“Let's take this offline”",
+                "“😳”",
+                "“Love this energy”",
+                "“Can you send the invoice?”",
+                "“👍”",
+                "“Approved!”"
+              ]
             }
           }
         }
@@ -521,10 +908,30 @@
           "text": "I can't get in the mood unless my partner is wearing {{clothing}} and holding {{held_object}}.",
           "slots": {
             "clothing": {
-              "hint": "Clothing or an outfit"
+              "hint": "Clothing or an outfit",
+              "options": [
+                "a dinosaur costume",
+                "full scuba gear",
+                "a tuxedo",
+                "oven mitts",
+                "a hi-vis vest",
+                "a Santa suit",
+                "a wedding dress",
+                "a Viking helmet"
+              ]
             },
             "held_object": {
-              "hint": "Something you can hold"
+              "hint": "Something you can hold",
+              "options": [
+                "a spatula",
+                "a baguette",
+                "a stapler",
+                "a ukulele",
+                "a rubber duck",
+                "a fire extinguisher",
+                "the TV remote",
+                "a pineapple"
+              ]
             }
           }
         },
@@ -533,10 +940,30 @@
           "text": "My partner and I tried {{position}}, and now we both need a chiropractor and {{professional}}.",
           "slots": {
             "position": {
-              "hint": "A position or move"
+              "hint": "A position or move",
+              "options": [
+                "the reverse pretzel",
+                "the folding chair",
+                "the IKEA manual",
+                "the flying squirrel",
+                "the starfish",
+                "the plank",
+                "the human pyramid",
+                "the Rubik's cube"
+              ]
             },
             "professional": {
-              "hint": "A professional"
+              "hint": "A professional",
+              "options": [
+                "a lawyer",
+                "a priest",
+                "a therapist",
+                "a plumber",
+                "a notary",
+                "a physiotherapist",
+                "a locksmith",
+                "an exorcist"
+              ]
             }
           }
         },
@@ -545,7 +972,17 @@
           "text": "I can only climax while thinking about {{unsexy_thing}}.",
           "slots": {
             "unsexy_thing": {
-              "hint": "Something very unsexy"
+              "hint": "Something very unsexy",
+              "options": [
+                "tax forms",
+                "the quarterly roadmap",
+                "my dentist",
+                "cold soup",
+                "Excel formulas",
+                "my grandma's casserole",
+                "a broken printer",
+                "the HR handbook"
+              ]
             }
           }
         },
@@ -554,10 +991,30 @@
           "text": "We role-played as {{roleplay}}, and now I can't {{everyday_activity}} without getting aroused.",
           "slots": {
             "roleplay": {
-              "hint": "A role-play pairing"
+              "hint": "A role-play pairing",
+              "options": [
+                "a plumber and a broken sink",
+                "a pirate and a parrot",
+                "a dentist and a patient",
+                "a barista and a regular",
+                "a tax auditor and a receipt",
+                "two rival chefs",
+                "a knight and a dragon",
+                "a librarian and an overdue book"
+              ]
             },
             "everyday_activity": {
-              "hint": "An everyday activity"
+              "hint": "An everyday activity",
+              "options": [
+                "buy groceries",
+                "file my taxes",
+                "water the plants",
+                "fix the sink",
+                "order coffee",
+                "go to the dentist",
+                "return a library book",
+                "load the dishwasher"
+              ]
             }
           }
         }

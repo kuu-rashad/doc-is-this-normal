@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Join · Doc, Is This Normal?</title>
+  <title>Doc, Is This Normal?</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
@@ -189,7 +189,7 @@
       font-weight: 500;
     }
 
-    /* Menu */
+    /* Home */
     .me {
       display: flex;
       align-items: center;
@@ -211,11 +211,33 @@
       overflow-wrap: anywhere;
     }
 
-    .menu button + button {
+    .phase {
+      margin: 8px 0 4px;
+      padding: 12px;
+      background: var(--white);
+      border: 4px solid var(--navy);
+      border-radius: 18px;
+    }
+
+    .phase-name {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .phase-timer {
+      margin: 2px 0 0;
+      font-size: 34px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--bandage-dark);
+    }
+
+    .actions button + button {
       margin-top: 12px;
     }
 
-    /* Symptom sentence, used on the symptom, treatment and vote screens */
+    /* Symptom sentence, used on the symptom, prescription, vote and finals screens */
     .symptom-text {
       margin: 0;
       padding: 14px 16px;
@@ -223,6 +245,7 @@
       font-weight: 500;
       line-height: 1.5;
       text-align: left;
+      overflow-wrap: anywhere;
       background: var(--white);
       border: 4px solid var(--navy);
       border-radius: 18px;
@@ -233,55 +256,86 @@
       min-width: 80px;
       border-bottom: 3px dashed var(--bandage-dark);
       font-weight: 700;
-      cursor: pointer;
     }
 
     .blank.filled {
+      display: inline;
       min-width: 0;
       padding: 0 6px;
       background: var(--bandage);
       border-bottom: 0;
       border-radius: 8px;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
     }
 
+    /* Patient mode: a text field per blank, with suggestion chips under it */
     .slot {
-      margin: 20px 0 0;
+      margin: 18px 0 0;
       text-align: left;
+    }
+
+    .slot input {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 14px;
+      font: 500 18px "Fredoka", system-ui, sans-serif;
+      color: var(--navy);
+      background: var(--white);
+      border: 4px solid var(--navy);
+      border-radius: 14px;
+    }
+
+    .slot input:focus {
+      outline: 4px solid var(--bandage);
     }
 
     .chips {
       display: flex;
       flex-wrap: wrap;
+      align-items: center;
       gap: 8px;
+      margin-top: 8px;
     }
 
-    .chips input {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .chips label {
+    .chips button {
+      width: auto;
       margin: 0;
-      padding: 8px 12px;
-      font-size: 16px;
+      padding: 6px 12px;
+      font-size: 15px;
       font-weight: 500;
       background: var(--white);
-      border: 3px solid var(--navy);
+      border-width: 3px;
       border-radius: 999px;
-      cursor: pointer;
+      box-shadow: none;
     }
 
-    .chips input:checked + label {
+    .chips .shuffle {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      padding: 0;
       background: var(--bandage);
-      font-weight: 700;
     }
 
-    .chips input:focus-visible + label {
-      outline: 3px solid var(--white);
+    .chips .shuffle svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
     }
 
-    /* Treatment */
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .row button {
+      flex: 1;
+    }
+
+    /* Doctor mode */
     .field-label {
       margin: 18px 0 8px;
       text-align: left;
@@ -290,7 +344,7 @@
     textarea {
       display: block;
       width: 100%;
-      min-height: 120px;
+      min-height: 110px;
       box-sizing: border-box;
       padding: 12px 16px;
       font: 500 18px "Fredoka", system-ui, sans-serif;
@@ -299,6 +353,10 @@
       border: 4px solid var(--navy);
       border-radius: 16px;
       resize: none;
+    }
+
+    textarea::placeholder {
+      color: #9a9aa5;
     }
 
     textarea:focus {
@@ -311,7 +369,7 @@
       text-align: right;
     }
 
-    /* Voting */
+    /* Shortlist voting */
     .vote-option {
       margin-top: 14px;
       padding: 14px;
@@ -328,23 +386,58 @@
       overflow-wrap: anywhere;
     }
 
-    .thumbs {
-      display: flex;
-      gap: 8px;
-    }
-
-    .thumbs button {
-      flex: 1;
+    .vote-option button {
       margin: 0;
       padding: 8px;
-      font-size: 20px;
+      font-size: 22px;
       background: var(--white);
       border-width: 3px;
       box-shadow: 0 3px 0 var(--navy);
     }
 
-    .thumbs button[aria-pressed="true"] {
+    .vote-option button[aria-pressed="true"] {
       background: var(--bandage);
+    }
+
+    /* Finals ballot */
+    .finalist {
+      display: block;
+      margin-top: 14px;
+      padding: 14px;
+      font: inherit;
+      text-align: left;
+      background: var(--white);
+      border: 4px solid var(--navy);
+      border-radius: 18px;
+      box-shadow: 0 4px 0 var(--navy);
+    }
+
+    .finalist[aria-pressed="true"] {
+      background: var(--bandage);
+    }
+
+    .finalist .symptom {
+      margin: 0 0 10px;
+      font-size: 17px;
+      font-weight: 500;
+      overflow-wrap: anywhere;
+    }
+
+    .finalist .prescription {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .finalist img {
+      flex: none;
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
     }
   </style>
   <script src="/play.js" defer></script>
@@ -371,47 +464,65 @@
       <p class="error" hidden></p>
     </form>
 
-    <section id="menu" class="screen menu" hidden>
+    <section id="home" class="screen" hidden>
       <div class="me">
         <img id="me-avatar" alt="">
         <p id="me-name"></p>
       </div>
-      <h1>What next?</h1>
-      <button type="button" id="menu-symptom">Describe a symptom</button>
-      <button type="button" id="menu-treat">Treat a patient</button>
-      <button type="button" id="menu-vote">Vote on treatments</button>
-      <p class="notice" id="menu-notice" hidden></p>
-      <button type="button" class="link-button" id="menu-edit">Change nickname or avatar</button>
+      <div class="phase">
+        <p class="phase-name" id="phase-name"></p>
+        <p class="phase-timer" id="phase-timer"></p>
+      </div>
+      <div class="actions">
+        <button type="button" data-phase="clinic_open" id="home-symptom">Write a symptom</button>
+        <button type="button" data-phase="clinic_open" id="home-prescribe">Treat a patient</button>
+        <button type="button" data-phase="second_opinions" id="home-vote">Vote</button>
+        <button type="button" data-phase="finals" id="home-finals">Pick a winner</button>
+      </div>
+      <p class="notice" id="home-notice" hidden></p>
+      <button type="button" class="link-button" id="home-edit">Change nickname or avatar</button>
     </section>
 
     <form id="symptom-form" class="screen" hidden>
       <h1>What's wrong with you?</h1>
       <p class="symptom-text" id="symptom-preview"></p>
       <div id="symptom-slots"></div>
-      <button type="submit" id="symptom-submit" disabled>Submit symptom</button>
+      <p class="counter" id="symptom-counter"></p>
+      <div class="row">
+        <button type="button" class="secondary" id="surprise-me">Surprise me</button>
+        <button type="submit" id="symptom-submit" disabled>Submit</button>
+      </div>
       <p class="error" hidden></p>
       <button type="button" class="link-button" data-back>Back</button>
     </form>
 
-    <form id="treatment-form" class="screen" hidden>
+    <form id="prescription-form" class="screen" hidden>
       <h1>Your diagnosis, doctor?</h1>
       <p class="field-label"><strong>The patient says:</strong></p>
-      <p class="symptom-text" id="treatment-symptom"></p>
-      <label class="field-label" for="treatment-text">Your treatment</label>
-      <textarea id="treatment-text" maxlength="150" required></textarea>
-      <p class="counter" id="treatment-counter"></p>
-      <button type="submit" id="treatment-submit" disabled>Prescribe</button>
+      <p class="symptom-text" id="prescription-symptom"></p>
+      <label class="field-label" for="prescription-text">Your prescription</label>
+      <textarea id="prescription-text" maxlength="120" placeholder="Take two of these and…" required></textarea>
+      <p class="counter" id="prescription-counter"></p>
+      <button type="submit" id="prescription-submit" disabled>Prescribe</button>
       <p class="error" hidden></p>
       <button type="button" class="link-button" data-back>Back</button>
     </form>
 
     <form id="vote-form" class="screen" hidden>
-      <h1>Which treatment works?</h1>
+      <h1>Which prescription works?</h1>
       <p class="symptom-text" id="vote-symptom"></p>
       <div id="vote-options"></div>
       <button type="submit" id="vote-submit">Skip</button>
       <p class="error" hidden></p>
+      <button type="button" class="link-button" data-back>Back</button>
     </form>
+
+    <section id="finals" class="screen" hidden>
+      <h1>Pick your favorite</h1>
+      <div id="finalists"></div>
+      <p class="error" hidden></p>
+      <button type="button" class="link-button" data-back>Back</button>
+    </section>
   </main>
 </body>
 </html>
