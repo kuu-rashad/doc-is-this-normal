@@ -22,7 +22,8 @@
     "symptom": 1,
     "prescription": 2,
     "vote": 1,
-    "thumbs_up_received": 1,
+    "pair_win": 1,
+    "star_received": 1,
     "final_places": [
       10,
       8,

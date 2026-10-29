@@ -1848,7 +1848,7 @@
         prescription,
         patient: patient ? patient.nickname : "Walk-in Patient",
         patientAvatar: patient?.avatar ?? null,
-        thumbsUp: [24, 18, 15, 12, 9, 7][i] ?? 5,
+        wins: [24, 18, 15, 12, 9, 7][i] ?? 5,
         doctor: { name: `Dr. ${doctor.nickname}`, avatar: doctor.avatar },
       };
     }
@@ -1944,7 +1944,8 @@
 
       const badge = el("div", "badge");
       badge.innerHTML = THUMB_ICON;
-      badge.append(String(entry.thumbsUp ?? 0));
+      // How often the pair was picked as the funnier one (older winners stored it as thumbsUp).
+      badge.append(String(entry.wins ?? entry.thumbsUp ?? 0));
 
       card.append(complaint, board, badge);
       return card;
@@ -2038,8 +2039,9 @@
       fill("rules-overall", [
         ["Submit a symptom", scoring.symptom, amount(scoring.symptom)],
         ["Submit a prescription", scoring.prescription, amount(scoring.prescription)],
-        ["Vote (give a thumbs up or pick a finalist)", scoring.vote, amount(scoring.vote)],
-        ["Your prescription gets a thumbs up", scoring.thumbs_up_received, amount(scoring.thumbs_up_received)],
+        ["Vote (pick the funnier pair, star a line, or pick a finalist)", scoring.vote, amount(scoring.vote)],
+        ["Your symptom or prescription is in the pair picked as funnier", scoring.pair_win, amount(scoring.pair_win)],
+        ["Your line gets a star", scoring.star_received, amount(scoring.star_received)],
       ]);
       fill("rules-finals", [
         ["Your symptom or prescription wins", first, "place-1"],

@@ -101,9 +101,15 @@ export class DocGame extends DurableObject {
       `);
     }
 
+    // Votes used to be thumbs up on two prescriptions for the same symptom; they're now a pick
+    // between any two symptom + prescription pairs, kept in pair_votes.
+    this.sql.exec("DROP TABLE IF EXISTS matchup_votes");
+
     // nickname_key is the lowercased nickname, so "Duck" and "duck" count as the same name.
-    // matchup_votes: one row per player per pair of prescriptions they were shown (a_id < b_id),
-    // with a thumbs up (1) or not (0) for each. Rows double as the "times shown" count.
+    // A "pair" is a symptom with one of its prescriptions, identified by the prescription's id.
+    // prescriptions.shown / .wins: how often the pair was in a vote, and how often it was picked.
+    // pair_votes: one row per player per two pairs they were shown (a_id < b_id), with the pair they
+    // picked (NULL = skipped) and the sentence they starred, if any.
     this.sql.exec(`
       CREATE TABLE IF NOT EXISTS players (
         id TEXT PRIMARY KEY,
@@ -127,18 +133,21 @@ export class DocGame extends DurableObject {
         author_id TEXT NOT NULL,
         text TEXT NOT NULL,
         created_at INTEGER NOT NULL,
+        shown INTEGER NOT NULL DEFAULT 0,
+        wins INTEGER NOT NULL DEFAULT 0,
         UNIQUE (symptom_id, author_id)
       );
       CREATE TABLE IF NOT EXISTS assignments (
         player_id TEXT PRIMARY KEY,
         symptom_id INTEGER NOT NULL
       );
-      CREATE TABLE IF NOT EXISTS matchup_votes (
+      CREATE TABLE IF NOT EXISTS pair_votes (
         player_id TEXT NOT NULL,
         a_id INTEGER NOT NULL,
         b_id INTEGER NOT NULL,
-        a_up INTEGER NOT NULL,
-        b_up INTEGER NOT NULL,
+        winner_id INTEGER,
+        star_kind TEXT,
+        star_id INTEGER,
         PRIMARY KEY (player_id, a_id, b_id)
       );
       CREATE TABLE IF NOT EXISTS finals_votes (
@@ -154,6 +163,14 @@ export class DocGame extends DurableObject {
         entry TEXT NOT NULL
       );
     `);
+
+    const columns = this.sql.exec("PRAGMA table_info(prescriptions)").toArray().map((c) => c.name);
+    if (!columns.includes("shown")) {
+      this.sql.exec(`
+        ALTER TABLE prescriptions ADD COLUMN shown INTEGER NOT NULL DEFAULT 0;
+        ALTER TABLE prescriptions ADD COLUMN wins INTEGER NOT NULL DEFAULT 0;
+      `);
+    }
 
     if (!this.getSetting("round")) this.startGame(Date.now());
   }
@@ -284,7 +301,7 @@ export class DocGame extends DurableObject {
       DELETE FROM symptoms;
       DELETE FROM prescriptions;
       DELETE FROM assignments;
-      DELETE FROM matchup_votes;
+      DELETE FROM pair_votes;
       DELETE FROM finals_votes;
     `);
     this.setSetting("finalists", null);
@@ -312,19 +329,17 @@ export class DocGame extends DurableObject {
     }
   }
 
-  // Every prescription with how often it was shown in a matchup and how many thumbs up it got.
+  // Every pair (symptom + prescription) with how often it was in a vote and how often it won.
+  // "approval" is its win rate.
   prescriptionStats() {
     return this.sql.exec(`
-      SELECT p.id, p.symptom_id, p.text, p.author_id,
-             s.text AS symptom, s.author_id AS patient_id,
-             (SELECT COUNT(*) FROM matchup_votes v WHERE v.a_id = p.id OR v.b_id = p.id) AS shown,
-             (SELECT COALESCE(SUM(CASE WHEN v.a_id = p.id THEN v.a_up ELSE v.b_up END), 0)
-                FROM matchup_votes v WHERE v.a_id = p.id OR v.b_id = p.id) AS ups
+      SELECT p.id, p.symptom_id, p.text, p.author_id, p.shown, p.wins,
+             s.text AS symptom, s.author_id AS patient_id
       FROM prescriptions p JOIN symptoms s ON s.id = p.symptom_id
-    `).toArray().map((row) => ({ ...row, approval: row.shown ? row.ups / row.shown : 0 }));
+    `).toArray().map((row) => ({ ...row, approval: row.shown ? row.wins / row.shown : 0 }));
   }
 
-  // Higher approval first, then more appearances, then whichever was written first.
+  // Higher win rate first, then more appearances, then whichever was written first.
   static compareStats(a, b) {
     return b.approval - a.approval || b.shown - a.shown || a.id - b.id;
   }
@@ -361,7 +376,7 @@ export class DocGame extends DurableObject {
       patient: patient ? patient.nickname : config.premade_patient_name,
       // Premade symptoms have no patient avatar.
       patientAvatar: patient?.avatar ?? null,
-      thumbsUp: row.ups,
+      wins: row.wins,
       doctor: { name: doctor ? doctorName(doctor.nickname) : "", avatar: doctor?.avatar ?? AVATARS[0] },
     };
   }
@@ -531,52 +546,73 @@ export class DocGame extends DurableObject {
 
   // ---------- Shortlist voting ----------
 
-  // Two prescriptions for the same symptom that this player hasn't been shown together yet,
-  // favouring prescriptions that have been shown the least. Own symptoms and prescriptions count.
+  pairFor(prescriptionId) {
+    return this.one(
+      `SELECT p.id, p.text AS prescription, p.author_id AS doctor_id, s.text AS symptom, s.author_id AS patient_id
+       FROM prescriptions p JOIN symptoms s ON s.id = p.symptom_id WHERE p.id = ?`,
+      prescriptionId,
+    );
+  }
+
+  // Two pairs this player hasn't been shown together yet, favouring pairs that have been shown
+  // the least. They can share a symptom but don't have to; the player's own writing counts too.
   getVoteTask({ playerId }) {
     this.requirePlayer(playerId);
     this.requirePhase(["clinic_open", "second_opinions"], PHASE_MESSAGES.voting);
-    const pair = this.one(
-      `SELECT p1.id AS a, p2.id AS b, s.text AS symptom, p1.text AS a_text, p2.text AS b_text
-       FROM prescriptions p1
-       JOIN prescriptions p2 ON p2.symptom_id = p1.symptom_id AND p2.id > p1.id
-       JOIN symptoms s ON s.id = p1.symptom_id
-       WHERE NOT EXISTS (SELECT 1 FROM matchup_votes v WHERE v.player_id = ? AND v.a_id = p1.id AND v.b_id = p2.id)
-       ORDER BY (SELECT COUNT(*) FROM matchup_votes v
-                 WHERE v.a_id IN (p1.id, p2.id) OR v.b_id IN (p1.id, p2.id)), RANDOM()
-       LIMIT 1`,
-      playerId,
+    const pairs = this.sql.exec("SELECT id FROM prescriptions ORDER BY shown, RANDOM()").toArray().map((row) => row.id);
+    const seen = new Set(
+      this.sql.exec("SELECT a_id, b_id FROM pair_votes WHERE player_id = ?", playerId).toArray().map((row) => `${row.a_id}-${row.b_id}`),
     );
-    if (!pair) return null;
-    const prescriptions = [{ id: pair.a, text: pair.a_text }, { id: pair.b, text: pair.b_text }];
-    if (Math.random() < 0.5) prescriptions.reverse();
-    return { round: this.getSetting("round").number, symptom: pair.symptom, prescriptions };
+    for (const a of pairs) {
+      for (const b of pairs) {
+        if (a === b || seen.has(`${Math.min(a, b)}-${Math.max(a, b)}`)) continue;
+        const shown = [this.pairFor(a), this.pairFor(b)].map(({ id, symptom, prescription }) => ({ id, symptom, prescription }));
+        return { round: this.getSetting("round").number, pairs: shown };
+      }
+    }
+    return null;
   }
 
-  // body: { ids: [two prescription ids], up: [ids that got a thumbs up] }. No thumbs = skip,
-  // which still counts as both prescriptions being shown once.
+  // body: { ids: [two pair ids], winner: pair id or null, star: { kind: "symptom" | "prescription",
+  // id: pair id } or null }. Skipping (no winner, no star) still counts as both pairs being shown.
   addVote({ playerId, body }) {
     this.requirePlayer(playerId);
     this.requirePhase(["clinic_open", "second_opinions"], PHASE_MESSAGES.voting);
     this.requireRound(body?.round);
     const [a, b] = (body?.ids ?? []).map(Number).sort((x, y) => x - y);
-    if (!Number.isInteger(a) || !Number.isInteger(b)) throw new HttpError(400, "Unknown prescriptions");
-    const rows = this.sql.exec("SELECT id, symptom_id, author_id FROM prescriptions WHERE id IN (?, ?)", a, b).toArray();
-    if (a === b || rows.length !== 2 || rows[0].symptom_id !== rows[1].symptom_id) {
-      throw new HttpError(400, "Unknown prescriptions");
+    if (!Number.isInteger(a) || !Number.isInteger(b) || a === b) throw new HttpError(400, "Unknown pairs");
+    const pairs = [this.pairFor(a), this.pairFor(b)];
+    if (pairs.some((pair) => !pair)) throw new HttpError(400, "Unknown pairs");
+    if (this.one("SELECT 1 FROM pair_votes WHERE player_id = ? AND a_id = ? AND b_id = ?", playerId, a, b)) {
+      throw new HttpError(409, "You already voted on these two");
     }
-    if (this.one("SELECT 1 FROM matchup_votes WHERE player_id = ? AND a_id = ? AND b_id = ?", playerId, a, b)) {
-      throw new HttpError(409, "You already voted on this pair");
+
+    const winner = body?.winner == null ? null : Number(body.winner);
+    if (winner !== null && winner !== a && winner !== b) throw new HttpError(400, "Unknown pick");
+    const star = body?.star ?? null;
+    if (star && (!["symptom", "prescription"].includes(star.kind) || ![a, b].includes(Number(star.id)))) {
+      throw new HttpError(400, "Unknown star");
     }
-    const up = new Set((body?.up ?? []).map(Number));
+
     this.sql.exec(
-      "INSERT INTO matchup_votes (player_id, a_id, b_id, a_up, b_up) VALUES (?, ?, ?, ?, ?)",
-      playerId, a, b, up.has(a) ? 1 : 0, up.has(b) ? 1 : 0,
+      "INSERT INTO pair_votes (player_id, a_id, b_id, winner_id, star_kind, star_id) VALUES (?, ?, ?, ?, ?, ?)",
+      playerId, a, b, winner, star?.kind ?? null, star ? Number(star.id) : null,
     );
-    // A skip isn't a vote; at least one thumbs up is. Each thumbs up also scores for its doctor.
-    const liked = rows.filter((row) => up.has(row.id));
-    if (liked.length) this.addPoints(playerId, config.points.vote);
-    for (const row of liked) this.addPoints(row.author_id, config.points.thumbs_up_received);
+    this.sql.exec("UPDATE prescriptions SET shown = shown + 1 WHERE id IN (?, ?)", a, b);
+
+    // Picking a favourite or starring a line counts as voting. The picked pair scores for its
+    // patient and doctor; a star scores for whoever wrote that line (premade symptoms have no one).
+    if (winner !== null || star) this.addPoints(playerId, config.points.vote);
+    if (winner !== null) {
+      this.sql.exec("UPDATE prescriptions SET wins = wins + 1 WHERE id = ?", winner);
+      const won = pairs.find((pair) => pair.id === winner);
+      this.addPoints(won.patient_id, config.points.pair_win);
+      this.addPoints(won.doctor_id, config.points.pair_win);
+    }
+    if (star) {
+      const starred = pairs.find((pair) => pair.id === Number(star.id));
+      this.addPoints(star.kind === "symptom" ? starred.patient_id : starred.doctor_id, config.points.star_received);
+    }
     return { ok: true };
   }
 

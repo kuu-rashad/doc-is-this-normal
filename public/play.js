@@ -415,10 +415,13 @@ prescriptionForm.addEventListener("submit", async (event) => {
 });
 
 // ---------- Shortlist voting ----------
+// Two symptom + prescription pairs: pick the funnier one, and optionally star one of the four
+// sentences. Neither is required; with nothing chosen the button skips.
 
 const voteForm = $("vote-form");
 let matchup = null;
-let thumbsUp = new Set();
+let pick = null;   // pair id
+let star = null;   // { kind: "symptom" | "prescription", id: pair id }
 let voteAfterPrescription = false;
 
 async function startVote({ afterPrescription = false } = {}) {
@@ -427,48 +430,92 @@ async function startVote({ afterPrescription = false } = {}) {
   if (status === 404) return showHome(afterPrescription ? null : "Nothing new to vote on right now.");
   if (!ok) return showHome(data.error);
   matchup = data;
-  thumbsUp = new Set();
+  pick = null;
+  star = null;
 
-  $("vote-symptom").textContent = `“${data.symptom}”`;
   const options = $("vote-options");
   options.replaceChildren();
-  for (const prescription of data.prescriptions) {
+  for (const pair of data.pairs) {
     const card = document.createElement("div");
-    card.className = "vote-option";
-    const text = document.createElement("p");
-    text.textContent = prescription.text;
-    const thumb = document.createElement("button");
-    thumb.type = "button";
-    thumb.textContent = "👍";
-    thumb.setAttribute("aria-label", "Thumbs up");
-    thumb.dataset.id = prescription.id;
-    card.append(text, thumb);
+    card.className = "pair-card";
+    card.tabIndex = 0;
+    card.setAttribute("role", "button");
+    card.dataset.id = pair.id;
+    card.append(
+      sentenceLine(pair.id, "symptom", `“${pair.symptom}”`),
+      sentenceLine(pair.id, "prescription", pair.prescription),
+    );
     options.append(card);
   }
   updateVotes();
   show("vote-form");
 }
 
-function updateVotes() {
-  for (const button of voteForm.querySelectorAll(".vote-option button")) {
-    button.setAttribute("aria-pressed", String(thumbsUp.has(Number(button.dataset.id))));
+function sentenceLine(id, kind, text) {
+  const line = document.createElement("div");
+  line.className = "line";
+  if (kind === "prescription") {
+    const rx = document.createElement("span");
+    rx.className = "rx";
+    rx.textContent = "℞";
+    line.append(rx);
   }
-  $("vote-submit").textContent = thumbsUp.size ? "Send" : "Skip";
+  const words = document.createElement("p");
+  words.textContent = text;
+  const starButton = document.createElement("button");
+  starButton.type = "button";
+  starButton.className = "star";
+  starButton.dataset.id = id;
+  starButton.dataset.kind = kind;
+  starButton.setAttribute("aria-label", `Star this ${kind}`);
+  line.append(words, starButton);
+  return line;
+}
+
+function updateVotes() {
+  for (const card of voteForm.querySelectorAll(".pair-card")) {
+    card.setAttribute("aria-pressed", String(pick === Number(card.dataset.id)));
+  }
+  for (const button of voteForm.querySelectorAll(".pair-card .star")) {
+    const on = star?.id === Number(button.dataset.id) && star.kind === button.dataset.kind;
+    button.setAttribute("aria-pressed", String(on));
+    button.textContent = on ? "★" : "☆";
+  }
+  $("vote-submit").textContent = pick !== null || star ? "Send" : "Skip";
 }
 
 $("vote-options").addEventListener("click", (event) => {
-  const button = event.target.closest(".vote-option button");
-  if (!button) return;
-  const id = Number(button.dataset.id);
-  if (thumbsUp.has(id)) thumbsUp.delete(id);
-  else thumbsUp.add(id);
+  const starButton = event.target.closest(".star");
+  if (starButton) {
+    // One star per vote; tapping the starred one again removes it.
+    const next = { kind: starButton.dataset.kind, id: Number(starButton.dataset.id) };
+    star = star?.id === next.id && star.kind === next.kind ? null : next;
+  } else {
+    const card = event.target.closest(".pair-card");
+    if (!card) return;
+    const id = Number(card.dataset.id);
+    pick = pick === id ? null : id;
+  }
   updateVotes();
+});
+
+$("vote-options").addEventListener("keydown", (event) => {
+  const card = event.target.closest(".pair-card");
+  if (card && event.target === card && (event.key === "Enter" || event.key === " ")) {
+    event.preventDefault();
+    card.click();
+  }
 });
 
 voteForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   $("vote-submit").disabled = true;
-  const { ok, data } = await api("POST", "/votes", { round: matchup.round, ids: matchup.prescriptions.map((p) => p.id), up: [...thumbsUp] });
+  const { ok, data } = await api("POST", "/votes", {
+    round: matchup.round,
+    ids: matchup.pairs.map((pair) => pair.id),
+    winner: pick,
+    star,
+  });
   $("vote-submit").disabled = false;
   if (!ok) return showError(voteForm, data.error);
   // One vote after each prescription; from the Vote button, keep going until there's nothing left.
