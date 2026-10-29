@@ -1,0 +1,2 @@
+# Copy to .dev.vars for local development. In production, set ADMIN_PASSWORD as a Cloudflare secret.
+ADMIN_PASSWORD=change-me

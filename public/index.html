@@ -125,9 +125,188 @@
       font-weight: 700;
       text-align: center;
     }
+
+    /* Only shown if the browser blocks autoplay until the page is clicked. */
+    .music-hint {
+      position: fixed;
+      top: 1.5vw;
+      left: 1.5vw;
+      margin: 0;
+      padding: 0.6vw 1.2vw;
+      font-size: 1.2vw;
+      font-weight: 700;
+      background: var(--pad);
+      border: 0.25vw solid var(--navy);
+      border-radius: 999px;
+    }
+
+    /* Settings */
+    .settings-button {
+      position: fixed;
+      top: 1.5vw;
+      right: 1.5vw;
+      display: grid;
+      place-items: center;
+      width: clamp(48px, 4.5vw, 96px);
+      height: clamp(48px, 4.5vw, 96px);
+      padding: 0;
+      color: var(--navy);
+      background: var(--pad);
+      border: clamp(4px, 0.35vw, 7px) solid var(--navy);
+      border-radius: 24%;
+      cursor: pointer;
+    }
+
+    .settings-button svg {
+      width: 62%;
+      height: 62%;
+      fill: currentColor;
+    }
+
+    .settings-button:active {
+      transform: scale(0.94);
+    }
+
+    .settings {
+      width: min(420px, calc(100vw - 32px));
+      box-sizing: border-box;
+      padding: 24px;
+      font-family: inherit;
+      color: var(--navy);
+      background: var(--pad);
+      border: 5px solid var(--navy);
+      border-radius: 28px;
+      box-shadow: 0 6px 0 var(--navy);
+    }
+
+    .settings::backdrop {
+      background: rgb(11 20 51 / 0.5);
+    }
+
+    .settings h2 {
+      margin: 0 0 20px;
+      font-size: 28px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .settings label {
+      display: block;
+      margin: 0 0 18px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .settings input[type="password"] {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 6px;
+      padding: 10px 14px;
+      font: 500 18px "Fredoka", system-ui, sans-serif;
+      color: var(--navy);
+      background: var(--white);
+      border: 4px solid var(--navy);
+      border-radius: 14px;
+    }
+
+    .settings input[type="password"]:focus {
+      outline: 4px solid var(--bandage);
+    }
+
+    .settings .volume-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .settings input[type="range"] {
+      flex: 1;
+      accent-color: var(--bandage-dark);
+    }
+
+    .settings output {
+      width: 3.5em;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    .settings button {
+      display: block;
+      width: 100%;
+      margin-top: 12px;
+      padding: 12px;
+      font: 700 18px "Fredoka", system-ui, sans-serif;
+      color: var(--navy);
+      background: var(--white);
+      border: 4px solid var(--navy);
+      border-radius: 16px;
+      box-shadow: 0 4px 0 var(--navy);
+      cursor: pointer;
+    }
+
+    .settings button:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--navy);
+    }
+
+    .settings .danger {
+      margin-top: 24px;
+      color: var(--white);
+      background: #c0392b;
+    }
+
+    .settings .reset-status {
+      margin: 10px 0 0;
+      font-weight: 500;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
+  <audio id="music" src="/audio/somewhere-in-the-elevator.ogg" loop preload="auto"></audio>
+  <p class="music-hint" id="music-hint" hidden>🔇 Click anywhere to start the music</p>
+
+  <button type="button" class="settings-button" id="settings-open" aria-label="Settings">
+    <!-- "settings" icon from Google Material Symbols (Apache 2.0) -->
+    <svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M421-80q-14 0-25-9t-13-23l-15-94q-19-7-40-19t-37-25l-86 40q-14 6-28 1.5T155-226L97-330q-8-13-4.5-27t15.5-23l80-59q-2-9-2.5-20.5T185-480q0-9 .5-20.5T188-521l-80-59q-12-9-15.5-23t4.5-27l58-104q8-13 22-17.5t28 1.5l86 40q16-13 37-25t40-18l15-95q2-14 13-23t25-9h118q14 0 25 9t13 23l15 94q19 7 40.5 18.5T669-710l86-40q14-6 27.5-1.5T804-734l59 104q8 13 4.5 27.5T852-580l-80 57q2 10 2.5 21.5t.5 21.5q0 10-.5 21t-2.5 21l80 58q12 8 15.5 22.5T863-330l-58 104q-8 13-22 17.5t-28-1.5l-86-40q-16 13-36.5 25.5T592-206l-15 94q-2 14-13 23t-25 9H421Zm59-270q54 0 92-38t38-92q0-54-38-92t-92-38q-54 0-92 38t-38 92q0 54 38 92t92 38Z"/></svg>
+  </button>
+
+  <dialog class="settings" id="settings">
+    <form id="admin-login" method="dialog">
+      <h2>Admin only</h2>
+      <label>
+        Password
+        <input type="password" id="admin-password" autocomplete="current-password" required>
+      </label>
+      <p class="reset-status" id="login-error" hidden></p>
+      <button type="submit" id="login-submit">Unlock</button>
+      <button type="button" data-close>Cancel</button>
+    </form>
+
+    <div id="admin-panel" hidden>
+      <h2>Settings</h2>
+      <label>
+        Music volume
+        <span class="volume-row">
+          <input type="range" id="music-volume" min="0" max="100" step="5">
+          <output for="music-volume" id="music-volume-value"></output>
+        </span>
+      </label>
+      <label>
+        Sound effects volume
+        <span class="volume-row">
+          <input type="range" id="sfx-volume" min="0" max="100" step="5">
+          <output for="sfx-volume" id="sfx-volume-value"></output>
+        </span>
+      </label>
+      <button type="button" class="danger" id="reset-game">Reset game</button>
+      <p class="reset-status" id="reset-status" hidden></p>
+      <button type="button" data-close>Close</button>
+    </div>
+  </dialog>
+
   <section class="showcase" id="showcase" aria-live="polite">
     <p class="waiting">Waiting for the first diagnosis…</p>
   </section>
@@ -138,6 +317,157 @@
   </div>
 
   <script>
+    // Background music. Browsers usually block sound until the page has been clicked,
+    // so if autoplay fails, start on the first click or key press instead.
+    const music = document.getElementById("music");
+    const musicHint = document.getElementById("music-hint");
+
+    // ---------- Settings ----------
+    // Volumes are remembered on this computer (0–100). Sound effects will read
+    // window.sfxVolume (0–1) once the game has some.
+    const settings = document.getElementById("settings");
+    const volumes = [
+      { key: "musicVolume", input: "music-volume", fallback: 50, apply: (v) => (music.volume = v) },
+      { key: "sfxVolume", input: "sfx-volume", fallback: 70, apply: (v) => (window.sfxVolume = v) },
+    ];
+
+    for (const { key, input: id, fallback, apply } of volumes) {
+      const input = document.getElementById(id);
+      const output = document.getElementById(`${id}-value`);
+      let saved = null;
+      try { saved = localStorage.getItem(key); } catch {}
+      input.value = saved ?? fallback;
+      const update = () => {
+        output.textContent = `${input.value}%`;
+        apply(input.value / 100);
+        try { localStorage.setItem(key, input.value); } catch {}
+      };
+      input.addEventListener("input", update);
+      update();
+    }
+
+    const resetButton = document.getElementById("reset-game");
+    const resetStatus = document.getElementById("reset-status");
+    let confirmingReset = false;
+
+    function clearResetConfirmation() {
+      confirmingReset = false;
+      resetButton.textContent = "Reset game";
+    }
+
+    // The admin password is checked by the server and kept only until this tab is closed.
+    const loginForm = document.getElementById("admin-login");
+    const passwordInput = document.getElementById("admin-password");
+    const loginError = document.getElementById("login-error");
+    const adminPanel = document.getElementById("admin-panel");
+
+    function getAdminPassword() {
+      try { return sessionStorage.getItem("adminPassword"); } catch { return null; }
+    }
+
+    function setAdminPassword(password) {
+      try {
+        if (password) sessionStorage.setItem("adminPassword", password);
+        else sessionStorage.removeItem("adminPassword");
+      } catch {}
+    }
+
+    function showLogin(error) {
+      setAdminPassword(null);
+      passwordInput.value = "";
+      loginError.textContent = error ?? "";
+      loginError.hidden = !error;
+      adminPanel.hidden = true;
+      loginForm.hidden = false;
+      passwordInput.focus();
+    }
+
+    function showAdminPanel() {
+      clearResetConfirmation();
+      resetStatus.hidden = true;
+      loginForm.hidden = true;
+      adminPanel.hidden = false;
+    }
+
+    document.getElementById("settings-open").addEventListener("click", () => {
+      settings.showModal();
+      if (getAdminPassword()) showAdminPanel();
+      else showLogin();
+    });
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const submit = document.getElementById("login-submit");
+      submit.disabled = true;
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "X-Admin-Password": passwordInput.value },
+      }).catch(() => null);
+      submit.disabled = false;
+      if (response?.ok) {
+        setAdminPassword(passwordInput.value);
+        showAdminPanel();
+      } else {
+        const body = await response?.json().catch(() => null);
+        showLogin(body?.error ?? "Couldn't reach the server. Try again.");
+      }
+    });
+
+    for (const button of settings.querySelectorAll("[data-close]")) {
+      button.addEventListener("click", () => settings.close());
+    }
+    // Clicking the dark area outside the popup closes it.
+    settings.addEventListener("click", (event) => {
+      const box = settings.getBoundingClientRect();
+      const outside = event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom;
+      if (event.target === settings && outside) settings.close();
+    });
+
+    // First click asks for confirmation, second click wipes symptoms, treatments and votes.
+    resetButton.addEventListener("click", async () => {
+      if (!confirmingReset) {
+        confirmingReset = true;
+        resetButton.textContent = "Are you sure? Click again to reset";
+        resetStatus.textContent = "Removes all symptoms, treatments and votes. Players keep their names.";
+        resetStatus.hidden = false;
+        return;
+      }
+      resetButton.disabled = true;
+      const response = await fetch("/api/reset", {
+        method: "POST",
+        headers: { "X-Admin-Password": getAdminPassword() ?? "" },
+      }).catch(() => null);
+      resetButton.disabled = false;
+      clearResetConfirmation();
+      // Password changed on the server since this tab unlocked: ask again.
+      if (response?.status === 401) return showLogin("The admin password has changed. Please log in again.");
+      if (response?.ok) {
+        resetStatus.textContent = "The game has been reset.";
+        entries = [];
+        index = 0;
+        render(null);
+        refresh();
+      } else {
+        resetStatus.textContent = "Couldn't reset the game. Try again.";
+      }
+      resetStatus.hidden = false;
+    });
+
+    function startMusic() {
+      music.play().then(
+        () => {
+          musicHint.hidden = true;
+          document.removeEventListener("pointerdown", startMusic);
+          document.removeEventListener("keydown", startMusic);
+        },
+        () => (musicHint.hidden = false),
+      );
+    }
+
+    document.addEventListener("pointerdown", startMusic);
+    document.addEventListener("keydown", startMusic);
+    startMusic();
+
     const REFRESH_MS = 60 * 1000;
     const SLIDE_MS = 10 * 1000;
     const showcase = document.getElementById("showcase");

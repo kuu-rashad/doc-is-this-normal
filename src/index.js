@@ -79,6 +79,22 @@ export class Game extends DurableObject {
 
   // Premade symptoms join the pool like any other, so early players always have something to treat.
   seedPremadeSymptoms() {
+    // Premade symptoms that were removed from the config leave the pool, unless they're already
+    // finished (2 treatments): those stay so their votes and homepage spot aren't lost.
+    const premadeIds = config.categories.flatMap((category) => (category.premade_symptoms ?? []).map((p) => p.id));
+    const stale = this.sql.exec(
+      `SELECT id FROM symptoms s
+       WHERE premade_id IS NOT NULL
+         AND premade_id NOT IN (SELECT value FROM json_each(?))
+         AND (SELECT COUNT(*) FROM treatments t WHERE t.symptom_id = s.id) < ?`,
+      JSON.stringify(premadeIds), TREATMENTS_PER_SYMPTOM,
+    ).toArray();
+    for (const { id } of stale) {
+      this.sql.exec("DELETE FROM treatments WHERE symptom_id = ?", id);
+      this.sql.exec("DELETE FROM assignments WHERE symptom_id = ?", id);
+      this.sql.exec("DELETE FROM symptoms WHERE id = ?", id);
+    }
+
     for (const category of config.categories) {
       for (const premade of category.premade_symptoms ?? []) {
         const template = TEMPLATES.get(premade.template_id);
@@ -261,6 +277,18 @@ export class Game extends DurableObject {
 
   // Finished symptoms for the big screen, newest first, each with its best treatment.
   // Ties go to the treatment that was submitted first.
+  // Starts a fresh game: wipes symptoms, treatments and votes but keeps players and their names.
+  resetGame() {
+    this.sql.exec(`
+      DELETE FROM votes;
+      DELETE FROM assignments;
+      DELETE FROM treatments;
+      DELETE FROM symptoms;
+    `);
+    this.seedPremadeSymptoms();
+    return { ok: true };
+  }
+
   getShowcase() {
     const rows = this.sql.exec(
       `SELECT s.id AS symptom_id, s.text AS symptom, t.id AS treatment_id, t.text AS treatment,
@@ -298,6 +326,8 @@ export class Game extends DurableObject {
 
 const routes = [
   ["GET", /^\/api\/showcase$/, "getShowcase"],
+  ["POST", /^\/api\/admin\/login$/, "adminLogin"],
+  ["POST", /^\/api\/reset$/, "resetGame"],
   ["GET", /^\/api\/players\/([^/]+)$/, "getPlayer"],
   ["PUT", /^\/api\/players\/([^/]+)$/, "savePlayer"],
   ["GET", /^\/api\/players\/([^/]+)\/symptom-template$/, "randomTemplate"],
@@ -307,6 +337,27 @@ const routes = [
   ["GET", /^\/api\/players\/([^/]+)\/vote-task$/, "getVoteTask"],
   ["POST", /^\/api\/players\/([^/]+)\/votes$/, "addVotes"],
 ];
+
+// Routes that need the admin password (the ADMIN_PASSWORD secret) in the X-Admin-Password header.
+const ADMIN_ACTIONS = new Set(["adminLogin", "resetGame"]);
+
+async function sha256(text) {
+  return crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+}
+
+// Returns an error response if the request doesn't carry the right admin password.
+async function checkAdmin(request, env) {
+  if (!env.ADMIN_PASSWORD) {
+    return Response.json({ error: "No admin password is set up on the server" }, { status: 503 });
+  }
+  // Compare hashes in constant time so the password can't be guessed from response timings.
+  const given = await sha256(request.headers.get("X-Admin-Password") ?? "");
+  const expected = await sha256(env.ADMIN_PASSWORD);
+  if (!crypto.subtle.timingSafeEqual(given, expected)) {
+    return Response.json({ error: "Wrong password" }, { status: 401 });
+  }
+  return null;
+}
 
 function cleanPlayer(body) {
   // Every name is shown as "Dr. <nickname>", so drop a "Dr." the player typed themselves.
@@ -335,6 +386,12 @@ export default {
     const playerId = pathname.match(pattern)[1]?.toLowerCase();
     if (playerId !== undefined && !UUID.test(playerId)) {
       return Response.json({ error: "Not found" }, { status: 404 });
+    }
+
+    if (ADMIN_ACTIONS.has(action)) {
+      const denied = await checkAdmin(request, env);
+      if (denied) return denied;
+      if (action === "adminLogin") return Response.json({ ok: true });
     }
 
     let body = request.method === "GET" ? null : await request.json().catch(() => null);
