@@ -32,19 +32,21 @@ body::before,
 body::after {
   content: "";
   position: fixed;
-  top: 0;
+  /* Half a screen past the top and bottom: phones also draw the page behind their toolbars and
+     when it's pulled past its end, and those areas should have the pattern too. */
+  top: -50vh;
+  bottom: -50vh;
   left: 0;
   right: 0;
-  /* As tall as the screen can get, so the layers still reach the bottom when a phone browser's
-     toolbars shrink away (lvh = "large viewport height"; vh is the fallback). */
-  height: 100vh;
-  height: 100lvh;
   pointer-events: none;
 }
 
+/* The gradient spans the screen itself (which starts 50vh into this taller layer), and the end
+   colours carry on above and below it. lvh = the screen height with phone toolbars hidden. */
 body::before {
   z-index: -2;
-  background: linear-gradient(var(--sky-top), var(--sky-bottom));
+  background: linear-gradient(var(--sky-top) 50vh, var(--sky-bottom) calc(50vh + 100vh));
+  background: linear-gradient(var(--sky-top) 50vh, var(--sky-bottom) calc(50vh + 100lvh));
 }
 
 body::after {
