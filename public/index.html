@@ -394,19 +394,23 @@
     }
 
     /* Default view: Hall of Fame carousel, kept clear of the bandage in the corner. */
-    /* This round's leaders: the current finals candidates, one at a time, centred between the
-       logo and the Hall of Fame strip. */
+    /* This round's leaders: the current finals candidates, three at a time, filling the space
+       between the logo and the Hall of Fame strip. */
     .leaders {
       position: fixed;
-      left: 6vw;
-      top: calc((var(--logo-bottom) + 100vh - var(--players-bar) - var(--fame-height, 0px)) / 2);
-      width: 54vw;
+      left: 4vw;
+      top: calc(var(--logo-bottom) + 0.6vw);
+      bottom: calc(var(--players-bar) + var(--fame-height, 0px) + 1vw);
+      /* Up to the right-hand column (phase card and leaderboard, about 24vw wide at 1.5vw from the edge). */
+      right: 27.5vw;
+      display: flex;
+      flex-direction: column;
       font-size: 1.35vw;
-      transform: translateY(-50%);
     }
 
     .leaders h2 {
-      margin: 0 0 0.5em;
+      flex: none;
+      margin: 0 0 2.4vw;
       font-size: 1.5em;
       font-weight: 700;
       line-height: 1;
@@ -415,9 +419,147 @@
       paint-order: stroke fill;
     }
 
-    /* Only the slide fades between leaders; the heading stays. */
+    /* Only the cards fade between pages; the heading stays. */
     .leaders-slide {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      gap: 1.6vw;
       transition: opacity 0.6s;
+    }
+
+    .leaders-slide .waiting {
+      align-self: center;
+      flex: 1;
+    }
+
+    /* One leader: a clipboard (public/clipboard.png as a 9-slice frame, so the clip keeps its
+       shape) holding the patient's note, then the doctor's notes. Sized in em; the text shrinks
+       to fit when an entry is long (see fitLeaderCard). */
+    .leader-card {
+      --u: 1em;
+      position: relative;
+      flex: 0 0 calc((100% - 3.2vw) / 3);
+      min-height: 0;
+      display: flex;
+      box-sizing: border-box;
+      font-size: 0.85vw;
+      border-style: solid;
+      /* The image is 1536px wide and a card about 21.8vw, so 1px of the image ≈ 0.0142vw; the
+         frame widths below follow from that, which keeps the clip from being squashed. */
+      border-width: 3.4vw 1.55vw 2.05vw;
+      border-image: url("/clipboard.png") 240 110 144 fill / 3.4vw 1.55vw 2.05vw;
+      margin-top: -1.8vw;   /* the clip pokes up above the paper */
+    }
+
+    .leader-card .sheet {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7em;
+      padding: 0.4em 0.6em 0.3em;
+      overflow: hidden;
+      background: repeating-linear-gradient(transparent 0 1.9em, rgb(185 128 73 / 0.22) 1.9em calc(1.9em + 1px));
+    }
+
+    /* The patient's note, clipped on slightly crooked. */
+    .leader-card .note {
+      flex: none;
+      padding: 0.8em 1em 0.9em;
+      background:
+        repeating-linear-gradient(transparent 0 1.7em, rgb(11 20 51 / 0.08) 1.7em calc(1.7em + 1px)),
+        var(--white);
+      border: 0.22em solid var(--navy);
+      border-radius: 1em;
+      box-shadow: 0.25em 0.3em 0 rgb(11 20 51 / 0.25);
+      transform: rotate(-2deg);
+    }
+
+    .leader-card .who {
+      display: flex;
+      align-items: center;
+      gap: 0.6em;
+      margin-bottom: 0.4em;
+      font-size: 1.35em;
+      font-weight: 700;
+    }
+
+    .leader-card .avatar {
+      flex: none;
+      display: grid;
+      place-items: center;
+      width: 2.6em;
+      height: 2.6em;
+      box-sizing: border-box;
+      overflow: hidden;
+      font-weight: 700;
+      background: var(--pad);
+      border: 0.16em solid var(--navy);
+      border-radius: 50%;
+    }
+
+    .leader-card .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .leader-card .symptom {
+      margin: 0;
+      font-size: 1.45em;
+      font-weight: 600;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .leader-card .notes-label {
+      margin: 0.2em 0 -0.3em;
+      font-size: 1.3em;
+      font-weight: 700;
+      color: var(--bandage-dark);
+    }
+
+    .leader-card .prescription {
+      margin: 0;
+      font-size: 2em;
+      font-weight: 700;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+
+    .leader-card .doctor {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.6em;
+      font-size: 1.35em;
+      font-weight: 700;
+    }
+
+    /* Times the pair was picked as funnier, on the top-right corner. */
+    .leader-card .badge {
+      position: absolute;
+      top: -2.2vw;
+      right: -0.9vw;
+      display: flex;
+      align-items: center;
+      gap: 0.25em;
+      padding: 0.1em 0.55em 0.1em 0.4em;
+      font-size: 2em;
+      font-weight: 700;
+      background: #74e3b5;
+      border: 0.12em solid var(--navy);
+      border-radius: 0.6em;
+    }
+
+    .leader-card .badge svg {
+      width: 1.05em;
+      height: 1.05em;
+      fill: var(--white);
+      stroke: var(--navy);
+      stroke-width: 60;
+      paint-order: stroke fill;
     }
 
     .leaders-slide.fading {
@@ -521,9 +663,13 @@
       left: 1.5vw;
       right: 30vw;
       bottom: calc(var(--players-bar) + 0.6vw);
-      font-size: 0.78vw;
+      /* Everything in the strip is sized in em, so this one value scales the whole strip. */
+      font-size: 0.55vw;
       /* Bottom padding keeps the speech bubbles' tails inside the clipped area. */
       padding-bottom: 1.2em;
+      /* A fixed height, so the area above doesn't jump when the strip pages to longer winners. */
+      height: 10.4vw;
+      box-sizing: border-box;
       overflow: hidden;
     }
 
@@ -574,14 +720,14 @@
 
     /* Empty Hall of Fame: a rounded outline holding the space the winner cards will take, with
        the message in the middle. Sized to roughly match a card (2em above it is the cards' room
-       for the clip and badge; the strip's em is 0.78vw). */
+       for the clip and badge; the strip's em is 0.55vw). */
     .fame-empty {
       display: flex;
       align-items: center;
       justify-content: center;
       box-sizing: border-box;
-      min-height: 8.6vw;
-      margin: 1.56vw 0 0;
+      min-height: 6.1vw;
+      margin: 1.1vw 0 0;
       padding: 1vw 2vw;
       font-size: 1.4vw;
       font-weight: 700;
@@ -1726,20 +1872,92 @@
       document.getElementById("finals-countdown").textContent = formatTime(left);
     }
 
-    // This round's leaders (the current finals candidates, best first), one at a time.
+    // This round's leaders (the current finals candidates, best first), three at a time.
+    const LEADERS_PER_PAGE = 3;
+    let shownLeaders = "";
+
+    function avatarCircle(avatar, fallback) {
+      const circle = el("div", "avatar");
+      if (avatar) {
+        const img = el("img", "");
+        img.src = `/avatars/${avatar}.png`;
+        img.alt = "";
+        circle.append(img);
+      } else {
+        circle.textContent = fallback;
+      }
+      return circle;
+    }
+
+    function leaderCardElement(entry) {
+      const card = el("article", "leader-card");
+      const sheet = el("div", "sheet");
+
+      const note = el("div", "note");
+      const patient = el("div", "who");
+      patient.append(avatarCircle(entry.patientAvatar, "?"), el("span", "", entry.patient));
+      note.append(patient, el("p", "symptom", entry.symptom));
+
+      const doctor = el("div", "doctor");
+      doctor.append(avatarCircle(entry.doctor.avatar), el("span", "", entry.doctor.name));
+
+      sheet.append(note, el("p", "notes-label", "Doctor's notes:"), el("p", "prescription", entry.prescription), doctor);
+
+      const badge = el("div", "badge");
+      badge.innerHTML = THUMB_ICON;
+      badge.append(String(entry.wins ?? entry.thumbsUp ?? 0));
+
+      card.append(sheet, badge);
+      return card;
+    }
+
+    // Each card uses the largest text that still fits its space: long entries shrink, short ones
+    // grow. Bounds are relative to the card's width so lines stay a readable length.
+    function fitLeaderCard(card) {
+      const sheet = card.querySelector(".sheet");
+      const width = card.clientWidth;
+      let low = width / 70;
+      let high = width / 26;
+      for (let i = 0; i < 10; i++) {
+        const mid = (low + high) / 2;
+        card.style.fontSize = `${mid}px`;
+        if (sheet.scrollHeight > sheet.clientHeight + 1) high = mid;
+        else low = mid;
+      }
+      card.style.fontSize = `${low}px`;
+    }
+
     function renderLeaders() {
       const entries = screen?.candidates ?? [];
-      leaderIndex = entries.length ? leaderIndex % entries.length : 0;
-      if (!entries.length) leadersSlide.replaceChildren(el("p", "waiting", "Waiting for the first diagnosis…"));
-      else leadersSlide.replaceChildren(pairElement(entries[leaderIndex]));
+      const pages = Math.max(1, Math.ceil(entries.length / LEADERS_PER_PAGE));
+      leaderIndex %= pages;
+      const page = entries.slice(leaderIndex * LEADERS_PER_PAGE, (leaderIndex + 1) * LEADERS_PER_PAGE);
+      // Only rebuild when what's on the page changed.
+      const key = JSON.stringify(page);
+      if (key === shownLeaders) return;
+      shownLeaders = key;
+      if (!page.length) {
+        leadersSlide.replaceChildren(el("p", "waiting", "Waiting for the first diagnosis…"));
+        return;
+      }
+      leadersSlide.replaceChildren(...page.map(leaderCardElement));
+      refitLeaders();
+    }
+
+    // Fit again from full size, e.g. once the Hall of Fame strip's height is known, or on resize.
+    function refitLeaders() {
+      for (const card of leadersSlide.querySelectorAll(".leader-card")) {
+        card.style.fontSize = "";
+        fitLeaderCard(card);
+      }
     }
 
     function nextLeader() {
       const entries = screen?.candidates ?? [];
-      if (entries.length < 2) return;
+      if (entries.length <= LEADERS_PER_PAGE) return;
       leadersSlide.classList.add("fading");
       setTimeout(() => {
-        leaderIndex = (leaderIndex + 1) % entries.length;
+        leaderIndex++;
         renderLeaders();
         leadersSlide.classList.remove("fading");
       }, 600);
@@ -1809,6 +2027,7 @@
       renderPlayers(screen.players);
       fitPlayers();
       renderFame(screen.hallOfFame);
+      refitLeaders();
       renderLeaderboard(screen.leaderboard);
       renderRules(screen.scoring);
     }
@@ -2097,6 +2316,7 @@
     }
 
     window.addEventListener("resize", () => {
+      refitLeaders();
       fitPlayers();
       if (screen) renderFame(screen.hallOfFame);
     });
