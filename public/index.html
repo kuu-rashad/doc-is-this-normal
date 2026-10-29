@@ -220,15 +220,16 @@
       .players-track.scrolling { animation: none; }
     }
 
-    /* Settings */
-    .settings-button {
+    /* Mute and settings buttons, top-right corner */
+    .corner-button {
+      --size: clamp(48px, 4.5vw, 96px);
       position: fixed;
       top: 1.5vw;
       right: 1.5vw;
       display: grid;
       place-items: center;
-      width: clamp(48px, 4.5vw, 96px);
-      height: clamp(48px, 4.5vw, 96px);
+      width: var(--size);
+      height: var(--size);
       padding: 0;
       color: var(--navy);
       background: var(--pad);
@@ -237,13 +238,22 @@
       cursor: pointer;
     }
 
-    .settings-button svg {
+    .corner-button.mute {
+      right: calc(1.5vw + var(--size) + 1vw);
+    }
+
+    .corner-button svg {
       width: 62%;
       height: 62%;
       fill: currentColor;
     }
 
-    .settings-button:active {
+    /* Browsers don't apply "hidden" to inline SVGs by default. */
+    .corner-button svg[hidden] {
+      display: none;
+    }
+
+    .corner-button:active {
       transform: scale(0.94);
     }
 
@@ -350,7 +360,13 @@
 <body>
   <audio id="music" src="/audio/peachtea-somewhere-in-the-elevator.ogg" loop autoplay></audio>
 
-  <button type="button" class="settings-button" id="settings-open" aria-label="Settings">
+  <button type="button" class="corner-button mute" id="mute-toggle" aria-label="Mute" aria-pressed="false">
+    <!-- "volume_up" and "volume_off" icons from Google Material Symbols (Apache 2.0) -->
+    <svg viewBox="0 -960 960 960" aria-hidden="true" data-icon="on"><path d="M780-481q0-94-52.5-169T590-759q-12-5-17-16t0-22q5-12 17.5-16.5t25.5.5q101 41 162.5 131T840-481q0 111-61.5 201T616-149q-13 5-25.5.5T573-165q-5-11 0-22t17-16q85-34 137.5-109T780-481ZM280-360H150q-13 0-21.5-8.5T120-390v-180q0-13 8.5-21.5T150-600h130l149-149q14-14 32.5-6.5T480-728v496q0 20-18.5 27.5T429-211L280-360Zm380-120q0 52-26 94t-73 64q-8 4-14.5-1t-6.5-13v-289q0-8 6.5-13t14.5-1q47 22 73 65t26 94Z"/></svg>
+    <svg viewBox="0 -960 960 960" aria-hidden="true" data-icon="off" hidden><path d="M681-188q-17 12-35.5 22T607-148q-12 5-24.5 0T565-165q-5-11 .5-22t17.5-16q15-5 28.5-12t26.5-17L473-397v165q0 20-18.5 27.5T422-211L273-360H143q-13 0-21.5-8.5T113-390v-180q0-13 8.5-21.5T143-600h126L70-799q-9-9-8.5-21.5T71-842q9-9 21.5-9t21.5 9l721 721q9 9 9 21.5T835-78q-9 9-22 9t-22-9L681-188Zm92-293q0-93-52.5-168.5T583-759q-12-5-17-16t0-22q5-12 17.5-16.5t25.5.5q101 41 162.5 130.5T833-481q0 38-7.5 75T802-334q-8 17-19.5 20.5T760-315q-11-5-16.5-14.5t.5-20.5q15-30 22-63t7-68ZM576-628q38 23 57.5 63.5T653-480v15q0 7-2 15-2 10-11 13t-17-5l-61-61q-5-5-7-10t-2-11v-91q0-9 7.5-13.5t15.5.5Zm-196-57q-5-5-5-11t5-11l42-42q14-14 32.5-6.5T473-728v100q0 10-9.5 13.5T447-618l-67-67Z"/></svg>
+  </button>
+
+  <button type="button" class="corner-button" id="settings-open" aria-label="Settings">
     <!-- "settings" icon from Google Material Symbols (Apache 2.0) -->
     <svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M421-80q-14 0-25-9t-13-23l-15-94q-19-7-40-19t-37-25l-86 40q-14 6-28 1.5T155-226L97-330q-8-13-4.5-27t15.5-23l80-59q-2-9-2.5-20.5T185-480q0-9 .5-20.5T188-521l-80-59q-12-9-15.5-23t4.5-27l58-104q8-13 22-17.5t28 1.5l86 40q16-13 37-25t40-18l15-95q2-14 13-23t25-9h118q14 0 25 9t13 23l15 94q19 7 40.5 18.5T669-710l86-40q14-6 27.5-1.5T804-734l59 104q8 13 4.5 27.5T852-580l-80 57q2 10 2.5 21.5t.5 21.5q0 10-.5 21t-2.5 21l80 58q12 8 15.5 22.5T863-330l-58 104q-8 13-22 17.5t-28-1.5l-86-40q-16 13-36.5 25.5T592-206l-15 94q-2 14-13 23t-25 9H421Zm59-270q54 0 92-38t38-92q0-54-38-92t-92-38q-54 0-92 38t-38 92q0 54 38 92t92 38Z"/></svg>
   </button>
@@ -415,25 +431,61 @@
     // Volumes are remembered on this computer (0–100). Sound effects will read
     // window.sfxVolume (0–1) once the game has some.
     const settings = document.getElementById("settings");
+    const muteButton = document.getElementById("mute-toggle");
     const volumes = [
       { key: "musicVolume", input: "music-volume", fallback: 50, apply: (v) => (music.volume = v) },
       { key: "sfxVolume", input: "sfx-volume", fallback: 70, apply: (v) => (window.sfxVolume = v) },
     ];
 
-    for (const { key, input: id, fallback, apply } of volumes) {
-      const input = document.getElementById(id);
-      const output = document.getElementById(`${id}-value`);
+    for (const volume of volumes) {
+      const input = document.getElementById(volume.input);
+      const output = document.getElementById(`${volume.input}-value`);
       let saved = null;
-      try { saved = localStorage.getItem(key); } catch {}
-      input.value = saved ?? fallback;
-      const update = () => {
+      try { saved = localStorage.getItem(volume.key); } catch {}
+      volume.get = () => Number(input.value);
+      volume.set = (value) => {
+        input.value = value;
         output.textContent = `${input.value}%`;
-        apply(input.value / 100);
-        try { localStorage.setItem(key, input.value); } catch {}
+        volume.apply(input.value / 100);
+        try { localStorage.setItem(volume.key, input.value); } catch {}
+        updateMuteButton();
       };
-      input.addEventListener("input", update);
-      update();
+      input.addEventListener("input", () => volume.set(input.value));
+      volume.set(saved ?? volume.fallback);
     }
+
+    // ---------- Mute ----------
+    // Muting sets every volume to 0 and remembers the old levels; unmuting puts them back.
+    // It counts as muted whenever all volumes are 0, however they got there.
+    function isMuted() {
+      return volumes.every((volume) => volume.get() === 0);
+    }
+
+    function updateMuteButton() {
+      // Skip while the volumes are still being set up on page load.
+      if (!volumes.every((volume) => volume.get)) return;
+      const muted = isMuted();
+      muteButton.setAttribute("aria-pressed", String(muted));
+      muteButton.setAttribute("aria-label", muted ? "Unmute" : "Mute");
+      // SVG elements have no .hidden property, so toggle the attribute itself.
+      muteButton.querySelector('[data-icon="on"]').toggleAttribute("hidden", muted);
+      muteButton.querySelector('[data-icon="off"]').toggleAttribute("hidden", !muted);
+    }
+
+    muteButton.addEventListener("click", () => {
+      if (isMuted()) {
+        let before = null;
+        try { before = JSON.parse(localStorage.getItem("volumesBeforeMute")); } catch {}
+        const restore = volumes.map((volume) => before?.[volume.key] ?? 0);
+        // Nothing worth restoring (e.g. they were dragged to 0 by hand): use the defaults.
+        const useDefaults = restore.every((value) => value === 0);
+        volumes.forEach((volume, i) => volume.set(useDefaults ? volume.fallback : restore[i]));
+      } else {
+        const before = Object.fromEntries(volumes.map((volume) => [volume.key, volume.get()]));
+        try { localStorage.setItem("volumesBeforeMute", JSON.stringify(before)); } catch {}
+        for (const volume of volumes) volume.set(0);
+      }
+    });
 
     // ---------- Admin ----------
     // The password is asked every time the popup opens. It's only held in this variable
