@@ -180,119 +180,160 @@ $("home-vote").addEventListener("click", () => startVote());
 $("home-finals").addEventListener("click", () => startFinals());
 $("home-edit").addEventListener("click", () => showJoinForm());
 
+// ---------- Fill-in-the-blank (symptoms and prescriptions) ----------
+
+// A template sentence with a text field per blank. The sentence fills in as the player types,
+// and each blank offers a few suggestions from its pool, with a button to draw new ones.
+function createFillIn({ preview, slots, idPrefix, limit, counter, onChange }) {
+  let template = null;
+  const input = (key) => $(`${idPrefix}-${key}`);
+
+  function values() {
+    return Object.fromEntries(Object.keys(template.slots).map((key) => [key, input(key).value.trim().replace(/\s+/g, " ")]));
+  }
+
+  function fullText() {
+    const filled = values();
+    return template.text.replace(/\{\{(\w+)\}\}/g, (_, key) => filled[key]);
+  }
+
+  function update() {
+    if (!template) return;
+    const filled = values();
+    for (const blank of preview.querySelectorAll(".blank")) {
+      const value = filled[blank.dataset.slot];
+      blank.textContent = value || "\u00a0";
+      blank.classList.toggle("filled", Boolean(value));
+    }
+    const length = fullText().length;
+    counter.textContent = `${length}/${limit}`;
+    onChange(Object.values(filled).every(Boolean) && length <= limit);
+  }
+
+  function renderChips(key) {
+    const chips = slots.querySelector(`.chips[data-slot="${key}"]`);
+    chips.replaceChildren();
+    for (const option of shuffle(template.slots[key].options).slice(0, CHIPS_PER_SLOT)) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.textContent = option;
+      chip.addEventListener("click", () => {
+        input(key).value = option;
+        input(key).focus();
+        update();
+      });
+      chips.append(chip);
+    }
+    const reshuffle = document.createElement("button");
+    reshuffle.type = "button";
+    reshuffle.className = "shuffle";
+    reshuffle.setAttribute("aria-label", "Shuffle suggestions");
+    reshuffle.innerHTML = SHUFFLE_ICON;
+    reshuffle.addEventListener("click", () => renderChips(key));
+    chips.append(reshuffle);
+  }
+
+  function setTemplate(next) {
+    template = next;
+    // Turn "Whenever I {{a}}, I…" into text with a blank per slot.
+    preview.replaceChildren();
+    template.text.split(/\{\{(\w+)\}\}/).forEach((part, i) => {
+      if (i % 2 === 0) return preview.append(part);
+      const blank = document.createElement("span");
+      blank.className = "blank";
+      blank.dataset.slot = part;
+      preview.append(blank);
+    });
+
+    slots.replaceChildren();
+    for (const [key, slot] of Object.entries(template.slots)) {
+      const field = document.createElement("div");
+      field.className = "slot";
+      const label = document.createElement("label");
+      label.htmlFor = `${idPrefix}-${key}`;
+      label.textContent = slot.hint;
+      const box = document.createElement("input");
+      box.type = "text";
+      box.id = `${idPrefix}-${key}`;
+      box.maxLength = SLOT_LIMIT;
+      box.autocomplete = "off";
+      const chips = document.createElement("div");
+      chips.className = "chips";
+      chips.dataset.slot = key;
+      field.append(label, box, chips);
+      slots.append(field);
+      renderChips(key);
+    }
+    update();
+  }
+
+  function surprise() {
+    for (const [key, slot] of Object.entries(template.slots)) input(key).value = pickRandom(slot.options);
+    update();
+  }
+
+  slots.addEventListener("input", update);
+  return {
+    setTemplate, values, update, surprise,
+    get template() { return template; },
+    focus: () => slots.querySelector("input")?.focus(),
+  };
+}
+
 // ---------- Patient mode ----------
 
 const symptomForm = $("symptom-form");
-let template = null;
+const symptomFill = createFillIn({
+  preview: $("symptom-preview"),
+  slots: $("symptom-slots"),
+  idPrefix: "slot",
+  limit: SYMPTOM_LIMIT,
+  counter: $("symptom-counter"),
+  onChange: (ready) => ($("symptom-submit").disabled = !ready),
+});
 
 async function startSymptom() {
   const { ok, data } = await api("GET", "/symptom-template");
   if (!ok) return showHome(data.error);
-  template = data;
-
-  // Turn "Whenever I {{a}}, I…" into text with a blank per slot that fills in as the player types.
-  const preview = $("symptom-preview");
-  preview.replaceChildren();
-  template.text.split(/\{\{(\w+)\}\}/).forEach((part, i) => {
-    if (i % 2 === 0) return preview.append(part);
-    const blank = document.createElement("span");
-    blank.className = "blank";
-    blank.dataset.slot = part;
-    preview.append(blank);
-  });
-
-  const slots = $("symptom-slots");
-  slots.replaceChildren();
-  for (const [key, slot] of Object.entries(template.slots)) {
-    const field = document.createElement("div");
-    field.className = "slot";
-    const label = document.createElement("label");
-    label.htmlFor = `slot-${key}`;
-    label.textContent = slot.hint;
-    const input = document.createElement("input");
-    input.type = "text";
-    input.id = `slot-${key}`;
-    input.name = key;
-    input.maxLength = SLOT_LIMIT;
-    input.autocomplete = "off";
-    const chips = document.createElement("div");
-    chips.className = "chips";
-    chips.dataset.slot = key;
-    field.append(label, input, chips);
-    slots.append(field);
-    renderChips(key);
-  }
-
-  updateSymptom();
+  symptomFill.setTemplate(data);
   show("symptom-form");
-  symptomForm.querySelector(".slot input")?.focus();
+  symptomFill.focus();
 }
 
-// A few random suggestions from the slot's pool, plus a button to draw new ones.
-function renderChips(key) {
-  const chips = symptomForm.querySelector(`.chips[data-slot="${key}"]`);
-  chips.replaceChildren();
-  for (const option of shuffle(template.slots[key].options).slice(0, CHIPS_PER_SLOT)) {
-    const chip = document.createElement("button");
-    chip.type = "button";
-    chip.textContent = option;
-    chip.addEventListener("click", () => {
-      const input = $(`slot-${key}`);
-      input.value = option;
-      input.focus();
-      updateSymptom();
-    });
-    chips.append(chip);
-  }
-  const reshuffle = document.createElement("button");
-  reshuffle.type = "button";
-  reshuffle.className = "shuffle";
-  reshuffle.setAttribute("aria-label", "Shuffle suggestions");
-  reshuffle.innerHTML = SHUFFLE_ICON;
-  reshuffle.addEventListener("click", () => renderChips(key));
-  chips.append(reshuffle);
-}
-
-function filledSlots() {
-  return Object.fromEntries(Object.keys(template.slots).map((key) => [key, $(`slot-${key}`).value.trim().replace(/\s+/g, " ")]));
-}
-
-function updateSymptom() {
-  const filled = filledSlots();
-  for (const blank of symptomForm.querySelectorAll(".blank")) {
-    const value = filled[blank.dataset.slot];
-    blank.textContent = value || " ";
-    blank.classList.toggle("filled", Boolean(value));
-  }
-  const length = template.text.replace(/\{\{(\w+)\}\}/g, (_, key) => filled[key]).length;
-  $("symptom-counter").textContent = `${length}/${SYMPTOM_LIMIT}`;
-  $("symptom-submit").disabled = Object.values(filled).some((value) => !value) || length > SYMPTOM_LIMIT;
-}
-
-symptomForm.addEventListener("input", updateSymptom);
-
-$("surprise-me").addEventListener("click", () => {
-  for (const [key, slot] of Object.entries(template.slots)) $(`slot-${key}`).value = pickRandom(slot.options);
-  updateSymptom();
-});
+$("surprise-me").addEventListener("click", () => symptomFill.surprise());
 
 symptomForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   $("symptom-submit").disabled = true;
-  const { ok, data } = await api("POST", "/symptoms", { templateId: template.id, slots: filledSlots() });
+  const { ok, data } = await api("POST", "/symptoms", { templateId: symptomFill.template.id, slots: symptomFill.values() });
   if (!ok) {
     showError(symptomForm, data.error);
-    updateSymptom();
+    symptomFill.update();
     return;
   }
   startPrescription();
 });
 
 // ---------- Doctor mode ----------
+// A prescription is either a filled-in frame ("Sounds like you need ___.") or the doctor's own words.
 
 const prescriptionForm = $("prescription-form");
 const prescriptionText = $("prescription-text");
 let prescriptionSymptom = null;
+let prescriptionFrames = [];
+let frameIndex = 0;
+let writingOwn = false;
+
+const prescriptionFill = createFillIn({
+  preview: $("rx-preview"),
+  slots: $("rx-slots"),
+  idPrefix: "rx-slot",
+  limit: PRESCRIPTION_LIMIT,
+  counter: $("prescription-counter"),
+  onChange: (ready) => {
+    if (!writingOwn) $("prescription-submit").disabled = !ready;
+  },
+});
 
 async function startPrescription() {
   const { ok, status, data } = await api("GET", "/prescription-task");
@@ -300,25 +341,59 @@ async function startPrescription() {
   if (!ok) return showHome(data.error);
   prescriptionSymptom = data;
   $("prescription-symptom").textContent = `“${data.text}”`;
+  prescriptionFrames = shuffle(data.templates);
+  frameIndex = 0;
   prescriptionText.value = "";
-  updatePrescription();
+  setWritingOwn(false);
   show("prescription-form");
 }
 
-function updatePrescription() {
+function setWritingOwn(own) {
+  writingOwn = own;
+  $("rx-fill").hidden = own;
+  $("rx-own").hidden = !own;
+  $("rx-other").hidden = own;
+  $("rx-mode").textContent = own ? "Use a template" : "Write my own";
+  if (own) {
+    updateOwnPrescription();
+    prescriptionText.focus();
+  } else {
+    prescriptionFill.setTemplate(prescriptionFrames[frameIndex]);
+  }
+}
+
+function updateOwnPrescription() {
   $("prescription-counter").textContent = `${prescriptionText.value.length}/${PRESCRIPTION_LIMIT}`;
   $("prescription-submit").disabled = !prescriptionText.value.trim();
 }
 
-prescriptionText.addEventListener("input", updatePrescription);
+prescriptionText.addEventListener("input", updateOwnPrescription);
+
+// Next frame, keeping whatever was typed in the blank if the new frame uses the same kind of blank.
+$("rx-other").addEventListener("click", () => {
+  const typed = Object.values(prescriptionFill.values())[0] ?? "";
+  frameIndex = (frameIndex + 1) % prescriptionFrames.length;
+  prescriptionFill.setTemplate(prescriptionFrames[frameIndex]);
+  const [key, slot] = Object.entries(prescriptionFill.template.slots)[0];
+  if (typed && slot.options.includes(typed)) {
+    $(`rx-slot-${key}`).value = typed;
+    prescriptionFill.update();
+  }
+});
+
+$("rx-mode").addEventListener("click", () => setWritingOwn(!writingOwn));
 
 prescriptionForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   $("prescription-submit").disabled = true;
-  const { ok, data } = await api("POST", "/prescriptions", { round: prescriptionSymptom.round, symptomId: prescriptionSymptom.id, text: prescriptionText.value });
+  const answer = writingOwn
+    ? { text: prescriptionText.value }
+    : { templateId: prescriptionFill.template.id, slots: prescriptionFill.values() };
+  const { ok, data } = await api("POST", "/prescriptions", { round: prescriptionSymptom.round, symptomId: prescriptionSymptom.id, ...answer });
   if (!ok) {
     showError(prescriptionForm, data.error);
-    updatePrescription();
+    if (writingOwn) updateOwnPrescription();
+    else prescriptionFill.update();
     return;
   }
   // One shortlist vote after each prescription, then back home.

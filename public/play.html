@@ -29,18 +29,21 @@
       padding-top: 8px;
     }
 
-    /* Symptom form: tighter than the other screens, so the text fields sit high up. */
-    body[data-screen="symptom-form"] .card {
+    /* Symptom and prescription forms: tighter than the other screens, so the text fields sit high up. */
+    body[data-screen="symptom-form"] .card,
+    body[data-screen="prescription-form"] .card {
       padding: 14px 14px 10px;
     }
 
-    #symptom-form h1 {
+    #symptom-form h1,
+    #prescription-form h1 {
       margin-bottom: 8px;
       font-size: 24px;
       -webkit-text-stroke-width: 5px;
     }
 
-    #symptom-form .symptom-text {
+    #symptom-form .symptom-text,
+    #prescription-form .symptom-text {
       padding: 8px 12px;
       font-size: 17px;
       line-height: 1.35;
@@ -48,49 +51,58 @@
       border-radius: 14px;
     }
 
-    #symptom-form .slot {
+    #symptom-form .slot,
+    #prescription-form .slot {
       margin-top: 10px;
     }
 
-    #symptom-form .slot label {
+    #symptom-form .slot label,
+    #prescription-form .slot label {
       margin-bottom: 4px;
       font-size: 15px;
     }
 
-    #symptom-form .slot input {
+    #symptom-form .slot input,
+    #prescription-form .slot input {
       padding: 7px 12px;
       font-size: 17px;
       border-width: 3px;
       border-radius: 12px;
     }
 
-    #symptom-form .chips {
+    #symptom-form .chips,
+    #prescription-form .chips {
       gap: 6px;
       margin-top: 6px;
     }
 
-    #symptom-form .chips button {
+    #symptom-form .chips button,
+    #prescription-form .chips button {
       padding: 4px 10px;
       font-size: 14px;
       border-width: 2px;
     }
 
-    #symptom-form .chips .shuffle {
+    #symptom-form .chips .shuffle,
+    #prescription-form .chips .shuffle {
       width: 30px;
       height: 30px;
       padding: 0;
     }
 
-    #symptom-form .chips .shuffle svg {
+    #symptom-form .chips .shuffle svg,
+    #prescription-form .chips .shuffle svg {
       width: 18px;
       height: 18px;
     }
 
-    #symptom-form .counter {
+    #symptom-form .counter,
+    #prescription-form .counter {
       margin-top: 2px;
     }
 
-    #symptom-form .row button {
+    #symptom-form .row button,
+    #prescription-form .row button {
       margin-top: 8px;
       padding: 9px;
       font-size: 18px;
@@ -98,8 +110,31 @@
       box-shadow: 0 3px 0 var(--navy);
     }
 
-    #symptom-form .link-button {
+    #symptom-form .link-button,
+    #prescription-form .link-button {
       margin-top: 4px;
+    }
+
+    #prescription-form .field-label {
+      margin: 8px 0 4px;
+      font-size: 15px;
+    }
+
+    #prescription-form textarea {
+      min-height: 84px;
+      font-size: 17px;
+    }
+
+    #prescription-form .row button {
+      font-size: 16px;
+    }
+
+    #prescription-form #prescription-submit {
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 19px;
+      border-width: 3px;
+      box-shadow: 0 3px 0 var(--navy);
     }
 
     .card {
@@ -563,9 +598,19 @@
       <h1>Your diagnosis, doctor?</h1>
       <p class="field-label"><strong>The patient says:</strong></p>
       <p class="symptom-text" id="prescription-symptom"></p>
-      <label class="field-label" for="prescription-text">Your prescription</label>
-      <textarea id="prescription-text" maxlength="120" placeholder="Take two of these and…" required></textarea>
+      <p class="field-label"><strong>You prescribe:</strong></p>
+      <div id="rx-fill">
+        <p class="symptom-text" id="rx-preview"></p>
+        <div id="rx-slots"></div>
+      </div>
+      <div id="rx-own" hidden>
+        <textarea id="prescription-text" maxlength="120" placeholder="Take two of these and…" aria-label="Your prescription"></textarea>
+      </div>
       <p class="counter" id="prescription-counter"></p>
+      <div class="row">
+        <button type="button" class="secondary" id="rx-other">Other wording</button>
+        <button type="button" class="secondary" id="rx-mode">Write my own</button>
+      </div>
       <button type="submit" id="prescription-submit" disabled>Prescribe</button>
       <p class="error" hidden></p>
       <button type="button" class="link-button" data-back>Back</button>

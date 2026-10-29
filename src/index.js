@@ -21,8 +21,41 @@ const TEMPLATES = new Map(
 const PHASES = ["clinic_open", "second_opinions", "finals"];
 const TIMING_KEYS = ["first_clinic_open", "clinic_open", "second_opinions", "finals", "reveal"];
 
+// Fills the blanks, and capitalises the first letter in case the text starts with a blank
+// ("{{cure}} should do it." → "A goat should do it.").
 function fillTemplate(template, slots) {
-  return template.text.replace(/\{\{(\w+)\}\}/g, (_, key) => slots[key]);
+  const text = template.text.replace(/\{\{(\w+)\}\}/g, (_, key) => slots[key]);
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+// Prescription frames, each blank with its options taken from the shared pool it names.
+const PRESCRIPTION_TEMPLATES = new Map(
+  config.prescriptions.templates.map((template) => [template.id, {
+    ...template,
+    slots: Object.fromEntries(Object.entries(template.slots).map(([key, slot]) => [
+      key,
+      { hint: slot.hint, options: config.prescriptions.pools[slot.pool] ?? [] },
+    ])),
+  }]),
+);
+
+// Two prescriptions count as the same if they match ignoring case, spacing and punctuation.
+function sameTextKey(text) {
+  return text.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+}
+
+// Checks a filled-in template and returns the finished text.
+function fillChecked(template, slots, maxLength, what) {
+  const filled = {};
+  for (const key of Object.keys(template.slots)) {
+    const value = cleanText(slots?.[key]);
+    if (!value) throw new HttpError(400, "Fill in every blank");
+    if (value.length > LIMITS.slot_characters) throw new HttpError(400, `Each blank can be at most ${LIMITS.slot_characters} characters`);
+    filled[key] = value;
+  }
+  const text = fillTemplate(template, filled);
+  if (text.length > maxLength) throw new HttpError(400, `The whole ${what} can be at most ${maxLength} characters`);
+  return text;
 }
 
 function cleanText(value) {
@@ -422,18 +455,7 @@ export class DocGame extends DurableObject {
     this.requirePhase(["clinic_open"], PHASE_MESSAGES.clinic_open);
     const template = TEMPLATES.get(body?.templateId);
     if (!template) throw new HttpError(400, "Unknown symptom");
-
-    const filled = {};
-    for (const key of Object.keys(template.slots)) {
-      const value = cleanText(body?.slots?.[key]);
-      if (!value) throw new HttpError(400, "Fill in every blank");
-      if (value.length > LIMITS.slot_characters) throw new HttpError(400, `Each blank can be at most ${LIMITS.slot_characters} characters`);
-      filled[key] = value;
-    }
-    const text = fillTemplate(template, filled);
-    if (text.length > LIMITS.symptom_characters) {
-      throw new HttpError(400, `The whole symptom can be at most ${LIMITS.symptom_characters} characters`);
-    }
+    const text = fillChecked(template, body?.slots, LIMITS.symptom_characters, "symptom");
 
     this.sql.exec("INSERT INTO symptoms (author_id, text, created_at) VALUES (?, ?, ?)", playerId, text, Date.now());
     this.addPoints(playerId, config.points.symptom);
@@ -453,7 +475,8 @@ export class DocGame extends DurableObject {
       "SELECT s.id, s.text FROM assignments a JOIN symptoms s ON s.id = a.symptom_id WHERE a.player_id = ?",
       playerId,
     );
-    if (current) return { ...current, round };
+    const templates = [...PRESCRIPTION_TEMPLATES.values()];
+    if (current) return { ...current, round, templates };
 
     const symptom = this.one(
       `SELECT s.id, s.text FROM symptoms s
@@ -465,19 +488,33 @@ export class DocGame extends DurableObject {
     );
     if (!symptom) return null;
     this.sql.exec("INSERT OR REPLACE INTO assignments (player_id, symptom_id) VALUES (?, ?)", playerId, symptom.id);
-    return { ...symptom, round };
+    return { ...symptom, round, templates };
   }
 
   addPrescription({ playerId, body }) {
     this.requirePlayer(playerId);
     this.requirePhase(["clinic_open"], PHASE_MESSAGES.clinic_open);
     this.requireRound(body?.round);
-    const text = cleanText(body?.text);
-    if (!text || text.length > LIMITS.prescription_characters) {
-      throw new HttpError(400, `Prescriptions can be 1–${LIMITS.prescription_characters} characters`);
+    // Either a filled-in frame ({ templateId, slots }) or the doctor's own words ({ text }).
+    let text;
+    if (body?.templateId) {
+      const template = PRESCRIPTION_TEMPLATES.get(body.templateId);
+      if (!template) throw new HttpError(400, "Unknown prescription");
+      text = fillChecked(template, body.slots, LIMITS.prescription_characters, "prescription");
+    } else {
+      text = cleanText(body?.text);
+      if (!text || text.length > LIMITS.prescription_characters) {
+        throw new HttpError(400, `Prescriptions can be 1–${LIMITS.prescription_characters} characters`);
+      }
     }
     const symptom = this.one("SELECT id, author_id FROM symptoms WHERE id = ?", body?.symptomId);
     if (!symptom || symptom.author_id === playerId) throw new HttpError(400, "Unknown symptom");
+
+    const key = sameTextKey(text);
+    const existing = this.sql.exec("SELECT text FROM prescriptions WHERE symptom_id = ?", symptom.id).toArray();
+    if (existing.some((row) => sameTextKey(row.text) === key)) {
+      throw new HttpError(409, "Another doctor already told me this.");
+    }
 
     const { rowsWritten } = this.sql.exec(
       "INSERT OR IGNORE INTO prescriptions (symptom_id, author_id, text, created_at) VALUES (?, ?, ?, ?)",

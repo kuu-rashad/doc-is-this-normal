@@ -29,6 +29,157 @@
       6
     ]
   },
+  "prescriptions": {
+    "_about": "Fill-in-the-blank prescriptions. Each blank names a pool; every fill in a pool must fit every frame that uses it.",
+    "templates": [
+      {
+        "id": "rx_01",
+        "text": "Sounds like you need {{cure}}.",
+        "slots": {
+          "cure": {
+            "hint": "A cure",
+            "pool": "things"
+          }
+        }
+      },
+      {
+        "id": "rx_02",
+        "text": "{{cure}} should do it.",
+        "slots": {
+          "cure": {
+            "hint": "A cure",
+            "pool": "things"
+          }
+        }
+      },
+      {
+        "id": "rx_03",
+        "text": "I'm afraid you'll have to {{action}}.",
+        "slots": {
+          "action": {
+            "hint": "Something they have to do",
+            "pool": "actions"
+          }
+        }
+      },
+      {
+        "id": "rx_04",
+        "text": "The only thing I can prescribe for you is {{cure}}.",
+        "slots": {
+          "cure": {
+            "hint": "A cure",
+            "pool": "things"
+          }
+        }
+      },
+      {
+        "id": "rx_05",
+        "text": "Doctor's orders: {{action}}.",
+        "slots": {
+          "action": {
+            "hint": "Something they have to do",
+            "pool": "actions"
+          }
+        }
+      },
+      {
+        "id": "rx_06",
+        "text": "Go home, {{action}}, and stop googling your symptoms.",
+        "slots": {
+          "action": {
+            "hint": "Something they have to do",
+            "pool": "actions"
+          }
+        }
+      },
+      {
+        "id": "rx_07",
+        "text": "Take {{cure}} and call me in the morning.",
+        "slots": {
+          "cure": {
+            "hint": "A cure",
+            "pool": "things"
+          }
+        }
+      }
+    ],
+    "pools": {
+      "things": [
+        "a strongly worded email",
+        "two business days off",
+        "an exorcism",
+        "a nap under your desk",
+        "a hug from HR",
+        "more cowbell",
+        "a decaf intervention",
+        "less eye contact with the printer",
+        "a sabbatical in Lapland",
+        "a fax machine",
+        "a goat",
+        "emotional support pigeons",
+        "a bigger monitor",
+        "leeches",
+        "a mute button for your whole life",
+        "three espressos",
+        "a sauna and a long silence",
+        "a team-building retreat",
+        "a Jira ticket",
+        "a second opinion from the intern",
+        "a vacation from your own brain",
+        "a note excusing you from Mondays",
+        "duct tape",
+        "a priest",
+        "a raise",
+        "a new personality",
+        "bubble wrap",
+        "a rubber duck",
+        "a weighted blanket and a lawyer",
+        "a stern talking-to",
+        "airplane mode",
+        "ice cream for dinner",
+        "an emotional support houseplant",
+        "more sleep and fewer opinions",
+        "a spreadsheet about your feelings"
+      ],
+      "actions": [
+        "move to the woods",
+        "delete Slack",
+        "scream into a pillow",
+        "apologize to the printer",
+        "quit Google Meet forever",
+        "eat a whole cucumber",
+        "reply-all with an apology",
+        "dance it out",
+        "marry the office plant",
+        "join a monastery",
+        "switch to decaf",
+        "hand in your badge",
+        "adopt a goat",
+        "sit in the sauna until it stops",
+        "talk to a rubber duck",
+        "change your name",
+        "burn the spreadsheet",
+        "mute everyone",
+        "wear a helmet",
+        "call your mother",
+        "touch grass",
+        "lie down on the floor for a while",
+        "learn to whistle",
+        "ignore it until it goes away",
+        "sleep for a week",
+        "blame the intern",
+        "start a podcast about it",
+        "fake your own death",
+        "move back in with your parents",
+        "take up knitting",
+        "write a haiku about it",
+        "book a one-way ticket to Lapland",
+        "turn yourself off and on again",
+        "unplug your router",
+        "hide under your desk professionally"
+      ]
+    }
+  },
   "categories": [
     {
       "id": "mild",
