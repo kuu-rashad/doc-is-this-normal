@@ -107,6 +107,13 @@
       text-transform: uppercase;
     }
 
+    .leaderboard .empty {
+      margin: 0.4vw 0 0.6vw;
+      font-size: 1.5vw;
+      font-weight: 500;
+      text-align: center;
+    }
+
     .leaderboard ol {
       margin: 0;
       padding: 0;
@@ -1129,6 +1136,7 @@
 
     <section class="leaderboard" id="leaderboard" hidden>
       <h2>Top 3</h2>
+      <p class="empty" id="leaderboard-empty" hidden>Earn your place in the top 3</p>
       <ol id="leaderboard-list"></ol>
     </section>
   </aside>
@@ -1674,10 +1682,11 @@
     let shownLeaderboard = "";
 
     function renderLeaderboard(rows) {
-      leaderboard.hidden = !rows.length;
+      leaderboard.hidden = false;
       const key = JSON.stringify(rows);
       if (key === shownLeaderboard) return;
       shownLeaderboard = key;
+      document.getElementById("leaderboard-empty").hidden = rows.length > 0;
       document.getElementById("leaderboard-list").replaceChildren(...rows.map((row, i) => {
         const item = el("li", "");
         const avatar = el("img", "");
