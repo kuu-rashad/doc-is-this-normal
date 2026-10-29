@@ -30,7 +30,7 @@
     ]
   },
   "prescriptions": {
-    "_about": "Fill-in-the-blank prescriptions. Each blank names a pool; every fill in a pool must fit every frame that uses it.",
+    "_about": "Fill-in-the-blank prescriptions. Each blank names a pool. A pool can be shared by several frames (every fill must then fit all of them) or written for just one frame, so its fills can give that frame a second meaning.",
     "templates": [
       {
         "id": "rx_01",
@@ -73,16 +73,6 @@
         }
       },
       {
-        "id": "rx_05",
-        "text": "Doctor's orders: {{action}}.",
-        "slots": {
-          "action": {
-            "hint": "Something they have to do",
-            "pool": "actions"
-          }
-        }
-      },
-      {
         "id": "rx_06",
         "text": "Go home, {{action}}, and stop googling your symptoms.",
         "slots": {
@@ -94,7 +84,77 @@
       },
       {
         "id": "rx_07",
-        "text": "Take {{cure}} and call me in the morning.",
+        "text": "Take {{take}} and call me in the morning.",
+        "slots": {
+          "take": {
+            "hint": "Something to take",
+            "pool": "take"
+          }
+        }
+      },
+      {
+        "id": "rx_08",
+        "text": "Before we continue, I'll need you to take off {{off}}.",
+        "slots": {
+          "off": {
+            "hint": "Something to take off",
+            "pool": "take_off"
+          }
+        }
+      },
+      {
+        "id": "rx_09",
+        "text": "Rub {{rub}} on it twice a day.",
+        "slots": {
+          "rub": {
+            "hint": "Something to rub on it",
+            "pool": "rub"
+          }
+        }
+      },
+      {
+        "id": "rx_10",
+        "text": "Open wide and say {{say}}.",
+        "slots": {
+          "say": {
+            "hint": "Something to say",
+            "pool": "say"
+          }
+        }
+      },
+      {
+        "id": "rx_11",
+        "text": "Have you tried turning {{turn}} off and on again?",
+        "slots": {
+          "turn": {
+            "hint": "Something to restart",
+            "pool": "turn"
+          }
+        }
+      },
+      {
+        "id": "rx_12",
+        "text": "I'll need to examine your {{yours}} more closely.",
+        "slots": {
+          "yours": {
+            "hint": "Something of theirs",
+            "pool": "examine"
+          }
+        }
+      },
+      {
+        "id": "rx_13",
+        "text": "Swallow {{swallow}} and don't tell HR.",
+        "slots": {
+          "swallow": {
+            "hint": "Something to swallow",
+            "pool": "swallow"
+          }
+        }
+      },
+      {
+        "id": "rx_14",
+        "text": "I'm prescribing {{cure}}, to be taken rectally.",
         "slots": {
           "cure": {
             "hint": "A cure",
@@ -177,6 +237,97 @@
         "turn yourself off and on again",
         "unplug your router",
         "hide under your desk professionally"
+      ],
+      "take": [
+        "my hand",
+        "care",
+        "your hand off my leg",
+        "a long hard look at yourself",
+        "your pants off",
+        "the stairs",
+        "a hint",
+        "it slow",
+        "one for the team",
+        "my number",
+        "a cold shower",
+        "a deep breath and your clothes off",
+        "two of these",
+        "the rest of the year off"
+      ],
+      "take_off": [
+        "your pants",
+        "that attitude",
+        "your wedding ring",
+        "my glasses",
+        "work tomorrow",
+        "your tinfoil hat",
+        "the cone of shame",
+        "that ridiculous lanyard",
+        "your LinkedIn profile",
+        "the training wheels",
+        "your socks, slowly"
+      ],
+      "rub": [
+        "some butter",
+        "your ex's tears",
+        "my business card",
+        "a little prayer",
+        "the client's feedback",
+        "a rotisserie chicken",
+        "the intern",
+        "both hands",
+        "whatever's in the office fridge",
+        "your quarterly bonus",
+        "a warm spoon"
+      ],
+      "say": [
+        "ahh",
+        "my name",
+        "sorry",
+        "the safe word",
+        "yes to the promotion",
+        "goodbye to your dignity",
+        "something nice about the client",
+        "that again, slower",
+        "“per my last email”",
+        "what you said at the Christmas party"
+      ],
+      "turn": [
+        "yourself",
+        "your marriage",
+        "your manager",
+        "the sauna",
+        "your conscience",
+        "me",
+        "the CEO",
+        "your personality",
+        "the whole company",
+        "your partner"
+      ],
+      "examine": [
+        "browser history",
+        "search history",
+        "love life",
+        "left buttock",
+        "tax return",
+        "DMs",
+        "tongue",
+        "Spotify Wrapped",
+        "sock drawer",
+        "group chats",
+        "life choices"
+      ],
+      "swallow": [
+        "your pride",
+        "this pill",
+        "the evidence",
+        "your words",
+        "the key",
+        "two of these",
+        "a whistle",
+        "the whole thing",
+        "your feelings",
+        "the USB stick"
       ]
     }
   },

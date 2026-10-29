@@ -5,7 +5,9 @@ const AVATARS = [
 const SLOT_LIMIT = 40;
 const SYMPTOM_LIMIT = 160;
 const PRESCRIPTION_LIMIT = 120;
-const CHIPS_PER_SLOT = 3;
+// Suggestion chips under each blank. Off for now: players type their own, and "Surprise me" fills
+// the blanks at random for anyone stuck. Set to e.g. 3 to show that many chips again.
+const CHIPS_PER_SLOT = 0;
 const POLL_MS = 10 * 1000;
 const PHASE_NAMES = { clinic_open: "Clinic open", second_opinions: "Second opinions", finals: "Finals" };
 // "shuffle" icon from Google Material Symbols (Apache 2.0)
@@ -254,9 +256,6 @@ function createFillIn({ preview, slots, idPrefix, limit, counter, onChange, show
       box.id = `${idPrefix}-${key}`;
       box.maxLength = SLOT_LIMIT;
       box.autocomplete = "off";
-      const chips = document.createElement("div");
-      chips.className = "chips";
-      chips.dataset.slot = key;
       if (showHints) {
         const label = document.createElement("label");
         label.htmlFor = box.id;
@@ -265,9 +264,15 @@ function createFillIn({ preview, slots, idPrefix, limit, counter, onChange, show
       } else {
         box.setAttribute("aria-label", slot.hint);
       }
-      field.append(box, chips);
+      field.append(box);
+      if (CHIPS_PER_SLOT > 0) {
+        const chips = document.createElement("div");
+        chips.className = "chips";
+        chips.dataset.slot = key;
+        field.append(chips);
+      }
       slots.append(field);
-      renderChips(key);
+      if (CHIPS_PER_SLOT > 0) renderChips(key);
     }
     update();
   }
@@ -361,6 +366,7 @@ function setWritingOwn(own) {
   $("rx-fill").hidden = own;
   $("rx-own").hidden = !own;
   $("rx-mode").textContent = own ? "Use a template" : "Write my own";
+  $("rx-surprise").hidden = own;
   if (own) {
     updateOwnPrescription();
     prescriptionText.focus();
@@ -389,6 +395,7 @@ $("rx-other").addEventListener("click", () => {
 });
 
 $("rx-mode").addEventListener("click", () => setWritingOwn(!writingOwn));
+$("rx-surprise").addEventListener("click", () => prescriptionFill.surprise());
 
 prescriptionForm.addEventListener("submit", async (event) => {
   event.preventDefault();
