@@ -464,8 +464,10 @@ export class DocGame extends DurableObject {
 
   // ---------- Doctor mode ----------
 
-  // A random symptom that isn't the player's own and that they haven't treated yet, favouring
-  // ones with fewer prescriptions. Asking again returns the same one, so a reload keeps it.
+  // A random symptom that isn't the player's own and that they haven't treated yet. Voting needs
+  // two prescriptions on the same symptom, so symptoms with exactly one come first (one more makes
+  // them votable), then untreated ones, then the rest. Asking again returns the same one, so a
+  // reload keeps it.
   getPrescriptionTask({ playerId }) {
     this.requirePlayer(playerId);
     this.requirePhase(["clinic_open"], PHASE_MESSAGES.clinic_open);
@@ -482,7 +484,9 @@ export class DocGame extends DurableObject {
       `SELECT s.id, s.text FROM symptoms s
        WHERE (s.author_id IS NULL OR s.author_id != ?)
          AND NOT EXISTS (SELECT 1 FROM prescriptions p WHERE p.symptom_id = s.id AND p.author_id = ?)
-       ORDER BY (SELECT COUNT(*) FROM prescriptions p WHERE p.symptom_id = s.id), RANDOM()
+       ORDER BY CASE (SELECT COUNT(*) FROM prescriptions p WHERE p.symptom_id = s.id)
+                  WHEN 1 THEN 0 WHEN 0 THEN 1 ELSE 2 END,
+                (SELECT COUNT(*) FROM prescriptions p WHERE p.symptom_id = s.id), RANDOM()
        LIMIT 1`,
       playerId, playerId,
     );
