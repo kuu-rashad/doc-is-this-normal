@@ -13,11 +13,15 @@
       overflow: hidden;
     }
 
+    :root {
+      --players-bar: 9vw;
+    }
+
     /* Bandage hangs off the right edge of the screen, QR code sits on its pad. */
     .join {
       position: fixed;
       right: -8.7vw;
-      bottom: 0.8vw;
+      bottom: calc(var(--players-bar) + 0.8vw);
       width: 37vw;
       aspect-ratio: 1024 / 344;
       background: url("/bandage.png") center / contain no-repeat;
@@ -50,7 +54,7 @@
     .showcase {
       position: fixed;
       left: 6vw;
-      top: 50%;
+      top: calc((100vh - var(--players-bar)) / 2);
       width: 56vw;
       transform: translateY(-50%);
       padding: 2.5vw 3vw;
@@ -124,6 +128,96 @@
       font-size: 2.4vw;
       font-weight: 700;
       text-align: center;
+    }
+
+    /* Everyone who has joined, along the bottom. Scrolls sideways when they don't all fit. */
+    .players {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 2vw;
+      height: var(--players-bar);
+      padding: 0 0 0 2.5vw;
+      box-sizing: border-box;
+      background: var(--navy);
+    }
+
+    .players h2 {
+      flex: none;
+      margin: 0;
+      font-size: 3vw;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .players-viewport {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      mask-image: linear-gradient(to right, transparent, #000 2vw, #000 calc(100% - 4vw), transparent);
+    }
+
+    .players-track {
+      display: flex;
+      width: max-content;
+    }
+
+    /* The list is shown twice in a row, so sliding by half its width loops seamlessly. */
+    .players-track.scrolling {
+      animation: players-scroll var(--scroll-duration) linear infinite;
+    }
+
+    @keyframes players-scroll {
+      to { transform: translateX(-50%); }
+    }
+
+    .players-group {
+      display: flex;
+      gap: 1.2vw;
+      padding: 0 1.2vw 0 2vw;
+    }
+
+    .player {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3vw;
+      width: 6.6vw;
+    }
+
+    .player img {
+      width: 5.6vw;
+      height: 5.6vw;
+      box-sizing: border-box;
+      padding: 0.3vw;
+      object-fit: contain;
+      background: var(--pad);
+      border-radius: 1.2vw;
+    }
+
+    .player span {
+      max-width: 100%;
+      overflow: hidden;
+      font-size: 1.15vw;
+      font-weight: 700;
+      color: var(--white);
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .players .empty {
+      margin: 0;
+      padding-left: 2vw;
+      font-size: 1.8vw;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .players-track.scrolling { animation: none; }
     }
 
     /* Only shown if the browser blocks autoplay until the page is clicked. */
@@ -252,9 +346,12 @@
     }
 
     .settings .danger {
-      margin-top: 24px;
       color: var(--white);
       background: #c0392b;
+    }
+
+    .settings #reset-game {
+      margin-top: 24px;
     }
 
     .settings .reset-status {
@@ -278,7 +375,7 @@
       <h2>Admin only</h2>
       <label>
         Password
-        <input type="password" id="admin-password" autocomplete="current-password" required>
+        <input type="password" id="admin-password" autocomplete="off" required>
       </label>
       <p class="reset-status" id="login-error" hidden></p>
       <button type="submit" id="login-submit">Unlock</button>
@@ -302,6 +399,7 @@
         </span>
       </label>
       <button type="button" class="danger" id="reset-game">Reset game</button>
+      <button type="button" class="danger" id="reset-everything">Delete all players and data</button>
       <p class="reset-status" id="reset-status" hidden></p>
       <button type="button" data-close>Close</button>
     </div>
@@ -309,6 +407,13 @@
 
   <section class="showcase" id="showcase" aria-live="polite">
     <p class="waiting">Waiting for the first diagnosis…</p>
+  </section>
+
+  <section class="players" aria-label="Players">
+    <h2>Players:</h2>
+    <div class="players-viewport">
+      <div class="players-track" id="players-track"></div>
+    </div>
   </section>
 
   <div class="join">
@@ -346,34 +451,42 @@
       update();
     }
 
-    const resetButton = document.getElementById("reset-game");
-    const resetStatus = document.getElementById("reset-status");
-    let confirmingReset = false;
-
-    function clearResetConfirmation() {
-      confirmingReset = false;
-      resetButton.textContent = "Reset game";
-    }
-
-    // The admin password is checked by the server and kept only until this tab is closed.
+    // ---------- Admin ----------
+    // The password is asked every time the popup opens. It's only held in this variable
+    // while the popup is open and is never stored.
     const loginForm = document.getElementById("admin-login");
     const passwordInput = document.getElementById("admin-password");
     const loginError = document.getElementById("login-error");
     const adminPanel = document.getElementById("admin-panel");
+    const resetStatus = document.getElementById("reset-status");
+    let adminPassword = null;
 
-    function getAdminPassword() {
-      try { return sessionStorage.getItem("adminPassword"); } catch { return null; }
-    }
+    // Both delete buttons need a second click to confirm.
+    const dangerActions = [
+      {
+        button: document.getElementById("reset-game"),
+        label: "Reset game",
+        endpoint: "/api/reset",
+        warning: "Removes all symptoms, treatments and votes. Players keep their names.",
+        done: "The game has been reset.",
+      },
+      {
+        button: document.getElementById("reset-everything"),
+        label: "Delete all players and data",
+        endpoint: "/api/reset-everything",
+        warning: "Removes every player too. Everyone has to join again.",
+        done: "All players and game data have been deleted.",
+      },
+    ];
+    let confirming = null;
 
-    function setAdminPassword(password) {
-      try {
-        if (password) sessionStorage.setItem("adminPassword", password);
-        else sessionStorage.removeItem("adminPassword");
-      } catch {}
+    function clearConfirmation() {
+      confirming = null;
+      for (const action of dangerActions) action.button.textContent = action.label;
     }
 
     function showLogin(error) {
-      setAdminPassword(null);
+      adminPassword = null;
       passwordInput.value = "";
       loginError.textContent = error ?? "";
       loginError.hidden = !error;
@@ -383,7 +496,7 @@
     }
 
     function showAdminPanel() {
-      clearResetConfirmation();
+      clearConfirmation();
       resetStatus.hidden = true;
       loginForm.hidden = true;
       adminPanel.hidden = false;
@@ -391,21 +504,28 @@
 
     document.getElementById("settings-open").addEventListener("click", () => {
       settings.showModal();
-      if (getAdminPassword()) showAdminPanel();
-      else showLogin();
+      showLogin();
+    });
+
+    // However the popup closes (Close, Cancel, Esc, clicking outside), forget the password.
+    settings.addEventListener("close", () => {
+      adminPassword = null;
+      passwordInput.value = "";
     });
 
     loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const submit = document.getElementById("login-submit");
       submit.disabled = true;
+      const password = passwordInput.value;
+      passwordInput.value = "";
       const response = await fetch("/api/admin/login", {
         method: "POST",
-        headers: { "X-Admin-Password": passwordInput.value },
+        headers: { "X-Admin-Password": password },
       }).catch(() => null);
       submit.disabled = false;
       if (response?.ok) {
-        setAdminPassword(passwordInput.value);
+        adminPassword = password;
         showAdminPanel();
       } else {
         const body = await response?.json().catch(() => null);
@@ -423,35 +543,36 @@
       if (event.target === settings && outside) settings.close();
     });
 
-    // First click asks for confirmation, second click wipes symptoms, treatments and votes.
-    resetButton.addEventListener("click", async () => {
-      if (!confirmingReset) {
-        confirmingReset = true;
-        resetButton.textContent = "Are you sure? Click again to reset";
-        resetStatus.textContent = "Removes all symptoms, treatments and votes. Players keep their names.";
+    for (const action of dangerActions) {
+      action.button.addEventListener("click", async () => {
+        if (confirming !== action) {
+          clearConfirmation();
+          confirming = action;
+          action.button.textContent = "Are you sure? Click again";
+          resetStatus.textContent = action.warning;
+          resetStatus.hidden = false;
+          return;
+        }
+        action.button.disabled = true;
+        const response = await fetch(action.endpoint, {
+          method: "POST",
+          headers: { "X-Admin-Password": adminPassword ?? "" },
+        }).catch(() => null);
+        action.button.disabled = false;
+        clearConfirmation();
+        if (response?.status === 401) return showLogin("The admin password has changed. Please log in again.");
+        if (response?.ok) {
+          resetStatus.textContent = action.done;
+          entries = [];
+          index = 0;
+          render(null);
+          refresh();
+        } else {
+          resetStatus.textContent = "Something went wrong. Try again.";
+        }
         resetStatus.hidden = false;
-        return;
-      }
-      resetButton.disabled = true;
-      const response = await fetch("/api/reset", {
-        method: "POST",
-        headers: { "X-Admin-Password": getAdminPassword() ?? "" },
-      }).catch(() => null);
-      resetButton.disabled = false;
-      clearResetConfirmation();
-      // Password changed on the server since this tab unlocked: ask again.
-      if (response?.status === 401) return showLogin("The admin password has changed. Please log in again.");
-      if (response?.ok) {
-        resetStatus.textContent = "The game has been reset.";
-        entries = [];
-        index = 0;
-        render(null);
-        refresh();
-      } else {
-        resetStatus.textContent = "Couldn't reset the game. Try again.";
-      }
-      resetStatus.hidden = false;
-    });
+      });
+    }
 
     function startMusic() {
       music.play().then(
@@ -510,7 +631,54 @@
       }, 600);
     }
 
+    // ---------- Players bar ----------
+    const playersTrack = document.getElementById("players-track");
+    let shownPlayers = "";
+
+    function renderPlayers(players) {
+      // Only rebuild when the list changed, so the scrolling doesn't jump every minute.
+      const key = JSON.stringify(players);
+      if (key === shownPlayers) return;
+      shownPlayers = key;
+
+      playersTrack.classList.remove("scrolling");
+      if (!players.length) {
+        playersTrack.replaceChildren(el("p", "empty", "Scan the QR code to join!"));
+        return;
+      }
+
+      const group = el("div", "players-group");
+      for (const player of players) {
+        const card = el("div", "player");
+        const avatar = el("img", "");
+        avatar.src = `/avatars/${player.avatar}.png`;
+        avatar.alt = "";
+        card.append(avatar, el("span", "", `Dr. ${player.nickname}`));
+        group.append(card);
+      }
+      playersTrack.replaceChildren(group);
+
+      // Too many to fit: add a second copy and scroll, about 1.5 seconds per player.
+      if (group.scrollWidth > playersTrack.parentElement.clientWidth) {
+        const copy = group.cloneNode(true);
+        copy.setAttribute("aria-hidden", "true");
+        playersTrack.append(copy);
+        playersTrack.style.setProperty("--scroll-duration", `${players.length * 1.5}s`);
+        playersTrack.classList.add("scrolling");
+      }
+    }
+
+    async function refreshPlayers() {
+      try {
+        const response = await fetch("/api/players");
+        if (response.ok) renderPlayers(await response.json());
+      } catch {
+        // Keep showing what we have; try again next minute.
+      }
+    }
+
     async function refresh() {
+      refreshPlayers();
       try {
         const response = await fetch("/api/showcase");
         if (!response.ok) return;

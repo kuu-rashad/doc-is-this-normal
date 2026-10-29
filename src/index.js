@@ -277,6 +277,17 @@ export class Game extends DurableObject {
 
   // Finished symptoms for the big screen, newest first, each with its best treatment.
   // Ties go to the treatment that was submitted first.
+  // Everyone who has joined, in the order they joined.
+  listPlayers() {
+    return this.sql.exec("SELECT nickname, avatar FROM players ORDER BY rowid").toArray();
+  }
+
+  // Wipes everything, players included. Their phones will ask them to join again.
+  resetEverything() {
+    this.sql.exec("DELETE FROM players");
+    return this.resetGame();
+  }
+
   // Starts a fresh game: wipes symptoms, treatments and votes but keeps players and their names.
   resetGame() {
     this.sql.exec(`
@@ -327,7 +338,9 @@ export class Game extends DurableObject {
 const routes = [
   ["GET", /^\/api\/showcase$/, "getShowcase"],
   ["POST", /^\/api\/admin\/login$/, "adminLogin"],
+  ["GET", /^\/api\/players$/, "listPlayers"],
   ["POST", /^\/api\/reset$/, "resetGame"],
+  ["POST", /^\/api\/reset-everything$/, "resetEverything"],
   ["GET", /^\/api\/players\/([^/]+)$/, "getPlayer"],
   ["PUT", /^\/api\/players\/([^/]+)$/, "savePlayer"],
   ["GET", /^\/api\/players\/([^/]+)\/symptom-template$/, "randomTemplate"],
@@ -339,7 +352,7 @@ const routes = [
 ];
 
 // Routes that need the admin password (the ADMIN_PASSWORD secret) in the X-Admin-Password header.
-const ADMIN_ACTIONS = new Set(["adminLogin", "resetGame"]);
+const ADMIN_ACTIONS = new Set(["adminLogin", "resetGame", "resetEverything"]);
 
 async function sha256(text) {
   return crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));

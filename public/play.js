@@ -18,6 +18,13 @@ async function api(method, path, body) {
       headers: body ? { "Content-Type": "application/json" } : {},
       body: body && JSON.stringify(body),
     });
+    // 403 means this player no longer exists (an admin deleted all players): start over at the
+    // join screen. The returned promise never settles, so the caller's screen change is skipped.
+    if (response.status === 403) {
+      player = null;
+      showJoinForm();
+      return new Promise(() => {});
+    }
     return { ok: response.ok, status: response.status, data: await response.json() };
   } catch {
     return { ok: false, status: 0, data: { error: "Couldn't reach the game. Check your connection and try again." } };
