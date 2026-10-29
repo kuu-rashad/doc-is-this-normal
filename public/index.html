@@ -1053,6 +1053,41 @@
       border-radius: 10px;
     }
 
+    .settings .toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+      cursor: pointer;
+    }
+
+    .settings .toggle input {
+      width: 22px;
+      height: 22px;
+      margin: 0;
+      accent-color: var(--bandage-dark);
+    }
+
+    .settings .debug-view {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .settings .debug-view[hidden] {
+      display: none;
+    }
+
+    .settings select {
+      padding: 6px 10px;
+      font: 500 17px "Fredoka", system-ui, sans-serif;
+      color: var(--navy);
+      background: var(--white);
+      border: 3px solid var(--navy);
+      border-radius: 10px;
+    }
+
     .settings .admin {
       margin-top: 22px;
       padding-top: 6px;
@@ -1127,6 +1162,21 @@
         <input type="range" id="sfx-volume" min="0" max="100" step="5">
         <output for="sfx-volume" id="sfx-volume-value"></output>
       </span>
+    </label>
+
+    <!-- Layout preview with made-up data; only in this browser, off again after a reload. -->
+    <label class="toggle">
+      <input type="checkbox" id="debug-toggle">
+      Show sample data
+    </label>
+    <label class="debug-view" id="debug-view-row" hidden>
+      Preview
+      <select id="debug-view">
+        <option value="clinic_open">Clinic open</option>
+        <option value="second_opinions">Second opinions</option>
+        <option value="finals">Finals</option>
+        <option value="reveal">Reveal</option>
+      </select>
     </label>
 
     <!-- Everything below needs the admin password. -->
@@ -1617,28 +1667,109 @@
       }
     }
 
+    let realScreen = null;
+
     async function refreshScreen() {
       try {
         const response = await fetch("/api/screen");
         if (!response.ok) return;
-        const previous = screen?.state;
-        screen = await response.json();
-        clockOffset = screen.state.now - Date.now();
-        render(previous);
-        renderPlayers(screen.players);
-        fitPlayers();
-        renderFame(screen.hallOfFame);
-        renderLeaderboard(screen.leaderboard);
-        renderRules(screen.scoring);
+        realScreen = await response.json();
+        clockOffset = realScreen.state.now - Date.now();
+        showScreen();
       } catch {
         // Keep showing what we have; try again on the next poll.
       }
     }
 
+    function showScreen() {
+      if (!realScreen) return;
+      // No chime for sample data, nor when switching between sample and real data.
+      const previous = screen?.sample ? null : screen?.state;
+      screen = debug.on ? sampleScreen(realScreen) : realScreen;
+      render(screen.sample ? null : previous);
+      renderPlayers(screen.players);
+      fitPlayers();
+      renderFame(screen.hallOfFame);
+      renderLeaderboard(screen.leaderboard);
+      renderRules(screen.scoring);
+    }
+
+    // ---------- Sample data (debug) ----------
+    // Made-up entries for every section, some at the maximum text lengths, to check the layout.
+    // Only in this browser: nothing is sent to the server, and a reload turns it off again.
+    const debug = { on: false, view: "clinic_open", endsAt: 0 };
+    const SAMPLE_PLAYERS = [
+      ["Mia", "pink"], ["Sam", "orange"], ["Lee", "purple"], ["Android", "green"], ["Jo", "yellow"],
+      ["Bea", "blue"], ["Toby", "red"], ["Kim", "purple_patient"], ["Max", "brown"], ["Zoe", "lime"],
+      ["Nia", "green_patient"], ["Felix", "yellow_patient"], ["Wilhelmina-Rose", "blue"], ["Rex", "orange"],
+    ].map(([nickname, avatar]) => ({ nickname, avatar }));
+    const SAMPLE_PAIRS = [
+      ["Every time I get a Slack notification from Bea, I pee a little before I've even read it.", "Two naps, then call me never.", "Mia", "Android"],
+      ["It started small. First I could only bend spoons. Now I can control every printer in the building, and my neighbors are concerned.", "Unplug everything, apologize to each printer individually, and never make eye contact with a scanner again.", null, "Sam"],
+      ["Whenever I open my inbox, I get an uncontrollable urge to throw my laptop into the sea.", "Prescribe yourself one meeting-free afternoon.", "Lee", "Kim"],
+      ["I accidentally replied-all with my honest opinion of the roadmap, and now I can't stop apologizing to the office plants, the printer and the CEO's dog.", "Write a heartfelt apology on a sticky note, attach one to every plant in the office, and water them twice a day.", "Wilhelmina-Rose", "Felix"],
+      ["My cat has started knocking my coffee off the desk, and I think it's contagious, because yesterday I did it too.", "Switch to a sippy cup and let the cat run your standups.", null, "Zoe"],
+      ["Whenever a client asks for \"one small change\", I start sweating pure panic.", "Bill them for the sweat.", "Toby", "Nia"],
+    ];
+
+    function sampleEntry([symptom, prescription, patientName, doctorName], i) {
+      const patient = SAMPLE_PLAYERS.find((p) => p.nickname === patientName);
+      const doctor = SAMPLE_PLAYERS.find((p) => p.nickname === doctorName);
+      return {
+        symptom,
+        prescription,
+        patient: patient ? patient.nickname : "Walk-in Patient",
+        patientAvatar: patient?.avatar ?? null,
+        thumbsUp: [24, 18, 15, 12, 9, 7][i] ?? 5,
+        doctor: { name: `Dr. ${doctor.nickname}`, avatar: doctor.avatar },
+      };
+    }
+
+    function sampleScreen(real) {
+      const entries = SAMPLE_PAIRS.map(sampleEntry);
+      const reveal = debug.view === "reveal";
+      const phase = reveal ? "clinic_open" : debug.view;
+      return {
+        ...real,
+        sample: true,
+        state: {
+          ...real.state,
+          round: 3,
+          phase,
+          phaseEndsAt: debug.endsAt,
+          finalists: phase === "finals"
+            ? entries.slice(0, 3).map(({ symptom, prescription, doctor }) => ({ symptom, prescription, doctor: { avatar: doctor.avatar } }))
+            : [],
+          reveal: reveal ? entries[1] : null,
+        },
+        candidates: phase === "finals" ? [] : entries,
+        hallOfFame: [...entries].reverse(),
+        players: SAMPLE_PLAYERS,
+        leaderboard: [["Wilhelmina-Rose", 128], ["Mia", 96], ["Android", 84]].map(([name, points]) => ({
+          ...SAMPLE_PLAYERS.find((p) => p.nickname === name),
+          points,
+        })),
+      };
+    }
+
+    const debugToggle = document.getElementById("debug-toggle");
+    const debugView = document.getElementById("debug-view");
+
+    function updateDebug() {
+      debug.on = debugToggle.checked;
+      debug.view = debugView.value;
+      debug.endsAt = Date.now() + clockOffset + 12 * 60 * 1000 + 34 * 1000;
+      document.getElementById("debug-view-row").hidden = !debug.on;
+      showScreen();
+    }
+
+    debugToggle.addEventListener("change", updateDebug);
+    debugView.addEventListener("change", updateDebug);
+
     // Count down every second; ask the server every 10 seconds, and right when a phase runs out.
     setInterval(() => {
       renderTimers();
-      if (screen && Date.now() + clockOffset > screen.state.phaseEndsAt + 1000) refreshScreen();
+      if (screen && !debug.on && Date.now() + clockOffset > screen.state.phaseEndsAt + 1000) refreshScreen();
     }, 1000);
     setInterval(refreshScreen, POLL_MS);
     setInterval(nextLeader, SLIDE_MS);
