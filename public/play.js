@@ -341,11 +341,13 @@ async function startPrescription() {
   if (!ok) return showHome(data.error);
   prescriptionSymptom = data;
   $("prescription-symptom").textContent = `“${data.text}”`;
-  prescriptionFrames = shuffle(data.templates);
+  // Without frames (e.g. an older server version) only "write my own" is possible.
+  prescriptionFrames = shuffle(data.templates ?? []);
   frameIndex = 0;
   prescriptionText.value = "";
-  setWritingOwn(false);
+  $("rx-mode").hidden = !prescriptionFrames.length;
   show("prescription-form");
+  setWritingOwn(!prescriptionFrames.length);
 }
 
 function setWritingOwn(own) {
