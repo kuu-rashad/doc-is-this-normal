@@ -439,6 +439,8 @@
     /* Finals: big countdown and the finalists side by side. */
     .finals-view {
       position: fixed;
+      /* Display only, and it spans the top of the screen: let clicks through to the corner buttons. */
+      pointer-events: none;
       top: 1.5vw;
       left: 3vw;
       right: 3vw;
@@ -481,6 +483,7 @@
     /* Reveal: the winner, big, with the patient's and doctor's names. */
     .reveal-view {
       position: fixed;
+      pointer-events: none;
       top: calc(var(--logo-bottom) + 1vw);
       left: 6vw;
       width: 54vw;
@@ -853,6 +856,8 @@
     .corner-button {
       --size: clamp(48px, 4.5vw, 96px);
       position: fixed;
+      /* Always on top, whatever view is showing. */
+      z-index: 10;
       top: 1.5vw;
       right: 1.5vw;
       display: grid;
