@@ -15,6 +15,9 @@
 
     :root {
       --players-bar: 9vw;
+      --logo-width: 20vw;
+      /* Where the logo ends (it's about half as tall as it is wide). */
+      --logo-bottom: calc(1.5vw + var(--logo-width) / 2);
     }
 
     /* Bandage hangs off the right edge of the screen, QR code sits on its pad. */
@@ -48,6 +51,19 @@
       color: var(--white);
       -webkit-text-stroke: 0.5vw var(--navy);
       paint-order: stroke fill;
+    }
+
+    /* Game logo, top-left corner. */
+    .game-title {
+      position: fixed;
+      top: 1.5vw;
+      left: 1.5vw;
+      margin: 0;
+      line-height: 0;
+    }
+
+    .game-title img {
+      width: var(--logo-width);
     }
 
     /* Round, phase and time left until the next phase, top-right under the mute and settings
@@ -272,7 +288,7 @@
     .hall {
       position: fixed;
       left: 6vw;
-      top: calc((100vh - var(--players-bar)) / 2);
+      top: calc((var(--logo-bottom) + 100vh - var(--players-bar)) / 2);
       width: 54vw;
       font-size: 1.8vw;
       transform: translateY(-50%);
@@ -340,7 +356,7 @@
     /* Reveal: the winner, big, with the patient's and doctor's names. */
     .reveal-view {
       position: fixed;
-      top: 2vw;
+      top: calc(var(--logo-bottom) + 1vw);
       left: 6vw;
       width: 54vw;
       display: none;
@@ -702,6 +718,8 @@
       <button type="button" data-close>Close</button>
     </div>
   </dialog>
+
+  <h1 class="game-title"><img src="/title_logo.png" alt="Doc, is this normal?"></h1>
 
   <!-- "stethoscope", "thumbs_up_down" and "schedule" icons from Google Material Symbols (Apache 2.0) -->
   <section class="phase-card" id="phase-card" hidden>
