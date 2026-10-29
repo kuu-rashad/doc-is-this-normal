@@ -1159,7 +1159,7 @@
   </style>
 </head>
 <body>
-  <audio id="music" src="/audio/peachtea-somewhere-in-the-elevator.ogg" loop autoplay></audio>
+  <audio id="music" preload="auto"></audio>
 
   <button type="button" class="corner-button info" id="info-open" aria-label="How to score points">
     <!-- "info_i" icon from Google Material Symbols (Apache 2.0) -->
@@ -1325,9 +1325,103 @@
   </div>
 
   <script>
-    // Background music starts as soon as the page loads. If the browser blocks autoplay,
-    // it starts on the first click or key press instead.
     const music = document.getElementById("music");
+
+    // ---------- Background music ----------
+    // Each phase has its own tracks, played in turn. Every track fades in and out, with 5–10
+    // seconds of silence before the next one. When the phase changes, the current track fades
+    // out, there's a pause, and the new phase's music fades in. The reveal plays during the next
+    // Clinic open, so it gets Clinic open music.
+    const PLAYLISTS = {
+      clinic_open: ["/audio/clinic_open_1.mp3", "/audio/clinic_open_2.mp3"],
+      second_opinions: ["/audio/second_opinions.mp3", "/audio/second_opinions_2.mp3"],
+      finals: ["/audio/finale_1.mp3", "/audio/finale_2.mp3"],
+    };
+    const FADE_MS = 3000;
+    const gap = () => 5000 + Math.random() * 5000;
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    let musicLevel = 0.5;   // the music volume setting, 0–1
+    let fade = 0;           // the current fade, 0–1; what you hear is musicLevel × fade
+    let fadeTimer = null;
+    let musicPhase = null;
+    let musicRun = 0;       // bumped on every phase change, so older sequences stop themselves
+    let fadingOut = false;
+    let blocked = false;    // the browser refused to play until the page is clicked
+    const nextTrack = {};   // per phase, which of its tracks plays next
+
+    function setMusicLevel(level) {
+      musicLevel = level;
+      music.volume = Math.min(1, musicLevel * fade);
+    }
+
+    function fadeTo(target, ms) {
+      clearInterval(fadeTimer);
+      const start = fade;
+      const began = performance.now();
+      return new Promise((resolve) => {
+        fadeTimer = setInterval(() => {
+          const t = Math.min(1, (performance.now() - began) / ms);
+          fade = start + (target - start) * t;
+          setMusicLevel(musicLevel);
+          if (t === 1) {
+            clearInterval(fadeTimer);
+            resolve();
+          }
+        }, 50);
+      });
+    }
+
+    function playTrack(phase) {
+      const tracks = PLAYLISTS[phase];
+      if (!tracks) return;
+      const index = nextTrack[phase] ?? 0;
+      nextTrack[phase] = (index + 1) % tracks.length;
+      fadingOut = false;
+      fade = 0;
+      setMusicLevel(musicLevel);
+      music.src = tracks[index];
+      // If the browser blocks autoplay, startMusicOnClick picks it up on the first click.
+      blocked = false;
+      music.play().catch(() => (blocked = true));
+      fadeTo(1, FADE_MS);
+    }
+
+    async function setMusicPhase(phase) {
+      if (phase === musicPhase) return;
+      const firstTrack = musicPhase === null;
+      musicPhase = phase;
+      const run = ++musicRun;
+      if (!firstTrack) {
+        await fadeTo(0, FADE_MS);
+        music.pause();
+        await sleep(gap());
+      }
+      if (run === musicRun) playTrack(phase);
+    }
+
+    // Fade out over the last few seconds of a track, then pause before the next one.
+    music.addEventListener("timeupdate", () => {
+      if (!fadingOut && music.duration && music.duration - music.currentTime <= FADE_MS / 1000) {
+        fadingOut = true;
+        fadeTo(0, FADE_MS);
+      }
+    });
+    music.addEventListener("ended", async () => {
+      const run = musicRun;
+      await sleep(gap());
+      if (run === musicRun) playTrack(musicPhase);
+    });
+
+    // Browsers block sound until the page has been clicked; start the music then.
+    function startMusicOnClick() {
+      if (!blocked) return;
+      blocked = false;
+      music.play().catch(() => (blocked = true));
+    }
+    document.addEventListener("pointerdown", startMusicOnClick);
+    document.addEventListener("keydown", startMusicOnClick);
+
 
     // ---------- Settings ----------
     // Volumes are remembered on this computer (0–100). Sound effects will read
@@ -1335,7 +1429,7 @@
     const settings = document.getElementById("settings");
     const muteButton = document.getElementById("mute-toggle");
     const volumes = [
-      { key: "musicVolume", input: "music-volume", fallback: 50, apply: (v) => (music.volume = v) },
+      { key: "musicVolume", input: "music-volume", fallback: 50, apply: (v) => setMusicLevel(v) },
       { key: "sfxVolume", input: "sfx-volume", fallback: 70, apply: (v) => (window.sfxVolume = v) },
     ];
 
@@ -1551,16 +1645,6 @@
       });
     }
 
-    function startMusic() {
-      music.play().then(() => {
-        document.removeEventListener("pointerdown", startMusic);
-        document.removeEventListener("keydown", startMusic);
-      }, () => {});
-    }
-
-    document.addEventListener("pointerdown", startMusic);
-    document.addEventListener("keydown", startMusic);
-    startMusic();
 
     // ---------- Waiting-room chime ----------
     // Played with the Web Audio API at the start of the finals and at the reveal, at the
@@ -1681,6 +1765,7 @@
       for (const icon of card.querySelectorAll("[data-phase-icon]")) {
         icon.toggleAttribute("hidden", icon.dataset.phaseIcon !== state.phase);
       }
+      setMusicPhase(state.phase);
       document.body.classList.toggle("finals", state.phase === "finals");
       document.body.classList.toggle("reveal", state.phase !== "finals" && Boolean(state.reveal));
 
