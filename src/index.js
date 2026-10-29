@@ -109,6 +109,10 @@ export class Game extends DurableObject {
         player_id TEXT PRIMARY KEY,
         choice INTEGER NOT NULL
       );
+      CREATE TABLE IF NOT EXISTS points (
+        player_id TEXT PRIMARY KEY,
+        points INTEGER NOT NULL
+      );
       CREATE TABLE IF NOT EXISTS hall_of_fame (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         entry TEXT NOT NULL
@@ -132,6 +136,16 @@ export class Game extends DurableObject {
   setSetting(key, value) {
     if (value === null) this.sql.exec("DELETE FROM settings WHERE key = ?", key);
     else this.sql.exec("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", key, JSON.stringify(value));
+  }
+
+  // Points add up across rounds; see "points" in the config for what earns them.
+  addPoints(playerId, amount) {
+    if (!playerId || !amount) return;
+    this.sql.exec(
+      `INSERT INTO points (player_id, points) VALUES (?, ?)
+       ON CONFLICT (player_id) DO UPDATE SET points = points + excluded.points`,
+      playerId, amount,
+    );
   }
 
   requirePlayer(id) {
@@ -206,13 +220,21 @@ export class Game extends DurableObject {
       }
       if (now < finalsEnd) return;
 
-      this.endRound(finalsEnd, this.pickWinner());
+      this.endRound(finalsEnd, this.rankFinalists());
     }
   }
 
   // Everything from this round retires; only the winner lives on in the Hall of Fame.
-  endRound(at, winner) {
-    if (winner) {
+  // ranked: the finalists, best first (or null when the finals were skipped). The top places
+  // earn points for both the patient and the doctor behind the pair.
+  endRound(at, ranked) {
+    if (ranked?.length) {
+      ranked.slice(0, config.points.final_places.length).forEach((entry, place) => {
+        this.addPoints(entry.authors?.patient, config.points.final_places[place]);
+        this.addPoints(entry.authors?.doctor, config.points.final_places[place]);
+      });
+      // Player ids double as their login, so they never leave the server.
+      const { authors, ...winner } = ranked[0];
       this.sql.exec("INSERT INTO hall_of_fame (entry) VALUES (?)", JSON.stringify(winner));
       this.setSetting("reveal", { entry: winner, until: at + this.timing().reveal * MINUTE });
     }
@@ -235,6 +257,7 @@ export class Game extends DurableObject {
 
   startGame(now) {
     this.sql.exec("DELETE FROM hall_of_fame");
+    this.sql.exec("DELETE FROM points");
     this.setSetting("reveal", null);
     this.clearRound();
     this.setSetting("round", { number: 1, startedAt: now });
@@ -284,8 +307,11 @@ export class Game extends DurableObject {
     return [...best.values()].sort(Game.compareStats);
   }
 
+  // Finalists also remember who wrote them (for points at the end); those ids stay on the server.
   pickFinalists() {
-    return this.rankCandidates().slice(0, config.finalists.count).map((row) => this.toEntry(row));
+    return this.rankCandidates()
+      .slice(0, config.finalists.count)
+      .map((row) => ({ ...this.toEntry(row), authors: { patient: row.patient_id ?? null, doctor: row.author_id } }));
   }
 
   toEntry(row) {
@@ -304,8 +330,9 @@ export class Game extends DurableObject {
     };
   }
 
-  // Most finals votes wins; ties go to the higher approval rate, then the earlier prescription.
-  pickWinner() {
+  // The finalists ranked by finals votes, best first; ties go to the higher approval rate, then
+  // the earlier prescription.
+  rankFinalists() {
     const entries = this.getSetting("finalists")?.entries ?? [];
     if (!entries.length) return null;
     const counts = entries.map(() => 0);
@@ -315,7 +342,7 @@ export class Game extends DurableObject {
     const ranked = entries
       .map((entry, i) => ({ entry, votes: counts[i] }))
       .sort((a, b) => b.votes - a.votes || b.entry.approval - a.entry.approval || a.entry.prescriptionId - b.entry.prescriptionId);
-    return { ...ranked[0].entry, finalsVotes: ranked[0].votes };
+    return ranked.map(({ entry, votes }) => ({ ...entry, finalsVotes: votes }));
   }
 
   // What everyone may see: the phase and its end time, the finalists during the finals
@@ -349,6 +376,12 @@ export class Game extends DurableObject {
       candidates: candidates.map((row) => this.toEntry(row)),
       hallOfFame: this.sql.exec("SELECT entry FROM hall_of_fame ORDER BY id DESC").toArray().map((row) => JSON.parse(row.entry)),
       players: this.sql.exec("SELECT nickname, avatar FROM players ORDER BY rowid").toArray(),
+      // Top 3 by points; ties go to whoever joined first.
+      leaderboard: this.sql.exec(
+        `SELECT p.nickname, p.avatar, s.points FROM points s JOIN players p ON p.id = s.player_id
+         WHERE s.points > 0 ORDER BY s.points DESC, p.rowid LIMIT 3`,
+      ).toArray(),
+      scoring: config.points,
     };
   }
 
@@ -400,6 +433,7 @@ export class Game extends DurableObject {
     }
 
     this.sql.exec("INSERT INTO symptoms (author_id, text, created_at) VALUES (?, ?, ?)", playerId, text, Date.now());
+    this.addPoints(playerId, config.points.symptom);
     return { ok: true };
   }
 
@@ -442,10 +476,11 @@ export class Game extends DurableObject {
     const symptom = this.one("SELECT id, author_id FROM symptoms WHERE id = ?", body?.symptomId);
     if (!symptom || symptom.author_id === playerId) throw new HttpError(400, "Unknown symptom");
 
-    this.sql.exec(
+    const { rowsWritten } = this.sql.exec(
       "INSERT OR IGNORE INTO prescriptions (symptom_id, author_id, text, created_at) VALUES (?, ?, ?, ?)",
       symptom.id, playerId, text, Date.now(),
     );
+    if (rowsWritten) this.addPoints(playerId, config.points.prescription);
     this.sql.exec("DELETE FROM assignments WHERE player_id = ?", playerId);
     return { ok: true };
   }
@@ -482,7 +517,7 @@ export class Game extends DurableObject {
     this.requireRound(body?.round);
     const [a, b] = (body?.ids ?? []).map(Number).sort((x, y) => x - y);
     if (!Number.isInteger(a) || !Number.isInteger(b)) throw new HttpError(400, "Unknown prescriptions");
-    const rows = this.sql.exec("SELECT id, symptom_id FROM prescriptions WHERE id IN (?, ?)", a, b).toArray();
+    const rows = this.sql.exec("SELECT id, symptom_id, author_id FROM prescriptions WHERE id IN (?, ?)", a, b).toArray();
     if (a === b || rows.length !== 2 || rows[0].symptom_id !== rows[1].symptom_id) {
       throw new HttpError(400, "Unknown prescriptions");
     }
@@ -494,6 +529,10 @@ export class Game extends DurableObject {
       "INSERT INTO matchup_votes (player_id, a_id, b_id, a_up, b_up) VALUES (?, ?, ?, ?, ?)",
       playerId, a, b, up.has(a) ? 1 : 0, up.has(b) ? 1 : 0,
     );
+    // A skip isn't a vote; at least one thumbs up is. Each thumbs up also scores for its doctor.
+    const liked = rows.filter((row) => up.has(row.id));
+    if (liked.length) this.addPoints(playerId, config.points.vote);
+    for (const row of liked) this.addPoints(row.author_id, config.points.thumbs_up_received);
     return { ok: true };
   }
 
@@ -513,7 +552,10 @@ export class Game extends DurableObject {
     const choice = Number(body?.choice);
     const count = this.getSetting("finalists")?.entries.length ?? 0;
     if (!Number.isInteger(choice) || choice < 0 || choice >= count) throw new HttpError(400, "Unknown finalist");
+    // The first pick each round scores; changing it later doesn't.
+    const firstPick = !this.one("SELECT 1 FROM finals_votes WHERE player_id = ?", playerId);
     this.sql.exec("INSERT OR REPLACE INTO finals_votes (player_id, choice) VALUES (?, ?)", playerId, choice);
+    if (firstPick) this.addPoints(playerId, config.points.vote);
     return { choice };
   }
 

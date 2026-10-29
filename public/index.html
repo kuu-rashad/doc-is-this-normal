@@ -23,9 +23,9 @@
     /* Bandage hangs off the right edge of the screen, QR code sits on its pad. */
     .join {
       position: fixed;
-      right: -8.7vw;
+      right: -7.8vw;
       bottom: calc(var(--players-bar) + 0.8vw);
-      width: 37vw;
+      width: 33vw;
       aspect-ratio: 1024 / 344;
       background: url("/bandage.png") center / contain no-repeat;
     }
@@ -44,12 +44,12 @@
       bottom: 100%;
       margin: 0 0 0.3vw;
       transform: translateX(-50%);
-      font-size: 3.6vw;
+      font-size: 3.2vw;
       font-weight: 700;
       line-height: 1;
       white-space: nowrap;
       color: var(--white);
-      -webkit-text-stroke: 0.5vw var(--navy);
+      -webkit-text-stroke: 0.45vw var(--navy);
       paint-order: stroke fill;
     }
 
@@ -68,16 +68,118 @@
 
     /* Round, phase and time left until the next phase, top-right under the mute and settings
        buttons. Each phase has its own colour and icon. */
+    /* Right-hand column under the corner buttons: the phase card, then the leaderboard. Scaled to
+       80% so that on a 16:9 screen it ends above the "SCAN ME!" bandage. zoom also scales the
+       offsets below, hence dividing them by 0.8. */
+    .side {
+      position: fixed;
+      zoom: 0.8;
+      top: calc((1.5vw + clamp(48px, 4.5vw, 96px) + 1.2vw) / 0.8);
+      right: calc(1.5vw / 0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 1vw;
+      width: max-content;
+      min-width: 30vw;
+    }
+
     .phase-card {
       --phase-color: #74e3b5;
-      position: fixed;
-      top: calc(1.5vw + clamp(48px, 4.5vw, 96px) + 1.2vw);
-      right: 1.5vw;
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: max-content;
-      min-width: 30vw;
+    }
+
+    /* Top 3 players by points. */
+    .leaderboard {
+      padding: 0.8vw 1.4vw 0.4vw;
+      background: var(--pad);
+      border: 0.35vw solid var(--navy);
+      border-radius: 1.6vw;
+    }
+
+    .leaderboard h2 {
+      margin: 0 0 0.3vw;
+      font-size: 2vw;
+      font-weight: 700;
+      line-height: 1.1;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .leaderboard ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .leaderboard li {
+      display: flex;
+      align-items: center;
+      gap: 1vw;
+      padding: 0.45vw 0;
+      font-size: 1.6vw;
+      font-weight: 700;
+    }
+
+    .leaderboard li + li {
+      border-top: 0.15vw solid rgb(185 128 73 / 0.3);
+    }
+
+    /* "1st", "2nd", "3rd", with the suffix a little smaller. 1st sits on a yellow pill. */
+    .leaderboard .rank {
+      flex: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      min-width: 3.4vw;
+      height: 2.4vw;
+      box-sizing: border-box;
+      padding: 0 0.5vw;
+      border: 0.15vw solid var(--navy);
+      border-radius: 999px;
+    }
+
+    .leaderboard .rank small {
+      font-size: 0.65em;
+    }
+
+    /* Gold, silver and bronze pills. */
+    .leaderboard li:nth-child(1) .rank {
+      background: #f8b84e;
+    }
+
+    .leaderboard li:nth-child(2) .rank {
+      background: #cfd4dc;
+    }
+
+    .leaderboard li:nth-child(3) .rank {
+      background: #dc9a63;
+    }
+
+    .leaderboard img {
+      flex: none;
+      width: 2.9vw;
+      height: 2.9vw;
+      box-sizing: border-box;
+      object-fit: contain;
+      background: var(--white);
+      border: 0.2vw solid var(--navy);
+      border-radius: 50%;
+    }
+
+    .leaderboard .name {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .leaderboard .points {
+      flex: none;
+      font-variant-numeric: tabular-nums;
     }
 
     .phase-card[data-phase="second_opinions"] {
@@ -372,7 +474,7 @@
 
     body.finals .hall,
     body.finals .players,
-    body.finals .phase-card,
+    body.finals .side,
     body.reveal .hall,
     body.reveal .players {
       display: none;
@@ -733,6 +835,44 @@
       right: calc(1.5vw + var(--size) + 1vw);
     }
 
+    .corner-button.info {
+      right: calc(1.5vw + 2 * (var(--size) + 1vw));
+    }
+
+    /* Scoring rules, opened from the info button. */
+    #info h3 {
+      margin: 14px 0 2px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--bandage-dark);
+    }
+
+    .rules {
+      margin: 0 0 4px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .rules li {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 8px 0;
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .rules li + li {
+      border-top: 2px solid rgb(185 128 73 / 0.3);
+    }
+
+    .rules strong {
+      flex: none;
+      font-weight: 700;
+    }
+
     .corner-button svg {
       width: 62%;
       height: 62%;
@@ -891,6 +1031,20 @@
 <body>
   <audio id="music" src="/audio/peachtea-somewhere-in-the-elevator.ogg" loop autoplay></audio>
 
+  <button type="button" class="corner-button info" id="info-open" aria-label="How to score points">
+    <!-- "info_i" icon from Google Material Symbols (Apache 2.0) -->
+    <svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M430.5-720.59q-20.5-20.59-20.5-49.5t20.59-49.41q20.59-20.5 49.5-20.5t49.41 20.59q20.5 20.59 20.5 49.5t-20.59 49.41q-20.59 20.5-49.5 20.5t-49.41-20.59Zm14 586.01Q430-149.17 430-170v-380q0-20.83 14.62-35.42Q459.24-600 480.12-600q20.88 0 35.38 14.58Q530-570.83 530-550v380q0 20.83-14.62 35.42Q500.76-120 479.88-120q-20.88 0-35.38-14.58Z"/></svg>
+  </button>
+
+  <dialog class="settings" id="info">
+    <h2>How to score points</h2>
+    <h3>Overall</h3>
+    <ul class="rules" id="rules-overall"></ul>
+    <h3>Finals</h3>
+    <ul class="rules" id="rules-finals"></ul>
+    <button type="button" data-close>Close</button>
+  </dialog>
+
   <button type="button" class="corner-button mute" id="mute-toggle" aria-label="Mute" aria-pressed="false">
     <!-- "volume_up" and "volume_off" icons from Google Material Symbols (Apache 2.0) -->
     <svg viewBox="0 -960 960 960" aria-hidden="true" data-icon="on"><path d="M780-481q0-94-52.5-169T590-759q-12-5-17-16t0-22q5-12 17.5-16.5t25.5.5q101 41 162.5 131T840-481q0 111-61.5 201T616-149q-13 5-25.5.5T573-165q-5-11 0-22t17-16q85-34 137.5-109T780-481ZM280-360H150q-13 0-21.5-8.5T120-390v-180q0-13 8.5-21.5T150-600h130l149-149q14-14 32.5-6.5T480-728v496q0 20-18.5 27.5T429-211L280-360Zm380-120q0 52-26 94t-73 64q-8 4-14.5-1t-6.5-13v-289q0-8 6.5-13t14.5-1q47 22 73 65t26 94Z"/></svg>
@@ -958,19 +1112,26 @@
   <h1 class="game-title"><img src="/title_logo.png" alt="Doc, is this normal?"></h1>
 
   <!-- "stethoscope", "thumbs_up_down" and "schedule" icons from Google Material Symbols (Apache 2.0) -->
-  <section class="phase-card" id="phase-card" hidden>
-    <p class="round" id="phase-round"></p>
-    <p class="title">
-      <svg viewBox="0 -960 960 960" aria-hidden="true" data-phase-icon="clinic_open"><path d="M540-81q-112 0-186-78.5T280-347v-35q-85-11-142.5-75.71T80-610v-200q0-12.75 8.63-21.38Q97.25-840 110-840h90v-10q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v80q0 12-8.68 21-8.67 9-21.5 9-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37v-10h-60v170q0 71 49.5 120.5T310-440q71 0 120.5-49.5T480-610v-170h-60v10q0 12-8.68 21-8.67 9-21.5 9-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37v-80q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v10h90q12.75 0 21.38 8.62Q540-822.75 540-810v200q0 87.58-57.5 152.29T340-382v35q0 85 56.5 145.5T540-141q81 0 140.5-60.15T740-347.23V-424q-35-10-57.5-39T660-530q0-45.83 32.12-77.92 32.12-32.08 78-32.08T848-607.92q32 32.09 32 77.92 0 38-22.5 67T800-424v77q0 111-76.5 188.5T540-81Zm265.5-413.32q14.5-14.33 14.5-35.5 0-21.18-14.32-35.68-14.33-14.5-35.5-14.5-21.18 0-35.68 14.32-14.5 14.33-14.5 35.5 0 21.18 14.32 35.68 14.33 14.5 35.5 14.5 21.18 0 35.68-14.32ZM770-530Z"/></svg>
-      <svg viewBox="0 -960 960 960" aria-hidden="true" data-phase-icon="second_opinions"><path d="M60-400q-24 0-42-18T0-460v-270q0-10 3-18t11-17l145-145q6.88-7 15.29-10.5 8.42-3.5 16.83-3.5 19.88 0 34.38 15.5Q240-893 235-870l-21 110h216q21.25 0 35.63 14.37Q480-731.25 480-710v39q0 7-1 12.5t-2 7.5l-93 220q-6.08 14.64-19.54 22.82Q351-400 330-400H60Zm270-60 90-209v-31H139l28-133L60-725v265h270Zm200 260q-21.25 0-35.62-14.38Q480-228.75 480-250v-39q0-7 1-12.5t2-7.5l93-220q6-15 19.5-23t34.5-8h270q24 0 42 18t18 42v270q0 10-3 18t-11 17L801-50q-6.88 7-15.29 10.5-8.42 3.5-16.83 3.5Q749-36 734.5-51.5 720-67 725-90l21-110H530Zm100-300-90 209v31h281l-28 133 107-108v-265H630ZM60-472v-253 253Zm840-16v253-253Z"/></svg>
-      <span id="phase-name"></span>
-    </p>
-    <div class="clock">
-      <svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M513-492v-171q0-13-8.5-21.5T483-693q-13 0-21.5 8.5T453-663v183q0 6 2 11t6 10l144 149q9 10 22.5 9.5T650-310q9-9 9-22t-9-22L513-492ZM480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-82 31.5-155t86-127.5Q252-817 325-848.5T480-880q82 0 155 31.5t127.5 86Q817-708 848.5-635T880-480q0 82-31.5 155t-86 127.5Q708-143 635-111.5T480-80Z"/></svg>
-      <span class="timer" id="phase-timer"></span>
-      <p class="until">until <strong id="phase-next"></strong></p>
-    </div>
-  </section>
+  <aside class="side">
+    <section class="phase-card" id="phase-card" hidden>
+      <p class="round" id="phase-round"></p>
+      <p class="title">
+        <svg viewBox="0 -960 960 960" aria-hidden="true" data-phase-icon="clinic_open"><path d="M540-81q-112 0-186-78.5T280-347v-35q-85-11-142.5-75.71T80-610v-200q0-12.75 8.63-21.38Q97.25-840 110-840h90v-10q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v80q0 12-8.68 21-8.67 9-21.5 9-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37v-10h-60v170q0 71 49.5 120.5T310-440q71 0 120.5-49.5T480-610v-170h-60v10q0 12-8.68 21-8.67 9-21.5 9-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37v-80q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v10h90q12.75 0 21.38 8.62Q540-822.75 540-810v200q0 87.58-57.5 152.29T340-382v35q0 85 56.5 145.5T540-141q81 0 140.5-60.15T740-347.23V-424q-35-10-57.5-39T660-530q0-45.83 32.12-77.92 32.12-32.08 78-32.08T848-607.92q32 32.09 32 77.92 0 38-22.5 67T800-424v77q0 111-76.5 188.5T540-81Zm265.5-413.32q14.5-14.33 14.5-35.5 0-21.18-14.32-35.68-14.33-14.5-35.5-14.5-21.18 0-35.68 14.32-14.5 14.33-14.5 35.5 0 21.18 14.32 35.68 14.33 14.5 35.5 14.5 21.18 0 35.68-14.32ZM770-530Z"/></svg>
+        <svg viewBox="0 -960 960 960" aria-hidden="true" data-phase-icon="second_opinions"><path d="M60-400q-24 0-42-18T0-460v-270q0-10 3-18t11-17l145-145q6.88-7 15.29-10.5 8.42-3.5 16.83-3.5 19.88 0 34.38 15.5Q240-893 235-870l-21 110h216q21.25 0 35.63 14.37Q480-731.25 480-710v39q0 7-1 12.5t-2 7.5l-93 220q-6.08 14.64-19.54 22.82Q351-400 330-400H60Zm270-60 90-209v-31H139l28-133L60-725v265h270Zm200 260q-21.25 0-35.62-14.38Q480-228.75 480-250v-39q0-7 1-12.5t2-7.5l93-220q6-15 19.5-23t34.5-8h270q24 0 42 18t18 42v270q0 10-3 18t-11 17L801-50q-6.88 7-15.29 10.5-8.42 3.5-16.83 3.5Q749-36 734.5-51.5 720-67 725-90l21-110H530Zm100-300-90 209v31h281l-28 133 107-108v-265H630ZM60-472v-253 253Zm840-16v253-253Z"/></svg>
+        <span id="phase-name"></span>
+      </p>
+      <div class="clock">
+        <svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M513-492v-171q0-13-8.5-21.5T483-693q-13 0-21.5 8.5T453-663v183q0 6 2 11t6 10l144 149q9 10 22.5 9.5T650-310q9-9 9-22t-9-22L513-492ZM480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-82 31.5-155t86-127.5Q252-817 325-848.5T480-880q82 0 155 31.5t127.5 86Q817-708 848.5-635T880-480q0 82-31.5 155t-86 127.5Q708-143 635-111.5T480-80Z"/></svg>
+        <span class="timer" id="phase-timer"></span>
+        <p class="until">until <strong id="phase-next"></strong></p>
+      </div>
+    </section>
+
+    <section class="leaderboard" id="leaderboard" hidden>
+      <h2>Top 3</h2>
+      <ol id="leaderboard-list"></ol>
+    </section>
+  </aside>
 
   <section class="hall" id="hall" aria-live="polite">
     <p class="waiting">Waiting for the first diagnosis…</p>
@@ -1196,15 +1357,17 @@
       }
     });
 
-    for (const button of settings.querySelectorAll("[data-close]")) {
-      button.addEventListener("click", () => settings.close());
+    // Close buttons, and clicking the dark area outside a popup, close it (settings and info).
+    for (const dialog of document.querySelectorAll("dialog")) {
+      for (const button of dialog.querySelectorAll("[data-close]")) {
+        button.addEventListener("click", () => dialog.close());
+      }
+      dialog.addEventListener("click", (event) => {
+        const box = dialog.getBoundingClientRect();
+        const outside = event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom;
+        if (event.target === dialog && outside) dialog.close();
+      });
     }
-    // Clicking the dark area outside the popup closes it.
-    settings.addEventListener("click", (event) => {
-      const box = settings.getBoundingClientRect();
-      const outside = event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom;
-      if (event.target === settings && outside) settings.close();
-    });
 
     for (const action of dangerActions) {
       action.button.addEventListener("click", async () => {
@@ -1400,6 +1563,8 @@
         renderPlayers(screen.players);
         fitPlayers();
         renderCandidates(screen.candidates);
+        renderLeaderboard(screen.leaderboard);
+        renderRules(screen.scoring);
       } catch {
         // Keep showing what we have; try again on the next poll.
       }
@@ -1503,6 +1668,52 @@
         candidatesTrack.classList.remove("fading");
       }, 500);
     });
+
+    // ---------- Leaderboard ----------
+    const leaderboard = document.getElementById("leaderboard");
+    let shownLeaderboard = "";
+
+    function renderLeaderboard(rows) {
+      leaderboard.hidden = !rows.length;
+      const key = JSON.stringify(rows);
+      if (key === shownLeaderboard) return;
+      shownLeaderboard = key;
+      document.getElementById("leaderboard-list").replaceChildren(...rows.map((row, i) => {
+        const item = el("li", "");
+        const avatar = el("img", "");
+        avatar.src = `/avatars/${row.avatar}.png`;
+        avatar.alt = "";
+        const rank = el("span", "rank", String(i + 1));
+        rank.append(el("small", "", ["st", "nd", "rd"][i]));
+        item.append(rank, avatar, el("span", "name", row.nickname), el("span", "points", `${row.points} pts`));
+        return item;
+      }));
+    }
+
+    // ---------- Scoring rules (info button) ----------
+    const info = document.getElementById("info");
+
+    function renderRules(scoring) {
+      const [first, second, third] = scoring.final_places;
+      const fill = (id, rules) => document.getElementById(id).replaceChildren(...rules.map(([label, points]) => {
+        const item = el("li", "");
+        item.append(el("span", "", label), el("strong", "", `+${points}`));
+        return item;
+      }));
+      fill("rules-overall", [
+        ["Submit a symptom", scoring.symptom],
+        ["Submit a prescription", scoring.prescription],
+        ["Vote (give a thumbs up or pick a finalist)", scoring.vote],
+        ["Your prescription gets a thumbs up", scoring.thumbs_up_received],
+      ]);
+      fill("rules-finals", [
+        ["Your symptom or prescription wins", first],
+        ["…comes 2nd", second],
+        ["…comes 3rd", third],
+      ]);
+    }
+
+    document.getElementById("info-open").addEventListener("click", () => info.showModal());
 
     // ---------- Players bar ----------
     const playersTrack = document.getElementById("players-track");

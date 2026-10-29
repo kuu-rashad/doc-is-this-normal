@@ -18,6 +18,17 @@
     "symptom_characters": 160,
     "prescription_characters": 120
   },
+  "points": {
+    "symptom": 1,
+    "prescription": 2,
+    "vote": 1,
+    "thumbs_up_received": 1,
+    "final_places": [
+      10,
+      8,
+      6
+    ]
+  },
   "categories": [
     {
       "id": "mild",
