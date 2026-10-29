@@ -6,7 +6,8 @@
   --white: #fff;
   --sky-top: #0786db;
   --sky-bottom: #0051ba;
-  --pattern-size: 96px;
+  /* The tile has 2×2 icons; at 288px each cross is about 73px across. */
+  --pattern-size: 288px;
 }
 
 html, body {
@@ -51,7 +52,8 @@ body::after {
   background: url("/background.png") repeat;
   background-size: var(--pattern-size) var(--pattern-size);
   opacity: 0.15;
-  animation: scroll-bg 4.8s linear infinite;
+  /* One tile per loop, at the same 20px/s as before. */
+  animation: scroll-bg 14.4s linear infinite;
 }
 
 /* Moves up and to the right by one tile per loop. */

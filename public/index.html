@@ -569,14 +569,25 @@
       to   { stroke-dashoffset: 0; }
     }
 
+    /* Empty Hall of Fame: a rounded outline holding the space the winner cards will take, with
+       the message in the middle. Sized to roughly match a card (2em above it is the cards' room
+       for the clip and badge; the strip's em is 0.78vw). */
     .fame-empty {
-      margin: 0;
-      padding: 0.6vw 1.2vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      min-height: 8.6vw;
+      margin: 1.56vw 0 0;
+      padding: 1vw 2vw;
       font-size: 1.4vw;
       font-weight: 700;
+      text-align: center;
       color: var(--white);
       -webkit-text-stroke: 0.25vw var(--navy);
       paint-order: stroke fill;
+      border: 0.3vw dashed rgb(255 255 255 / 0.75);
+      border-radius: 1.1vw;
     }
 
     .fame-group {
