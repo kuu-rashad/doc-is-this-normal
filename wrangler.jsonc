@@ -10,5 +10,10 @@
   "durable_objects": {
     "bindings": [{ "name": "DOC_GAME", "class_name": "DocGame" }]
   },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DocGame"] }]
+  // Storage migrations run once each, in order, and must never be edited after deploying.
+  // v1 created the storage under the original class name; v2 renamed the class, keeping its data.
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["Game"] },
+    { "tag": "v2", "renamed_classes": [{ "from": "Game", "to": "DocGame" }] }
+  ]
 }

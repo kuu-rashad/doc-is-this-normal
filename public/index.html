@@ -1053,6 +1053,21 @@
       border-radius: 10px;
     }
 
+    .settings .admin {
+      margin-top: 22px;
+      padding-top: 6px;
+      border-top: 3px solid rgb(185 128 73 / 0.35);
+    }
+
+    .settings .admin h3 {
+      margin: 8px 0 12px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--bandage-dark);
+    }
+
     .settings .danger {
       color: var(--white);
       background: #c0392b;
@@ -1098,56 +1113,60 @@
   </button>
 
   <dialog class="settings" id="settings">
-    <form id="admin-login" method="dialog">
-      <h2>Admin only</h2>
-      <label>
-        Password
-        <input type="password" id="admin-password" autocomplete="off" required>
-      </label>
-      <p class="reset-status" id="login-error" hidden></p>
-      <button type="submit" id="login-submit">Unlock</button>
-      <button type="button" data-close>Cancel</button>
-    </form>
+    <h2>Settings</h2>
+    <label>
+      Music volume
+      <span class="volume-row">
+        <input type="range" id="music-volume" min="0" max="100" step="5">
+        <output for="music-volume" id="music-volume-value"></output>
+      </span>
+    </label>
+    <label>
+      Sound effects volume
+      <span class="volume-row">
+        <input type="range" id="sfx-volume" min="0" max="100" step="5">
+        <output for="sfx-volume" id="sfx-volume-value"></output>
+      </span>
+    </label>
 
-    <div id="admin-panel" hidden>
-      <h2>Settings</h2>
-      <label>
-        Music volume
-        <span class="volume-row">
-          <input type="range" id="music-volume" min="0" max="100" step="5">
-          <output for="music-volume" id="music-volume-value"></output>
-        </span>
-      </label>
-      <label>
-        Sound effects volume
-        <span class="volume-row">
-          <input type="range" id="sfx-volume" min="0" max="100" step="5">
-          <output for="sfx-volume" id="sfx-volume-value"></output>
-        </span>
-      </label>
-      <fieldset class="timing">
-        <legend>Phase lengths (minutes)</legend>
-        <div class="timing-grid">
-          <label for="timing-first_clinic_open">First Clinic open</label>
-          <input type="number" id="timing-first_clinic_open" min="0.5" max="600" step="0.5">
-          <label for="timing-clinic_open">Clinic open</label>
-          <input type="number" id="timing-clinic_open" min="0.5" max="600" step="0.5">
-          <label for="timing-second_opinions">Second opinions</label>
-          <input type="number" id="timing-second_opinions" min="0.5" max="600" step="0.5">
-          <label for="timing-finals">Finals</label>
-          <input type="number" id="timing-finals" min="0.5" max="600" step="0.5">
-          <label for="timing-reveal">Reveal</label>
-          <input type="number" id="timing-reveal" min="0.5" max="600" step="0.5">
-        </div>
-        <button type="button" id="save-timing">Save phase lengths</button>
-      </fieldset>
-      <button type="button" id="skip-phase">Skip to next phase</button>
-      <button type="button" id="restart-round">Restart this round</button>
-      <button type="button" class="danger" id="reset-game">Reset game</button>
-      <button type="button" class="danger" id="reset-everything">Delete all players and data</button>
-      <p class="reset-status" id="reset-status" hidden></p>
-      <button type="button" data-close>Close</button>
-    </div>
+    <!-- Everything below needs the admin password. -->
+    <section class="admin">
+      <h3>Admin</h3>
+      <form id="admin-login">
+        <label>
+          Password
+          <input type="password" id="admin-password" autocomplete="off" required>
+        </label>
+        <p class="reset-status" id="login-error" hidden></p>
+        <button type="submit" id="login-submit">Unlock</button>
+      </form>
+
+      <div id="admin-panel" hidden>
+        <fieldset class="timing">
+          <legend>Phase lengths (minutes)</legend>
+          <div class="timing-grid">
+            <label for="timing-first_clinic_open">First Clinic open</label>
+            <input type="number" id="timing-first_clinic_open" min="0.5" max="600" step="0.5">
+            <label for="timing-clinic_open">Clinic open</label>
+            <input type="number" id="timing-clinic_open" min="0.5" max="600" step="0.5">
+            <label for="timing-second_opinions">Second opinions</label>
+            <input type="number" id="timing-second_opinions" min="0.5" max="600" step="0.5">
+            <label for="timing-finals">Finals</label>
+            <input type="number" id="timing-finals" min="0.5" max="600" step="0.5">
+            <label for="timing-reveal">Reveal</label>
+            <input type="number" id="timing-reveal" min="0.5" max="600" step="0.5">
+          </div>
+          <button type="button" id="save-timing">Save phase lengths</button>
+        </fieldset>
+        <button type="button" id="skip-phase">Skip to next phase</button>
+        <button type="button" id="restart-round">Restart this round</button>
+        <button type="button" class="danger" id="reset-game">Reset game</button>
+        <button type="button" class="danger" id="reset-everything">Delete all players and data</button>
+        <p class="reset-status" id="reset-status" hidden></p>
+      </div>
+    </section>
+
+    <button type="button" data-close>Close</button>
   </dialog>
 
   <h1 class="game-title"><img src="/title_logo.png" alt="Doc, is this normal?"></h1>
@@ -1332,7 +1351,7 @@
       loginError.hidden = !error;
       adminPanel.hidden = true;
       loginForm.hidden = false;
-      passwordInput.focus();
+      if (error) passwordInput.focus();
     }
 
     function showAdminPanel() {
