@@ -14,10 +14,15 @@ html, body {
   height: 100%;
 }
 
+/* Anything that shows past the layers below (e.g. when a phone overscrolls) matches the gradient's end. */
+html {
+  background: var(--sky-bottom);
+}
+
+/* No background on body: it would paint over the two layers below. The page colour is on html. */
 body {
   font-family: "Fredoka", system-ui, sans-serif;
   color: var(--navy);
-  background: var(--sky-bottom);
 }
 
 /* Two fixed layers behind the page: a blue gradient, and the white cross pattern faded to
@@ -26,7 +31,13 @@ body::before,
 body::after {
   content: "";
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* As tall as the screen can get, so the layers still reach the bottom when a phone browser's
+     toolbars shrink away (lvh = "large viewport height"; vh is the fallback). */
+  height: 100vh;
+  height: 100lvh;
   pointer-events: none;
 }
 
