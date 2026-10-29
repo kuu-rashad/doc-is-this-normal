@@ -436,59 +436,38 @@
       ],
       "premade_symptoms": [
         {
-          "id": "premade_v3_01",
+          "id": "walkin_mild_01",
           "template_id": "mild_01",
           "slots": {
-            "urge_action": "moonwalk out of the room"
+            "urge_action": "vomit"
           }
         },
         {
-          "id": "premade_v3_02",
+          "id": "walkin_mild_02",
           "template_id": "mild_02",
           "slots": {
-            "big_ability": "summon pigeons at will"
+            "big_ability": "bend other people's wills"
           }
         },
         {
-          "id": "premade_v3_03",
-          "template_id": "mild_02",
-          "slots": {
-            "big_ability": "control every printer in the building"
-          }
-        },
-        {
-          "id": "premade_v3_04",
+          "id": "walkin_mild_03",
           "template_id": "mild_03",
           "slots": {
-            "trigger": "a spreadsheet"
+            "trigger": "a cucumber"
           }
         },
         {
-          "id": "premade_v3_05",
-          "template_id": "mild_03",
-          "slots": {
-            "trigger": "the color beige"
-          }
-        },
-        {
-          "id": "premade_v3_06",
+          "id": "walkin_mild_04",
           "template_id": "mild_04",
           "slots": {
-            "pet_behavior": "judging my outfits"
+            "pet_behavior": "licking its balls"
           }
         },
         {
-          "id": "premade_v3_07",
-          "template_id": "mild_04",
-          "slots": {
-            "pet_behavior": "knocking my coffee off the desk"
-          }
-        },
-        {
-          "id": "premade_v3_08",
+          "id": "walkin_mild_05",
           "template_id": "mild_05",
           "slots": {
-            "coworker": "that one guy from Finance"
+            "coworker": "my manager"
           }
         }
       ]
@@ -498,25 +477,6 @@
       "name": "Awkward: Office malfunctions",
       "risk_level": 2,
       "templates": [
-        {
-          "id": "awkward_01",
-          "text": "I accidentally replied-all with {{message}}, and now I can't stop apologizing to the office plants.",
-          "slots": {
-            "message": {
-              "hint": "Something you sent",
-              "options": [
-                "a bathroom selfie",
-                "my honest opinion of the roadmap",
-                "a single eggplant emoji",
-                "my grocery list",
-                "a love poem meant for my partner",
-                "a four-minute voice memo",
-                "“who even reads these?”",
-                "my salary spreadsheet"
-              ]
-            }
-          }
-        },
         {
           "id": "awkward_02",
           "text": "My Slack status has been stuck on \"{{status}}\" for weeks, and I've started to believe it.",
@@ -593,6 +553,36 @@
             }
           }
         }
+      ],
+      "premade_symptoms": [
+        {
+          "id": "walkin_awkward_02",
+          "template_id": "awkward_02",
+          "slots": {
+            "status": "Working hard"
+          }
+        },
+        {
+          "id": "walkin_awkward_03",
+          "template_id": "awkward_03",
+          "slots": {
+            "wrong_name": "Mom"
+          }
+        },
+        {
+          "id": "walkin_awkward_04",
+          "template_id": "awkward_04",
+          "slots": {
+            "embarrassing_action": "intentionally sharted"
+          }
+        },
+        {
+          "id": "walkin_awkward_05",
+          "template_id": "awkward_05",
+          "slots": {
+            "condition": "intoxicated"
+          }
+        }
       ]
     },
     {
@@ -639,44 +629,6 @@
           }
         },
         {
-          "id": "gross_03",
-          "text": "Every time I go to the dentist, they find {{object}} in my teeth, and they're starting to ask questions.",
-          "slots": {
-            "object": {
-              "hint": "Something unexpected",
-              "options": [
-                "a LEGO brick",
-                "a tiny umbrella",
-                "last year's Christmas cookie",
-                "a SIM card",
-                "a goldfish",
-                "a USB stick",
-                "a rubber band",
-                "a fortune cookie fortune"
-              ]
-            }
-          }
-        },
-        {
-          "id": "gross_04",
-          "text": "Every time I laugh, I shart a little, and I'm running out of people to blame besides {{scapegoat}}.",
-          "slots": {
-            "scapegoat": {
-              "hint": "Someone to blame, ideally someone here tonight",
-              "options": [
-                "the dog",
-                "the intern",
-                "the office plant",
-                "my desk neighbor",
-                "the radiator",
-                "the guy from Finance",
-                "my chair",
-                "a ghost"
-              ]
-            }
-          }
-        },
-        {
           "id": "gross_05",
           "text": "I've been saving my toenail clippings in a jar labeled \"{{label}}\". Is that a hobby?",
           "slots": {
@@ -713,24 +665,35 @@
               ]
             }
           }
+        }
+      ],
+      "premade_symptoms": [
+        {
+          "id": "walkin_gross_01",
+          "template_id": "gross_01",
+          "slots": {
+            "thought": "my performance review"
+          }
         },
         {
-          "id": "gross_07",
-          "text": "Whenever a client asks for \"one small change\", I start sweating {{substance}}.",
+          "id": "walkin_gross_02",
+          "template_id": "gross_02",
           "slots": {
-            "substance": {
-              "hint": "A substance",
-              "options": [
-                "maple syrup",
-                "glitter",
-                "mayonnaise",
-                "cold brew",
-                "ketchup",
-                "gravy",
-                "soy sauce",
-                "pure panic"
-              ]
-            }
+            "trigger": "our CEO"
+          }
+        },
+        {
+          "id": "walkin_gross_05",
+          "template_id": "gross_05",
+          "slots": {
+            "label": "Sell if unemployed"
+          }
+        },
+        {
+          "id": "walkin_gross_06",
+          "template_id": "gross_06",
+          "slots": {
+            "object": "my laptop"
           }
         }
       ]
@@ -740,25 +703,6 @@
       "name": "Spicy: Flirting malfunctions",
       "risk_level": 4,
       "templates": [
-        {
-          "id": "spicy_01",
-          "text": "The moment someone touches my lower back, I forget how to {{forgotten_action}}.",
-          "slots": {
-            "forgotten_action": {
-              "hint": "An action",
-              "options": [
-                "speak",
-                "blink",
-                "walk",
-                "breathe normally",
-                "use a fork",
-                "count to three",
-                "spell my own name",
-                "stand up straight"
-              ]
-            }
-          }
-        },
         {
           "id": "spicy_02",
           "text": "Every time I try to look sexy, I end up looking like {{comparison}}.",
@@ -774,25 +718,6 @@
                 "a deflating balloon",
                 "my grandpa doing the worm",
                 "a raccoon caught in headlights"
-              ]
-            }
-          }
-        },
-        {
-          "id": "spicy_03",
-          "text": "My crush once called me \"{{compliment}}\", and my knees haven't stopped shaking since.",
-          "slots": {
-            "compliment": {
-              "hint": "What your crush called you",
-              "options": [
-                "very punctual",
-                "a great spreadsheet person",
-                "kind of bready",
-                "sturdy",
-                "the printer whisperer",
-                "surprisingly flexible",
-                "buddy",
-                "the intern"
               ]
             }
           }
@@ -836,25 +761,6 @@
           }
         },
         {
-          "id": "spicy_06",
-          "text": "I get weirdly turned on whenever {{coworker}} shares their screen on Google Meet.",
-          "slots": {
-            "coworker": {
-              "hint": "A coworker, ideally someone here tonight",
-              "options": [
-                "my manager",
-                "the CEO",
-                "the intern",
-                "someone from Finance",
-                "the client",
-                "my team lead",
-                "IT support",
-                "the new hire"
-              ]
-            }
-          }
-        },
-        {
           "id": "spicy_07",
           "text": "I keep sending flirty Slack DMs to the client channel. The client keeps replying with {{client_reply}}.",
           "slots": {
@@ -873,6 +779,36 @@
             }
           }
         }
+      ],
+      "premade_symptoms": [
+        {
+          "id": "walkin_spicy_02",
+          "template_id": "spicy_02",
+          "slots": {
+            "comparison": "a croissant"
+          }
+        },
+        {
+          "id": "walkin_spicy_04",
+          "template_id": "spicy_04",
+          "slots": {
+            "embarrassing_activity": "moaning"
+          }
+        },
+        {
+          "id": "walkin_spicy_05",
+          "template_id": "spicy_05",
+          "slots": {
+            "innocent_activity": "assemble a KALLAX"
+          }
+        },
+        {
+          "id": "walkin_spicy_07",
+          "template_id": "spicy_07",
+          "slots": {
+            "client_reply": "a thumbs-up emoji"
+          }
+        }
       ]
     },
     {
@@ -880,25 +816,6 @@
       "name": "After hours: Questionable bedroom behavior",
       "risk_level": 5,
       "templates": [
-        {
-          "id": "after_hours_01",
-          "text": "I can't get in the mood unless my partner is wearing {{clothing}}.",
-          "slots": {
-            "clothing": {
-              "hint": "Clothing or an outfit",
-              "options": [
-                "a dinosaur costume",
-                "full scuba gear",
-                "a tuxedo",
-                "oven mitts",
-                "a hi-vis vest",
-                "a Santa suit",
-                "a wedding dress",
-                "a Viking helmet"
-              ]
-            }
-          }
-        },
         {
           "id": "after_hours_02",
           "text": "My partner and I tried {{position}}, and now we both need a chiropractor.",
@@ -954,6 +871,29 @@
                 "a pirate and a parrot"
               ]
             }
+          }
+        }
+      ],
+      "premade_symptoms": [
+        {
+          "id": "walkin_after_hours_02",
+          "template_id": "after_hours_02",
+          "slots": {
+            "position": "moving our piano"
+          }
+        },
+        {
+          "id": "walkin_after_hours_03",
+          "template_id": "after_hours_03",
+          "slots": {
+            "unsexy_thing": "SQL Queries"
+          }
+        },
+        {
+          "id": "walkin_after_hours_04",
+          "template_id": "after_hours_04",
+          "slots": {
+            "roleplay": "a pair of shopping carts"
           }
         }
       ]
