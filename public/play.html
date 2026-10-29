@@ -21,6 +21,87 @@
 
     [hidden] { display: none !important; }
 
+    /* Screens where players type start at the top of the page, so the phone keyboard covers as
+       little as possible. */
+    body[data-screen="symptom-form"],
+    body[data-screen="prescription-form"] {
+      align-items: flex-start;
+      padding-top: 8px;
+    }
+
+    /* Symptom form: tighter than the other screens, so the text fields sit high up. */
+    body[data-screen="symptom-form"] .card {
+      padding: 14px 14px 10px;
+    }
+
+    #symptom-form h1 {
+      margin-bottom: 8px;
+      font-size: 24px;
+      -webkit-text-stroke-width: 5px;
+    }
+
+    #symptom-form .symptom-text {
+      padding: 8px 12px;
+      font-size: 17px;
+      line-height: 1.35;
+      border-width: 3px;
+      border-radius: 14px;
+    }
+
+    #symptom-form .slot {
+      margin-top: 10px;
+    }
+
+    #symptom-form .slot label {
+      margin-bottom: 4px;
+      font-size: 15px;
+    }
+
+    #symptom-form .slot input {
+      padding: 7px 12px;
+      font-size: 17px;
+      border-width: 3px;
+      border-radius: 12px;
+    }
+
+    #symptom-form .chips {
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    #symptom-form .chips button {
+      padding: 4px 10px;
+      font-size: 14px;
+      border-width: 2px;
+    }
+
+    #symptom-form .chips .shuffle {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+    }
+
+    #symptom-form .chips .shuffle svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    #symptom-form .counter {
+      margin-top: 2px;
+    }
+
+    #symptom-form .row button {
+      margin-top: 8px;
+      padding: 9px;
+      font-size: 18px;
+      border-width: 3px;
+      box-shadow: 0 3px 0 var(--navy);
+    }
+
+    #symptom-form .link-button {
+      margin-top: 4px;
+    }
+
     .card {
       width: 100%;
       max-width: 420px;

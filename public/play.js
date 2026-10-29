@@ -53,6 +53,8 @@ async function request(url, method = "GET", body) {
 const api = (method, path, body) => request(`/api/players/${playerId}${path}`, method, body);
 
 function show(screenId) {
+  // Lets the page style itself per screen (e.g. top-aligned where the keyboard comes up).
+  document.body.dataset.screen = screenId;
   $("loading").hidden = true;
   for (const screen of document.querySelectorAll(".screen")) screen.hidden = screen.id !== screenId;
   for (const error of document.querySelectorAll(".error")) error.hidden = true;
