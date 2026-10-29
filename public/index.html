@@ -288,11 +288,16 @@
     .hall {
       position: fixed;
       left: 6vw;
-      top: calc((var(--logo-bottom) + 100vh - var(--players-bar)) / 2);
+      top: calc((var(--logo-bottom) + 100vh - var(--players-bar) - var(--candidates-height, 0px)) / 2);
       width: 54vw;
       font-size: 1.8vw;
       transform: translateY(-50%);
       transition: opacity 0.6s;
+    }
+
+    /* Smaller while the candidates strip takes up the bottom of the screen. */
+    body.has-candidates .hall {
+      font-size: 1.35vw;
     }
 
     .hall.fading {
@@ -382,6 +387,237 @@
     body.finals .join,
     body.reveal .join {
       bottom: 0.8vw;
+    }
+
+    /* Current finals candidates (pairs that have been shown often enough to count), above the
+       players bar and left of the bandage. Shows as many as fit, then fades to the next few. */
+    .candidates {
+      position: fixed;
+      left: 1.5vw;
+      right: 30vw;
+      bottom: calc(var(--players-bar) + 0.6vw);
+      display: none;
+      font-size: 0.78vw;
+      /* Bottom padding keeps the speech bubbles' tails inside the clipped area. */
+      padding-bottom: 1.2em;
+      overflow: hidden;
+    }
+
+    /* Only the cards fade between pages; the countdown ring stays put. */
+    .candidates-track {
+      transition: opacity 0.5s;
+    }
+
+    .candidates-track.fading {
+      opacity: 0;
+    }
+
+    /* Countdown ring to the next page of candidates, top-right of the strip. It only shows (and
+       only runs) when there's more than one page; each completed fill turns the page. */
+    .candidates-timer {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: none;
+      width: 1.5vw;
+      height: 1.5vw;
+      transform: rotate(-90deg);
+    }
+
+    .candidates.paging .candidates-timer {
+      display: block;
+    }
+
+    .candidates-timer circle {
+      fill: none;
+      stroke-width: 6;
+    }
+
+    .candidates-timer .track {
+      stroke: var(--navy);
+    }
+
+    .candidates-timer .progress {
+      stroke: #f8b84e;
+      stroke-dasharray: 100;
+      animation: candidates-timer var(--page-duration, 8s) linear infinite;
+    }
+
+    @keyframes candidates-timer {
+      from { stroke-dashoffset: 100; }
+      to   { stroke-dashoffset: 0; }
+    }
+
+    body.has-candidates .candidates {
+      display: block;
+    }
+
+    .candidates-group {
+      display: flex;
+      gap: 2em;
+    }
+
+    .candidate[hidden] {
+      display: none;
+    }
+
+    .candidate {
+      position: relative;
+      display: flex;
+      align-items: stretch;
+      flex: none;
+      /* Room above for the clip and the thumbs-up badge. */
+      padding-top: 2em;
+    }
+
+    .candidate .circle {
+      flex: none;
+      width: 5.4em;
+      height: 5.4em;
+      box-sizing: border-box;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      font-size: 1em;
+      font-weight: 700;
+      color: var(--navy);
+      border: 0.22em solid var(--navy);
+      border-radius: 50%;
+    }
+
+    .candidate .circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .candidate .who {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4em;
+      flex: none;
+      width: 6.4em;
+    }
+
+    .candidate .who span {
+      max-width: 100%;
+      font-size: 0.9em;
+      font-weight: 700;
+      line-height: 1.1;
+      text-align: center;
+      text-transform: uppercase;
+      overflow-wrap: anywhere;
+    }
+
+    /* The patient's complaint: a speech bubble with its tail at the bottom-left. */
+    .candidate .complaint {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 1em;
+      width: 22em;
+      box-sizing: border-box;
+      padding: 1em 1.2em;
+      background: var(--pad);
+      border: 0.22em solid var(--navy);
+      border-radius: 1.4em;
+    }
+
+    .candidate .complaint::after {
+      content: "";
+      position: absolute;
+      left: 1.6em;
+      bottom: -1.05em;
+      width: 1.3em;
+      height: 1.3em;
+      background: var(--pad);
+      border-right: 0.22em solid var(--navy);
+      border-bottom: 0.22em solid var(--navy);
+      transform: skewY(40deg) rotate(45deg);
+    }
+
+    .candidate .complaint .circle {
+      background: #f4897b;
+    }
+
+    .candidate .text {
+      margin: 0;
+      font-size: 1.2em;
+      font-weight: 700;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    /* The prescription on public/clipboard.png, used as a 9-slice frame: the corners and the clip
+       keep their shape and only the plain sides and paper stretch. The image is 1536px wide and
+       the board 20em, so 1px of the image = 20/1536 em; the slice sizes below follow from that.
+       The image has transparent margins (47px left, 150px above the frame, 89px below), so the
+       board is shifted to line its frame up with the speech bubble. */
+    .candidate .board {
+      display: flex;
+      width: 20em;
+      box-sizing: border-box;
+      margin: -1.95em 0 -1.16em -0.83em;
+      border-style: solid;
+      border-width: 3.125em 1.432em 1.875em;
+      border-image: url("/clipboard.png") 240 110 144 fill / 3.125em 1.432em 1.875em;
+    }
+
+    .candidate .paper {
+      display: flex;
+      align-items: center;
+      gap: 0.8em;
+      flex: 1;
+      padding: 0.2em 0.4em 0 0.3em;
+    }
+
+    .candidate .rx {
+      align-self: flex-start;
+      margin: 0;
+      font-size: 2.2em;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .candidate .paper .text {
+      flex: 1;
+      font-size: 1.1em;
+      font-weight: 500;
+    }
+
+    .candidate .board .circle {
+      background: #74e3b5;
+    }
+
+    /* Thumbs-up count, sitting on the seam between the bubble and the clipboard. */
+    .candidate .badge {
+      position: absolute;
+      /* Centred on the top edge of the bubble and clipboard (2em down the card, in badge em). */
+      top: calc(2em / 1.3);
+      transform: translate(-50%, -50%);
+      /* On the seam, 22em into the card. The badge's own text is 1.3× bigger, so its em is too. */
+      left: calc(22em / 1.3);
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.3em;
+      padding: 0.15em 0.7em 0.15em 0.5em;
+      font-size: 1.3em;
+      font-weight: 700;
+      line-height: 1.2;
+      background: #f4897b;
+      border: 0.18em solid var(--navy);
+      border-radius: 999px;
+    }
+
+    .candidate .badge svg {
+      width: 1.1em;
+      height: 1.1em;
+      fill: var(--white);
+      stroke: var(--navy);
+      stroke-width: 60;
+      paint-order: stroke fill;
     }
 
     /* Everyone who has joined, along the bottom. Scrolls sideways when they don't all fit. */
@@ -748,6 +984,14 @@
 
   <section class="reveal-view" id="reveal" aria-live="polite">
     <h2>Winner!</h2>
+  </section>
+
+  <section class="candidates" id="candidates" aria-label="Finals candidates">
+    <div class="candidates-track" id="candidates-track"></div>
+    <svg class="candidates-timer" viewBox="0 0 24 24" aria-hidden="true">
+      <circle class="track" cx="12" cy="12" r="9"/>
+      <circle class="progress" id="candidates-progress" cx="12" cy="12" r="9" pathLength="100"/>
+    </svg>
   </section>
 
   <section class="players" aria-label="Players">
@@ -1155,6 +1399,7 @@
         render(previous);
         renderPlayers(screen.players);
         fitPlayers();
+        renderCandidates(screen.candidates);
       } catch {
         // Keep showing what we have; try again on the next poll.
       }
@@ -1167,6 +1412,97 @@
     }, 1000);
     setInterval(refreshScreen, POLL_MS);
     setInterval(nextSlide, SLIDE_MS);
+
+    // ---------- Finals candidates ----------
+    // "thumb_up" icon from Google Material Symbols (Apache 2.0)
+    const THUMB_ICON = '<svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M860-632q23 0 41.5 18.5T920-572v82q0 11-2.5 25.5T910-439L794-171q-9 21-29.5 36T721-120H314q-25 0-42.5-17.5T254-180v-428q0-11 4.5-22t12.5-19l207-218q14-14 33.5-17t36.5 7q17 10 25.5 28t4.5 37l-38 180h320ZM137-120q-23 0-40-17t-17-40v-398q0-23 17-40t40-17q23 0 40 17t17 40v398q0 23-17 40t-40 17Z"/></svg>';
+    const candidatesStrip = document.getElementById("candidates");
+    const candidatesTrack = document.getElementById("candidates-track");
+    let shownCandidates = "";
+
+    function circle(avatar, fallback) {
+      const node = el("div", "circle");
+      if (avatar) {
+        const img = el("img", "");
+        img.src = `/avatars/${avatar}.png`;
+        img.alt = "";
+        node.append(img);
+      } else {
+        node.textContent = fallback;
+      }
+      return node;
+    }
+
+    function candidateElement(entry) {
+      const card = el("div", "candidate");
+
+      const patient = el("div", "who");
+      patient.append(
+        circle(entry.patientAvatar, "?"),
+        el("span", "", entry.patientAvatar ? `Patient ${entry.patient}` : entry.patient),
+      );
+      const complaint = el("div", "complaint");
+      complaint.append(patient, el("p", "text", entry.symptom));
+
+      const doctor = el("div", "who");
+      doctor.append(circle(entry.doctor.avatar), el("span", "", entry.doctor.name));
+      const paper = el("div", "paper");
+      paper.append(el("p", "rx", "℞"), el("p", "text", entry.prescription), doctor);
+      const board = el("div", "board");
+      board.append(paper);
+
+      const badge = el("div", "badge");
+      badge.innerHTML = THUMB_ICON;
+      badge.append(String(entry.thumbsUp));
+
+      card.append(complaint, board, badge);
+      return card;
+    }
+
+    function renderCandidates(candidates) {
+      const visible = screen.state.phase !== "finals" && !document.body.classList.contains("reveal") && candidates.length > 0;
+      document.body.classList.toggle("has-candidates", visible);
+
+      const key = JSON.stringify(candidates);
+      if (key !== shownCandidates) {
+        shownCandidates = key;
+        const group = el("div", "candidates-group");
+        group.append(...candidates.map(candidateElement));
+        candidatesTrack.replaceChildren(group);
+      }
+      showCandidatePage();
+      // Tell the Hall of Fame how much room the strip takes.
+      document.documentElement.style.setProperty("--candidates-height", visible ? `${candidatesStrip.offsetHeight}px` : "0px");
+    }
+
+    // Pages of as many whole cards as fit side by side; a new page every few seconds.
+    const CANDIDATE_PAGE_MS = 8 * 1000;
+    let candidatePage = 0;
+
+    function showCandidatePage() {
+      const cards = [...candidatesTrack.querySelectorAll(".candidate")];
+      if (!cards.length) return;
+      // All cards are the same width, so measure one to see how many fit.
+      cards[0].hidden = false;
+      const gap = parseFloat(getComputedStyle(cards[0].parentElement).columnGap) || 0;
+      const perPage = Math.max(1, Math.floor((candidatesStrip.clientWidth + gap) / (cards[0].offsetWidth + gap)));
+      const pages = Math.ceil(cards.length / perPage);
+      candidatePage %= pages;
+      cards.forEach((card, i) => (card.hidden = Math.floor(i / perPage) !== candidatePage));
+      candidatesStrip.classList.toggle("paging", pages > 1);
+      return pages;
+    }
+
+    // The countdown ring sets the pace: every time it fills up, fade to the next page.
+    candidatesStrip.style.setProperty("--page-duration", `${CANDIDATE_PAGE_MS}ms`);
+    document.getElementById("candidates-progress").addEventListener("animationiteration", () => {
+      candidatesTrack.classList.add("fading");
+      setTimeout(() => {
+        candidatePage++;
+        showCandidatePage();
+        candidatesTrack.classList.remove("fading");
+      }, 500);
+    });
 
     // ---------- Players bar ----------
     const playersTrack = document.getElementById("players-track");
@@ -1190,34 +1526,41 @@
         const avatar = el("img", "");
         avatar.src = `/avatars/${player.avatar}.png`;
         avatar.alt = "";
-        card.append(avatar, el("span", "", `Dr. ${player.nickname}`));
+        card.append(avatar, el("span", "", player.nickname));
         group.append(card);
       }
       playersTrack.replaceChildren(group);
       fitPlayers();
     }
 
-    // Too many to fit: add a second copy and scroll, about 1.5 seconds per player. Checked again
-    // whenever the bar may have changed size, since a hidden bar (finals, reveal) measures as 0.
     function fitPlayers() {
-      const group = playersTrack.querySelector(".players-group");
-      const available = playersTrack.parentElement.clientWidth;
+      fitMarquee(playersTrack, "players-group", 1.5);
+    }
+
+    // Too many items to fit: add a second copy and scroll, secondsPerItem per item. Checked again
+    // whenever a strip may have changed size, since a hidden strip (finals, reveal) measures as 0.
+    function fitMarquee(track, groupClass, secondsPerItem) {
+      const group = track.querySelector(`.${groupClass}`);
+      const available = track.parentElement.clientWidth;
       if (!group || !available) return;
       const overflows = group.scrollWidth > available;
-      if (overflows === playersTrack.classList.contains("scrolling")) return;
+      if (overflows === track.classList.contains("scrolling")) return;
 
-      playersTrack.classList.toggle("scrolling", overflows);
+      track.classList.toggle("scrolling", overflows);
       if (overflows) {
         const copy = group.cloneNode(true);
         copy.setAttribute("aria-hidden", "true");
-        playersTrack.append(copy);
-        playersTrack.style.setProperty("--scroll-duration", `${group.children.length * 1.5}s`);
+        track.append(copy);
+        track.style.setProperty("--scroll-duration", `${group.children.length * secondsPerItem}s`);
       } else {
-        playersTrack.replaceChildren(group);
+        track.replaceChildren(group);
       }
     }
 
-    window.addEventListener("resize", fitPlayers);
+    window.addEventListener("resize", () => {
+      fitPlayers();
+      if (screen) renderCandidates(screen.candidates);
+    });
 
     refreshScreen();
   </script>

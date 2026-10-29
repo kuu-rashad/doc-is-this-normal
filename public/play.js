@@ -130,7 +130,7 @@ async function refreshState() {
 function renderHome() {
   if (!player || !state) return;
   $("me-avatar").src = `/avatars/${player.avatar}.png`;
-  $("me-name").textContent = `Dr. ${player.nickname}`;
+  $("me-name").textContent = player.nickname;
   $("phase-name").textContent = PHASE_NAMES[state.phase];
   for (const button of document.querySelectorAll("[data-phase]")) button.hidden = button.dataset.phase !== state.phase;
   renderTimer();

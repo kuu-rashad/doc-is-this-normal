@@ -5,6 +5,8 @@ const AVATARS = ["blue", "brown", "green", "lime", "orange", "pink", "purple", "
 const MAX_NICKNAME_LENGTH = 16;
 const LIMITS = config.limits;
 const MINUTE = 60 * 1000;
+// How many of the current finals candidates the big screen lists.
+const MAX_CANDIDATES_SHOWN = 12;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const TEMPLATES = new Map(
@@ -24,6 +26,7 @@ function cleanText(value) {
   return String(value ?? "").trim().replace(/\s+/g, " ");
 }
 
+// Players are only "Dr." when they're the one behind a prescription.
 function doctorName(nickname) {
   return `Dr. ${nickname}`;
 }
@@ -269,17 +272,20 @@ export class Game extends DurableObject {
 
   // Each symptom is ranked by its best prescription (approval rate, with enough appearances to
   // count); the top symptoms become the finalists.
-  pickFinalists() {
+  // Every symptom whose best prescription has been shown often enough to count, ranked the same
+  // way the finalists are picked. The top ones become the finalists.
+  rankCandidates() {
     const best = new Map();
     for (const row of this.prescriptionStats()) {
       if (row.shown < config.finalists.min_appearances) continue;
       const current = best.get(row.symptom_id);
       if (!current || Game.compareStats(row, current) < 0) best.set(row.symptom_id, row);
     }
-    return [...best.values()]
-      .sort(Game.compareStats)
-      .slice(0, config.finalists.count)
-      .map((row) => this.toEntry(row));
+    return [...best.values()].sort(Game.compareStats);
+  }
+
+  pickFinalists() {
+    return this.rankCandidates().slice(0, config.finalists.count).map((row) => this.toEntry(row));
   }
 
   toEntry(row) {
@@ -290,7 +296,10 @@ export class Game extends DurableObject {
       approval: row.approval,
       symptom: row.symptom,
       prescription: row.text,
-      patient: patient ? doctorName(patient.nickname) : config.premade_patient_name,
+      patient: patient ? patient.nickname : config.premade_patient_name,
+      // Premade symptoms have no patient avatar.
+      patientAvatar: patient?.avatar ?? null,
+      thumbsUp: row.ups,
       doctor: { name: doctor ? doctorName(doctor.nickname) : "", avatar: doctor?.avatar ?? AVATARS[0] },
     };
   }
@@ -333,8 +342,11 @@ export class Game extends DurableObject {
 
   // Everything the big screen needs in one request.
   getScreen() {
+    const state = this.publicState();
+    const candidates = state.phase === "finals" ? [] : this.rankCandidates().slice(0, MAX_CANDIDATES_SHOWN);
     return {
-      state: this.publicState(),
+      state,
+      candidates: candidates.map((row) => this.toEntry(row)),
       hallOfFame: this.sql.exec("SELECT entry FROM hall_of_fame ORDER BY id DESC").toArray().map((row) => JSON.parse(row.entry)),
       players: this.sql.exec("SELECT nickname, avatar FROM players ORDER BY rowid").toArray(),
     };
@@ -349,7 +361,7 @@ export class Game extends DurableObject {
   savePlayer({ playerId, body: { nickname, avatar } }) {
     const key = nickname.toLowerCase();
     if (this.one("SELECT 1 FROM players WHERE nickname_key = ? AND id != ?", key, playerId)) {
-      throw new HttpError(409, `Dr. ${nickname} is already in the game. Pick another name!`);
+      throw new HttpError(409, `${nickname} is already in the game. Pick another name!`);
     }
     this.sql.exec(
       `INSERT INTO players (id, nickname, nickname_key, avatar) VALUES (?, ?, ?, ?)
@@ -604,8 +616,7 @@ async function checkAdmin(request, env) {
 }
 
 function cleanPlayer(body) {
-  // Every name is shown as "Dr. <nickname>", so drop a "Dr." the player typed themselves.
-  const nickname = cleanText(body?.nickname).replace(/^dr(\.\s*|\s+)/i, "");
+  const nickname = cleanText(body?.nickname);
   const avatar = body?.avatar;
 
   if (nickname.length < 1 || nickname.length > MAX_NICKNAME_LENGTH) {
