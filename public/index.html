@@ -394,22 +394,33 @@
     }
 
     /* Default view: Hall of Fame carousel, kept clear of the bandage in the corner. */
-    .hall {
+    /* This round's leaders: the current finals candidates, one at a time, centred between the
+       logo and the Hall of Fame strip. */
+    .leaders {
       position: fixed;
       left: 6vw;
-      top: calc((var(--logo-bottom) + 100vh - var(--players-bar) - var(--candidates-height, 0px)) / 2);
+      top: calc((var(--logo-bottom) + 100vh - var(--players-bar) - var(--fame-height, 0px)) / 2);
       width: 54vw;
-      font-size: 1.8vw;
+      font-size: 1.35vw;
       transform: translateY(-50%);
+    }
+
+    .leaders h2 {
+      margin: 0 0 0.5em;
+      font-size: 1.5em;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--white);
+      -webkit-text-stroke: 0.2em var(--navy);
+      paint-order: stroke fill;
+    }
+
+    /* Only the slide fades between leaders; the heading stays. */
+    .leaders-slide {
       transition: opacity 0.6s;
     }
 
-    /* Smaller while the candidates strip takes up the bottom of the screen. */
-    body.has-candidates .hall {
-      font-size: 1.35vw;
-    }
-
-    .hall.fading {
+    .leaders-slide.fading {
       opacity: 0;
     }
 
@@ -479,11 +490,13 @@
       font-size: 1.9vw;
     }
 
-    body.finals .hall,
+    body.finals .leaders,
     body.finals .players,
+    body.finals .fame,
     body.finals .side,
-    body.reveal .hall,
-    body.reveal .players {
+    body.reveal .leaders,
+    body.reveal .players,
+    body.reveal .fame {
       display: none;
     }
 
@@ -498,14 +511,13 @@
       bottom: 0.8vw;
     }
 
-    /* Current finals candidates (pairs that have been shown often enough to count), above the
-       players bar and left of the bandage. Shows as many as fit, then fades to the next few. */
-    .candidates {
+    /* Hall of Fame: past winners, above the players bar and left of the bandage. Shows as many as
+       fit, then fades to the next few. */
+    .fame {
       position: fixed;
       left: 1.5vw;
       right: 30vw;
       bottom: calc(var(--players-bar) + 0.6vw);
-      display: none;
       font-size: 0.78vw;
       /* Bottom padding keeps the speech bubbles' tails inside the clipped area. */
       padding-bottom: 1.2em;
@@ -513,17 +525,17 @@
     }
 
     /* Only the cards fade between pages; the countdown ring stays put. */
-    .candidates-track {
+    .fame-track {
       transition: opacity 0.5s;
     }
 
-    .candidates-track.fading {
+    .fame-track.fading {
       opacity: 0;
     }
 
-    /* Countdown ring to the next page of candidates, top-right of the strip. It only shows (and
+    /* Countdown ring to the next page of winners, top-right of the strip. It only shows (and
        only runs) when there's more than one page; each completed fill turns the page. */
-    .candidates-timer {
+    .fame-timer {
       position: absolute;
       top: 0;
       right: 0;
@@ -533,44 +545,50 @@
       transform: rotate(-90deg);
     }
 
-    .candidates.paging .candidates-timer {
+    .fame.paging .fame-timer {
       display: block;
     }
 
-    .candidates-timer circle {
+    .fame-timer circle {
       fill: none;
       stroke-width: 6;
     }
 
-    .candidates-timer .track {
+    .fame-timer .track {
       stroke: var(--navy);
     }
 
-    .candidates-timer .progress {
+    .fame-timer .progress {
       stroke: #f8b84e;
       stroke-dasharray: 100;
-      animation: candidates-timer var(--page-duration, 8s) linear infinite;
+      animation: fame-timer var(--page-duration, 8s) linear infinite;
     }
 
-    @keyframes candidates-timer {
+    @keyframes fame-timer {
       from { stroke-dashoffset: 100; }
       to   { stroke-dashoffset: 0; }
     }
 
-    body.has-candidates .candidates {
-      display: block;
+    .fame-empty {
+      margin: 0;
+      padding: 0.6vw 1.2vw;
+      font-size: 1.4vw;
+      font-weight: 700;
+      color: var(--white);
+      -webkit-text-stroke: 0.25vw var(--navy);
+      paint-order: stroke fill;
     }
 
-    .candidates-group {
+    .fame-group {
       display: flex;
       gap: 2em;
     }
 
-    .candidate[hidden] {
+    .fame-card[hidden] {
       display: none;
     }
 
-    .candidate {
+    .fame-card {
       position: relative;
       display: flex;
       align-items: stretch;
@@ -579,7 +597,7 @@
       padding-top: 2em;
     }
 
-    .candidate .circle {
+    .fame-card .circle {
       flex: none;
       width: 5.4em;
       height: 5.4em;
@@ -594,13 +612,13 @@
       border-radius: 50%;
     }
 
-    .candidate .circle img {
+    .fame-card .circle img {
       width: 100%;
       height: 100%;
       object-fit: contain;
     }
 
-    .candidate .who {
+    .fame-card .who {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -609,7 +627,7 @@
       width: 6.4em;
     }
 
-    .candidate .who span {
+    .fame-card .who span {
       max-width: 100%;
       font-size: 0.9em;
       font-weight: 700;
@@ -620,7 +638,7 @@
     }
 
     /* The patient's complaint: a speech bubble with its tail at the bottom-left. */
-    .candidate .complaint {
+    .fame-card .complaint {
       position: relative;
       display: flex;
       align-items: center;
@@ -633,7 +651,7 @@
       border-radius: 1.4em;
     }
 
-    .candidate .complaint::after {
+    .fame-card .complaint::after {
       content: "";
       position: absolute;
       left: 1.6em;
@@ -646,11 +664,11 @@
       transform: skewY(40deg) rotate(45deg);
     }
 
-    .candidate .complaint .circle {
+    .fame-card .complaint .circle {
       background: #f4897b;
     }
 
-    .candidate .text {
+    .fame-card .text {
       margin: 0;
       font-size: 1.2em;
       font-weight: 700;
@@ -663,7 +681,7 @@
        the board 20em, so 1px of the image = 20/1536 em; the slice sizes below follow from that.
        The image has transparent margins (47px left, 150px above the frame, 89px below), so the
        board is shifted to line its frame up with the speech bubble. */
-    .candidate .board {
+    .fame-card .board {
       display: flex;
       width: 20em;
       box-sizing: border-box;
@@ -673,7 +691,7 @@
       border-image: url("/clipboard.png") 240 110 144 fill / 3.125em 1.432em 1.875em;
     }
 
-    .candidate .paper {
+    .fame-card .paper {
       display: flex;
       align-items: center;
       gap: 0.8em;
@@ -681,7 +699,7 @@
       padding: 0.2em 0.4em 0 0.3em;
     }
 
-    .candidate .rx {
+    .fame-card .rx {
       align-self: flex-start;
       margin: 0;
       font-size: 2.2em;
@@ -689,18 +707,18 @@
       line-height: 1;
     }
 
-    .candidate .paper .text {
+    .fame-card .paper .text {
       flex: 1;
       font-size: 1.1em;
       font-weight: 500;
     }
 
-    .candidate .board .circle {
+    .fame-card .board .circle {
       background: #74e3b5;
     }
 
     /* Thumbs-up count, sitting on the seam between the bubble and the clipboard. */
-    .candidate .badge {
+    .fame-card .badge {
       position: absolute;
       /* Centred on the top edge of the bubble and clipboard (2em down the card, in badge em). */
       top: calc(2em / 1.3);
@@ -720,7 +738,7 @@
       border-radius: 999px;
     }
 
-    .candidate .badge svg {
+    .fame-card .badge svg {
       width: 1.1em;
       height: 1.1em;
       fill: var(--white);
@@ -1141,8 +1159,11 @@
     </section>
   </aside>
 
-  <section class="hall" id="hall" aria-live="polite">
-    <p class="waiting">Waiting for the first diagnosis…</p>
+  <section class="leaders" id="leaders">
+    <h2>This round's leaders</h2>
+    <div class="leaders-slide" id="leaders-slide" aria-live="polite">
+      <p class="waiting">Waiting for the first diagnosis…</p>
+    </div>
   </section>
 
   <section class="finals-view" aria-live="polite">
@@ -1155,11 +1176,11 @@
     <h2>Winner!</h2>
   </section>
 
-  <section class="candidates" id="candidates" aria-label="Finals candidates">
-    <div class="candidates-track" id="candidates-track"></div>
-    <svg class="candidates-timer" viewBox="0 0 24 24" aria-hidden="true">
+  <section class="fame" id="fame" aria-label="Hall of Fame">
+    <div class="fame-track" id="fame-track"></div>
+    <svg class="fame-timer" viewBox="0 0 24 24" aria-hidden="true">
       <circle class="track" cx="12" cy="12" r="9"/>
-      <circle class="progress" id="candidates-progress" cx="12" cy="12" r="9" pathLength="100"/>
+      <circle class="progress" id="fame-progress" cx="12" cy="12" r="9" pathLength="100"/>
     </svg>
   </section>
 
@@ -1458,10 +1479,10 @@
     const SLIDE_MS = 10 * 1000;
     const PHASE_NAMES = { clinic_open: "Clinic open", second_opinions: "Second opinions", finals: "Finals" };
     const NEXT_PHASE_NAMES = { clinic_open: "Second opinions", second_opinions: "Finals", finals: "the reveal" };
-    const hall = document.getElementById("hall");
+    const leadersSlide = document.getElementById("leaders-slide");
     let screen = null;
     let clockOffset = 0;
-    let hallIndex = 0;
+    let leaderIndex = 0;
     let shownFinalists = "";
     let shownReveal = "";
 
@@ -1502,21 +1523,22 @@
       document.getElementById("finals-countdown").textContent = formatTime(left);
     }
 
-    function renderHall() {
-      const entries = screen?.hallOfFame ?? [];
-      hallIndex = entries.length ? hallIndex % entries.length : 0;
-      if (!entries.length) hall.replaceChildren(el("p", "waiting", "Waiting for the first diagnosis…"));
-      else hall.replaceChildren(pairElement(entries[hallIndex]));
+    // This round's leaders (the current finals candidates, best first), one at a time.
+    function renderLeaders() {
+      const entries = screen?.candidates ?? [];
+      leaderIndex = entries.length ? leaderIndex % entries.length : 0;
+      if (!entries.length) leadersSlide.replaceChildren(el("p", "waiting", "Waiting for the first diagnosis…"));
+      else leadersSlide.replaceChildren(pairElement(entries[leaderIndex]));
     }
 
-    function nextSlide() {
-      const entries = screen?.hallOfFame ?? [];
+    function nextLeader() {
+      const entries = screen?.candidates ?? [];
       if (entries.length < 2) return;
-      hall.classList.add("fading");
+      leadersSlide.classList.add("fading");
       setTimeout(() => {
-        hallIndex = (hallIndex + 1) % entries.length;
-        renderHall();
-        hall.classList.remove("fading");
+        leaderIndex = (leaderIndex + 1) % entries.length;
+        renderLeaders();
+        leadersSlide.classList.remove("fading");
       }, 600);
     }
 
@@ -1549,7 +1571,7 @@
         reveal.replaceChildren(el("h2", "", "Winner!"));
         if (state.reveal) reveal.append(pairElement(state.reveal));
       }
-      renderHall();
+      renderLeaders();
       renderTimers();
 
       // The chime marks the shared moments: the finals starting, and the winner being revealed.
@@ -1570,7 +1592,7 @@
         render(previous);
         renderPlayers(screen.players);
         fitPlayers();
-        renderCandidates(screen.candidates);
+        renderFame(screen.hallOfFame);
         renderLeaderboard(screen.leaderboard);
         renderRules(screen.scoring);
       } catch {
@@ -1584,14 +1606,14 @@
       if (screen && Date.now() + clockOffset > screen.state.phaseEndsAt + 1000) refreshScreen();
     }, 1000);
     setInterval(refreshScreen, POLL_MS);
-    setInterval(nextSlide, SLIDE_MS);
+    setInterval(nextLeader, SLIDE_MS);
 
-    // ---------- Finals candidates ----------
+    // ---------- Hall of Fame strip ----------
     // "thumb_up" icon from Google Material Symbols (Apache 2.0)
     const THUMB_ICON = '<svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M860-632q23 0 41.5 18.5T920-572v82q0 11-2.5 25.5T910-439L794-171q-9 21-29.5 36T721-120H314q-25 0-42.5-17.5T254-180v-428q0-11 4.5-22t12.5-19l207-218q14-14 33.5-17t36.5 7q17 10 25.5 28t4.5 37l-38 180h320ZM137-120q-23 0-40-17t-17-40v-398q0-23 17-40t40-17q23 0 40 17t17 40v398q0 23-17 40t-40 17Z"/></svg>';
-    const candidatesStrip = document.getElementById("candidates");
-    const candidatesTrack = document.getElementById("candidates-track");
-    let shownCandidates = "";
+    const fameStrip = document.getElementById("fame");
+    const fameTrack = document.getElementById("fame-track");
+    let shownFame = "";
 
     function circle(avatar, fallback) {
       const node = el("div", "circle");
@@ -1606,8 +1628,10 @@
       return node;
     }
 
-    function candidateElement(entry) {
-      const card = el("div", "candidate");
+    // A winning pair as a card: the complaint as a speech bubble, the prescription on a clipboard,
+    // and its thumbs-up count on the seam.
+    function fameCardElement(entry) {
+      const card = el("div", "fame-card");
 
       const patient = el("div", "who");
       patient.append(
@@ -1626,54 +1650,60 @@
 
       const badge = el("div", "badge");
       badge.innerHTML = THUMB_ICON;
-      badge.append(String(entry.thumbsUp));
+      badge.append(String(entry.thumbsUp ?? 0));
 
       card.append(complaint, board, badge);
       return card;
     }
 
-    function renderCandidates(candidates) {
-      const visible = screen.state.phase !== "finals" && !document.body.classList.contains("reveal") && candidates.length > 0;
-      document.body.classList.toggle("has-candidates", visible);
-
-      const key = JSON.stringify(candidates);
-      if (key !== shownCandidates) {
-        shownCandidates = key;
-        const group = el("div", "candidates-group");
-        group.append(...candidates.map(candidateElement));
-        candidatesTrack.replaceChildren(group);
+    // Shown in the default view whether or not anyone has won yet; the players bar and this strip
+    // are hidden during the finals and the reveal (see the body.finals / body.reveal rules).
+    function renderFame(entries) {
+      const key = JSON.stringify(entries);
+      if (key !== shownFame) {
+        shownFame = key;
+        if (!entries.length) {
+          fameTrack.replaceChildren(el("p", "fame-empty", "Hall of Fame: no winners yet"));
+        } else {
+          const group = el("div", "fame-group");
+          group.append(...entries.map(fameCardElement));
+          fameTrack.replaceChildren(group);
+        }
       }
-      showCandidatePage();
-      // Tell the Hall of Fame how much room the strip takes.
-      document.documentElement.style.setProperty("--candidates-height", visible ? `${candidatesStrip.offsetHeight}px` : "0px");
+      showFamePage();
+      // Tell the leaders area how much room the strip takes.
+      document.documentElement.style.setProperty("--fame-height", `${fameStrip.offsetHeight}px`);
     }
 
     // Pages of as many whole cards as fit side by side; a new page every few seconds.
-    const CANDIDATE_PAGE_MS = 8 * 1000;
-    let candidatePage = 0;
+    const FAME_PAGE_MS = 8 * 1000;
+    let famePage = 0;
 
-    function showCandidatePage() {
-      const cards = [...candidatesTrack.querySelectorAll(".candidate")];
-      if (!cards.length) return;
+    function showFamePage() {
+      const cards = [...fameTrack.querySelectorAll(".fame-card")];
+      if (!cards.length) {
+        fameStrip.classList.remove("paging");
+        return 0;
+      }
       // All cards are the same width, so measure one to see how many fit.
       cards[0].hidden = false;
       const gap = parseFloat(getComputedStyle(cards[0].parentElement).columnGap) || 0;
-      const perPage = Math.max(1, Math.floor((candidatesStrip.clientWidth + gap) / (cards[0].offsetWidth + gap)));
+      const perPage = Math.max(1, Math.floor((fameStrip.clientWidth + gap) / (cards[0].offsetWidth + gap)));
       const pages = Math.ceil(cards.length / perPage);
-      candidatePage %= pages;
-      cards.forEach((card, i) => (card.hidden = Math.floor(i / perPage) !== candidatePage));
-      candidatesStrip.classList.toggle("paging", pages > 1);
+      famePage %= pages;
+      cards.forEach((card, i) => (card.hidden = Math.floor(i / perPage) !== famePage));
+      fameStrip.classList.toggle("paging", pages > 1);
       return pages;
     }
 
     // The countdown ring sets the pace: every time it fills up, fade to the next page.
-    candidatesStrip.style.setProperty("--page-duration", `${CANDIDATE_PAGE_MS}ms`);
-    document.getElementById("candidates-progress").addEventListener("animationiteration", () => {
-      candidatesTrack.classList.add("fading");
+    fameStrip.style.setProperty("--page-duration", `${FAME_PAGE_MS}ms`);
+    document.getElementById("fame-progress").addEventListener("animationiteration", () => {
+      fameTrack.classList.add("fading");
       setTimeout(() => {
-        candidatePage++;
-        showCandidatePage();
-        candidatesTrack.classList.remove("fading");
+        famePage++;
+        showFamePage();
+        fameTrack.classList.remove("fading");
       }, 500);
     });
 
@@ -1779,7 +1809,7 @@
 
     window.addEventListener("resize", () => {
       fitPlayers();
-      if (screen) renderCandidates(screen.candidates);
+      if (screen) renderFame(screen.hallOfFame);
     });
 
     refreshScreen();

@@ -1,7 +1,10 @@
 import { DurableObject } from "cloudflare:workers";
 import config from "../assets/gameconfig.json";
 
-const AVATARS = ["blue", "brown", "green", "lime", "orange", "pink", "purple", "red", "yellow"];
+const AVATARS = [
+  "blue", "brown", "green", "lime", "orange", "pink", "purple", "red", "yellow",
+  "green_patient", "purple_patient", "yellow_patient",
+];
 const MAX_NICKNAME_LENGTH = 16;
 const LIMITS = config.limits;
 const MINUTE = 60 * 1000;

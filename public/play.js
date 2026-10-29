@@ -1,4 +1,7 @@
-const AVATARS = ["blue", "brown", "green", "lime", "orange", "pink", "purple", "red", "yellow"];
+const AVATARS = [
+  "blue", "brown", "green", "lime", "orange", "pink", "purple", "red", "yellow",
+  "green_patient", "purple_patient", "yellow_patient",
+];
 const SLOT_LIMIT = 40;
 const SYMPTOM_LIMIT = 160;
 const PRESCRIPTION_LIMIT = 120;
@@ -93,7 +96,7 @@ function showJoinForm() {
   // Fresh random avatar order every time the form is shown.
   $("avatars").innerHTML = shuffle(AVATARS).map((name) => `
     <input type="radio" name="avatar" id="avatar-${name}" value="${name}">
-    <label for="avatar-${name}"><img src="/avatars/${name}.png" alt="${name} avatar"></label>
+    <label for="avatar-${name}"><img src="/avatars/${name}.png" alt="${name.replace("_", " ")} avatar"></label>
   `).join("");
   nicknameInput.value = player?.nickname ?? "";
   joinForm.avatar.value = player?.avatar ?? "";
