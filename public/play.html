@@ -143,36 +143,38 @@
       border-radius: 4px 12px 12px 4px;
     }
 
-    /* The prescription sentence, with a dice button for another wording: at the right edge on
-       one line, in the bottom-right corner when the sentence wraps. */
+    /* The prescription sentence, with a dice button for another wording just outside it on the
+       right, lined up with the top of the box. */
     .rx-frame {
-      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
       margin-top: 12px;
     }
 
     .rx-frame .symptom-text {
-      padding-right: 48px;
+      flex: 1;
+      min-width: 0;
     }
 
     .rx-frame .reroll {
-      position: absolute;
-      right: 7px;
-      bottom: 6px;
+      flex: none;
       display: grid;
       place-items: center;
-      width: 32px;
-      height: 32px;
+      /* Same height as a one-line sentence box. */
+      width: 48px;
+      height: 48px;
       margin: 0;
       padding: 0;
       background: var(--bandage);
-      border-width: 2px;
-      border-radius: 9px;
-      box-shadow: none;
+      border-width: 3px;
+      border-radius: 12px;
+      box-shadow: 0 3px 0 var(--navy);
     }
 
     .rx-frame .reroll svg {
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       fill: currentColor;
     }
 
