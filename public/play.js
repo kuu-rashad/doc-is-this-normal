@@ -186,7 +186,7 @@ $("home-edit").addEventListener("click", () => showJoinForm());
 
 // A template sentence with a text field per blank. The sentence fills in as the player types,
 // and each blank offers a few suggestions from its pool, with a button to draw new ones.
-function createFillIn({ preview, slots, idPrefix, limit, counter, onChange, showHints = true }) {
+function createFillIn({ preview, slots, idPrefix, limit, counter, onChange }) {
   let template = null;
   const input = (key) => $(`${idPrefix}-${key}`);
 
@@ -256,14 +256,8 @@ function createFillIn({ preview, slots, idPrefix, limit, counter, onChange, show
       box.id = `${idPrefix}-${key}`;
       box.maxLength = SLOT_LIMIT;
       box.autocomplete = "off";
-      if (showHints) {
-        const label = document.createElement("label");
-        label.htmlFor = box.id;
-        label.textContent = slot.hint;
-        field.append(label);
-      } else {
-        box.setAttribute("aria-label", slot.hint);
-      }
+      // No hint: players write whatever they like.
+      box.setAttribute("aria-label", "Fill in the blank");
       field.append(box);
       if (CHIPS_PER_SLOT > 0) {
         const chips = document.createElement("div");
@@ -339,7 +333,6 @@ const prescriptionFill = createFillIn({
   slots: $("rx-slots"),
   idPrefix: "rx-slot",
   limit: PRESCRIPTION_LIMIT,
-  showHints: false,
   counter: $("prescription-counter"),
   onChange: (ready) => {
     if (!writingOwn) $("prescription-submit").disabled = !ready;

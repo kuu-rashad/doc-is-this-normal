@@ -28,16 +28,8 @@ function fillTemplate(template, slots) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-// Prescription frames, each blank with its options taken from the shared pool it names.
-const PRESCRIPTION_TEMPLATES = new Map(
-  config.prescriptions.templates.map((template) => [template.id, {
-    ...template,
-    slots: Object.fromEntries(Object.entries(template.slots).map(([key, slot]) => [
-      key,
-      { hint: slot.hint, options: config.prescriptions.pools[slot.pool] ?? [] },
-    ])),
-  }]),
-);
+// Prescription frames; like symptom templates, each blank lists its own "Surprise me" options.
+const PRESCRIPTION_TEMPLATES = new Map(config.prescriptions.templates.map((template) => [template.id, template]));
 
 // Two prescriptions count as the same if they match ignoring case, spacing and punctuation.
 function sameTextKey(text) {
@@ -374,8 +366,10 @@ export class DocGame extends DurableObject {
       symptom: row.symptom,
       prescription: row.text,
       patient: patient ? patient.nickname : config.premade_patient_name,
-      // Premade symptoms have no patient avatar.
-      patientAvatar: patient?.avatar ?? null,
+      // Premade (walk-in) symptoms have no player behind them; they get their own avatar,
+      // which players can't pick.
+      walkIn: !patient,
+      patientAvatar: patient ? patient.avatar : config.premade_patient_avatar,
       wins: row.wins,
       doctor: { name: doctor ? doctorName(doctor.nickname) : "", avatar: doctor?.avatar ?? AVATARS[0] },
     };

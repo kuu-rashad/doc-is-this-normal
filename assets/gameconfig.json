@@ -2,6 +2,7 @@
   "game_title": "Doc, is this normal?",
   "placeholder_format": "{{slot_id}}",
   "premade_patient_name": "Walk-in Patient",
+  "premade_patient_avatar": "walk_in_patient",
   "timing_minutes": {
     "first_clinic_open": 45,
     "clinic_open": 30,
@@ -31,15 +32,50 @@
     ]
   },
   "prescriptions": {
-    "_about": "Fill-in-the-blank prescriptions. Each blank names a pool. A pool can be shared by several frames (every fill must then fit all of them) or written for just one frame, so its fills can give that frame a second meaning.",
+    "_about": "Fill-in-the-blank prescriptions. Each frame has one blank and its own Surprise me options.",
     "templates": [
       {
         "id": "rx_01",
         "text": "Sounds like you need {{cure}}.",
         "slots": {
           "cure": {
-            "hint": "A cure",
-            "pool": "things"
+            "options": [
+              "a strongly worded email",
+              "two business days off",
+              "an exorcism",
+              "a nap under your desk",
+              "a hug from HR",
+              "more cowbell",
+              "a decaf intervention",
+              "less eye contact with the printer",
+              "a sabbatical in Lapland",
+              "a fax machine",
+              "a goat",
+              "emotional support pigeons",
+              "a bigger monitor",
+              "leeches",
+              "a mute button for your whole life",
+              "three espressos",
+              "a sauna and a long silence",
+              "a team-building retreat",
+              "a Jira ticket",
+              "a second opinion from the intern",
+              "a vacation from your own brain",
+              "a note excusing you from Mondays",
+              "duct tape",
+              "a priest",
+              "a raise",
+              "a new personality",
+              "bubble wrap",
+              "a rubber duck",
+              "a weighted blanket and a lawyer",
+              "a stern talking-to",
+              "airplane mode",
+              "ice cream for dinner",
+              "an emotional support houseplant",
+              "more sleep and fewer opinions",
+              "a spreadsheet about your feelings"
+            ]
           }
         }
       },
@@ -48,8 +84,43 @@
         "text": "{{cure}} should do it.",
         "slots": {
           "cure": {
-            "hint": "A cure",
-            "pool": "things"
+            "options": [
+              "a strongly worded email",
+              "two business days off",
+              "an exorcism",
+              "a nap under your desk",
+              "a hug from HR",
+              "more cowbell",
+              "a decaf intervention",
+              "less eye contact with the printer",
+              "a sabbatical in Lapland",
+              "a fax machine",
+              "a goat",
+              "emotional support pigeons",
+              "a bigger monitor",
+              "leeches",
+              "a mute button for your whole life",
+              "three espressos",
+              "a sauna and a long silence",
+              "a team-building retreat",
+              "a Jira ticket",
+              "a second opinion from the intern",
+              "a vacation from your own brain",
+              "a note excusing you from Mondays",
+              "duct tape",
+              "a priest",
+              "a raise",
+              "a new personality",
+              "bubble wrap",
+              "a rubber duck",
+              "a weighted blanket and a lawyer",
+              "a stern talking-to",
+              "airplane mode",
+              "ice cream for dinner",
+              "an emotional support houseplant",
+              "more sleep and fewer opinions",
+              "a spreadsheet about your feelings"
+            ]
           }
         }
       },
@@ -58,8 +129,43 @@
         "text": "I'm afraid you'll have to {{action}}.",
         "slots": {
           "action": {
-            "hint": "Something they have to do",
-            "pool": "actions"
+            "options": [
+              "move to the woods",
+              "delete Slack",
+              "scream into a pillow",
+              "apologize to the printer",
+              "quit Google Meet forever",
+              "eat a whole cucumber",
+              "reply-all with an apology",
+              "dance it out",
+              "marry the office plant",
+              "join a monastery",
+              "switch to decaf",
+              "hand in your badge",
+              "adopt a goat",
+              "sit in the sauna until it stops",
+              "talk to a rubber duck",
+              "change your name",
+              "burn the spreadsheet",
+              "mute everyone",
+              "wear a helmet",
+              "call your mother",
+              "touch grass",
+              "lie down on the floor for a while",
+              "learn to whistle",
+              "ignore it until it goes away",
+              "sleep for a week",
+              "blame the intern",
+              "start a podcast about it",
+              "fake your own death",
+              "move back in with your parents",
+              "take up knitting",
+              "write a haiku about it",
+              "book a one-way ticket to Lapland",
+              "turn yourself off and on again",
+              "unplug your router",
+              "hide under your desk professionally"
+            ]
           }
         }
       },
@@ -68,8 +174,43 @@
         "text": "The only thing I can prescribe for you is {{cure}}.",
         "slots": {
           "cure": {
-            "hint": "A cure",
-            "pool": "things"
+            "options": [
+              "a strongly worded email",
+              "two business days off",
+              "an exorcism",
+              "a nap under your desk",
+              "a hug from HR",
+              "more cowbell",
+              "a decaf intervention",
+              "less eye contact with the printer",
+              "a sabbatical in Lapland",
+              "a fax machine",
+              "a goat",
+              "emotional support pigeons",
+              "a bigger monitor",
+              "leeches",
+              "a mute button for your whole life",
+              "three espressos",
+              "a sauna and a long silence",
+              "a team-building retreat",
+              "a Jira ticket",
+              "a second opinion from the intern",
+              "a vacation from your own brain",
+              "a note excusing you from Mondays",
+              "duct tape",
+              "a priest",
+              "a raise",
+              "a new personality",
+              "bubble wrap",
+              "a rubber duck",
+              "a weighted blanket and a lawyer",
+              "a stern talking-to",
+              "airplane mode",
+              "ice cream for dinner",
+              "an emotional support houseplant",
+              "more sleep and fewer opinions",
+              "a spreadsheet about your feelings"
+            ]
           }
         }
       },
@@ -78,8 +219,43 @@
         "text": "Go home, {{action}}, and stop googling your symptoms.",
         "slots": {
           "action": {
-            "hint": "Something they have to do",
-            "pool": "actions"
+            "options": [
+              "move to the woods",
+              "delete Slack",
+              "scream into a pillow",
+              "apologize to the printer",
+              "quit Google Meet forever",
+              "eat a whole cucumber",
+              "reply-all with an apology",
+              "dance it out",
+              "marry the office plant",
+              "join a monastery",
+              "switch to decaf",
+              "hand in your badge",
+              "adopt a goat",
+              "sit in the sauna until it stops",
+              "talk to a rubber duck",
+              "change your name",
+              "burn the spreadsheet",
+              "mute everyone",
+              "wear a helmet",
+              "call your mother",
+              "touch grass",
+              "lie down on the floor for a while",
+              "learn to whistle",
+              "ignore it until it goes away",
+              "sleep for a week",
+              "blame the intern",
+              "start a podcast about it",
+              "fake your own death",
+              "move back in with your parents",
+              "take up knitting",
+              "write a haiku about it",
+              "book a one-way ticket to Lapland",
+              "turn yourself off and on again",
+              "unplug your router",
+              "hide under your desk professionally"
+            ]
           }
         }
       },
@@ -88,8 +264,22 @@
         "text": "Take {{take}} and call me in the morning.",
         "slots": {
           "take": {
-            "hint": "Something to take",
-            "pool": "take"
+            "options": [
+              "my hand",
+              "care",
+              "your hand off my leg",
+              "a long hard look at yourself",
+              "your pants off",
+              "the stairs",
+              "a hint",
+              "it slow",
+              "one for the team",
+              "my number",
+              "a cold shower",
+              "a deep breath and your clothes off",
+              "two of these",
+              "the rest of the year off"
+            ]
           }
         }
       },
@@ -98,8 +288,19 @@
         "text": "Before we continue, I'll need you to take off {{off}}.",
         "slots": {
           "off": {
-            "hint": "Something to take off",
-            "pool": "take_off"
+            "options": [
+              "your pants",
+              "that attitude",
+              "your wedding ring",
+              "my glasses",
+              "work tomorrow",
+              "your tinfoil hat",
+              "the cone of shame",
+              "that ridiculous lanyard",
+              "your LinkedIn profile",
+              "the training wheels",
+              "your socks, slowly"
+            ]
           }
         }
       },
@@ -108,8 +309,19 @@
         "text": "Rub {{rub}} on it twice a day.",
         "slots": {
           "rub": {
-            "hint": "Something to rub on it",
-            "pool": "rub"
+            "options": [
+              "some butter",
+              "your ex's tears",
+              "my business card",
+              "a little prayer",
+              "the client's feedback",
+              "a rotisserie chicken",
+              "the intern",
+              "both hands",
+              "whatever's in the office fridge",
+              "your quarterly bonus",
+              "a warm spoon"
+            ]
           }
         }
       },
@@ -118,8 +330,18 @@
         "text": "Open wide and say {{say}}.",
         "slots": {
           "say": {
-            "hint": "Something to say",
-            "pool": "say"
+            "options": [
+              "ahh",
+              "my name",
+              "sorry",
+              "the safe word",
+              "yes to the promotion",
+              "goodbye to your dignity",
+              "something nice about the client",
+              "that again, slower",
+              "“per my last email”",
+              "what you said at the Christmas party"
+            ]
           }
         }
       },
@@ -128,8 +350,18 @@
         "text": "Have you tried turning {{turn}} off and on again?",
         "slots": {
           "turn": {
-            "hint": "Something to restart",
-            "pool": "turn"
+            "options": [
+              "yourself",
+              "your marriage",
+              "your manager",
+              "the sauna",
+              "your conscience",
+              "me",
+              "the CEO",
+              "your personality",
+              "the whole company",
+              "your partner"
+            ]
           }
         }
       },
@@ -138,8 +370,19 @@
         "text": "I'll need to examine your {{yours}} more closely.",
         "slots": {
           "yours": {
-            "hint": "Something of theirs",
-            "pool": "examine"
+            "options": [
+              "browser history",
+              "search history",
+              "love life",
+              "left buttock",
+              "tax return",
+              "DMs",
+              "tongue",
+              "Spotify Wrapped",
+              "sock drawer",
+              "group chats",
+              "life choices"
+            ]
           }
         }
       },
@@ -148,8 +391,18 @@
         "text": "Swallow {{swallow}} and don't tell HR.",
         "slots": {
           "swallow": {
-            "hint": "Something to swallow",
-            "pool": "swallow"
+            "options": [
+              "your pride",
+              "this pill",
+              "the evidence",
+              "your words",
+              "the key",
+              "two of these",
+              "a whistle",
+              "the whole thing",
+              "your feelings",
+              "the USB stick"
+            ]
           }
         }
       },
@@ -158,179 +411,47 @@
         "text": "I'm prescribing {{cure}}, to be taken rectally.",
         "slots": {
           "cure": {
-            "hint": "A cure",
-            "pool": "things"
+            "options": [
+              "a strongly worded email",
+              "two business days off",
+              "an exorcism",
+              "a nap under your desk",
+              "a hug from HR",
+              "more cowbell",
+              "a decaf intervention",
+              "less eye contact with the printer",
+              "a sabbatical in Lapland",
+              "a fax machine",
+              "a goat",
+              "emotional support pigeons",
+              "a bigger monitor",
+              "leeches",
+              "a mute button for your whole life",
+              "three espressos",
+              "a sauna and a long silence",
+              "a team-building retreat",
+              "a Jira ticket",
+              "a second opinion from the intern",
+              "a vacation from your own brain",
+              "a note excusing you from Mondays",
+              "duct tape",
+              "a priest",
+              "a raise",
+              "a new personality",
+              "bubble wrap",
+              "a rubber duck",
+              "a weighted blanket and a lawyer",
+              "a stern talking-to",
+              "airplane mode",
+              "ice cream for dinner",
+              "an emotional support houseplant",
+              "more sleep and fewer opinions",
+              "a spreadsheet about your feelings"
+            ]
           }
         }
       }
-    ],
-    "pools": {
-      "things": [
-        "a strongly worded email",
-        "two business days off",
-        "an exorcism",
-        "a nap under your desk",
-        "a hug from HR",
-        "more cowbell",
-        "a decaf intervention",
-        "less eye contact with the printer",
-        "a sabbatical in Lapland",
-        "a fax machine",
-        "a goat",
-        "emotional support pigeons",
-        "a bigger monitor",
-        "leeches",
-        "a mute button for your whole life",
-        "three espressos",
-        "a sauna and a long silence",
-        "a team-building retreat",
-        "a Jira ticket",
-        "a second opinion from the intern",
-        "a vacation from your own brain",
-        "a note excusing you from Mondays",
-        "duct tape",
-        "a priest",
-        "a raise",
-        "a new personality",
-        "bubble wrap",
-        "a rubber duck",
-        "a weighted blanket and a lawyer",
-        "a stern talking-to",
-        "airplane mode",
-        "ice cream for dinner",
-        "an emotional support houseplant",
-        "more sleep and fewer opinions",
-        "a spreadsheet about your feelings"
-      ],
-      "actions": [
-        "move to the woods",
-        "delete Slack",
-        "scream into a pillow",
-        "apologize to the printer",
-        "quit Google Meet forever",
-        "eat a whole cucumber",
-        "reply-all with an apology",
-        "dance it out",
-        "marry the office plant",
-        "join a monastery",
-        "switch to decaf",
-        "hand in your badge",
-        "adopt a goat",
-        "sit in the sauna until it stops",
-        "talk to a rubber duck",
-        "change your name",
-        "burn the spreadsheet",
-        "mute everyone",
-        "wear a helmet",
-        "call your mother",
-        "touch grass",
-        "lie down on the floor for a while",
-        "learn to whistle",
-        "ignore it until it goes away",
-        "sleep for a week",
-        "blame the intern",
-        "start a podcast about it",
-        "fake your own death",
-        "move back in with your parents",
-        "take up knitting",
-        "write a haiku about it",
-        "book a one-way ticket to Lapland",
-        "turn yourself off and on again",
-        "unplug your router",
-        "hide under your desk professionally"
-      ],
-      "take": [
-        "my hand",
-        "care",
-        "your hand off my leg",
-        "a long hard look at yourself",
-        "your pants off",
-        "the stairs",
-        "a hint",
-        "it slow",
-        "one for the team",
-        "my number",
-        "a cold shower",
-        "a deep breath and your clothes off",
-        "two of these",
-        "the rest of the year off"
-      ],
-      "take_off": [
-        "your pants",
-        "that attitude",
-        "your wedding ring",
-        "my glasses",
-        "work tomorrow",
-        "your tinfoil hat",
-        "the cone of shame",
-        "that ridiculous lanyard",
-        "your LinkedIn profile",
-        "the training wheels",
-        "your socks, slowly"
-      ],
-      "rub": [
-        "some butter",
-        "your ex's tears",
-        "my business card",
-        "a little prayer",
-        "the client's feedback",
-        "a rotisserie chicken",
-        "the intern",
-        "both hands",
-        "whatever's in the office fridge",
-        "your quarterly bonus",
-        "a warm spoon"
-      ],
-      "say": [
-        "ahh",
-        "my name",
-        "sorry",
-        "the safe word",
-        "yes to the promotion",
-        "goodbye to your dignity",
-        "something nice about the client",
-        "that again, slower",
-        "“per my last email”",
-        "what you said at the Christmas party"
-      ],
-      "turn": [
-        "yourself",
-        "your marriage",
-        "your manager",
-        "the sauna",
-        "your conscience",
-        "me",
-        "the CEO",
-        "your personality",
-        "the whole company",
-        "your partner"
-      ],
-      "examine": [
-        "browser history",
-        "search history",
-        "love life",
-        "left buttock",
-        "tax return",
-        "DMs",
-        "tongue",
-        "Spotify Wrapped",
-        "sock drawer",
-        "group chats",
-        "life choices"
-      ],
-      "swallow": [
-        "your pride",
-        "this pill",
-        "the evidence",
-        "your words",
-        "the key",
-        "two of these",
-        "a whistle",
-        "the whole thing",
-        "your feelings",
-        "the USB stick"
-      ]
-    }
+    ]
   },
   "categories": [
     {
@@ -343,16 +464,11 @@
           "text": "Whenever I open my inbox, I get an uncontrollable urge to {{urge_action}}.",
           "slots": {
             "urge_action": {
-              "hint": "An action",
               "options": [
-                "lick a battery",
-                "sing opera",
-                "speak like a pirate",
-                "throw my laptop into the sea",
+                "quit my job",
+                "throw my laptop out of the window",
                 "fake my own death",
-                "become a goat farmer",
-                "moonwalk out of the room",
-                "apologize to the furniture"
+                "become a goat farmer"
               ]
             }
           }
@@ -362,7 +478,6 @@
           "text": "It started small. First I could only bend spoons. Now I can {{big_ability}}, and my neighbors are concerned.",
           "slots": {
             "big_ability": {
-              "hint": "An alarming ability",
               "options": [
                 "bend lampposts with my mind",
                 "fly to the grocery store",
@@ -381,7 +496,6 @@
           "text": "I've tried yoga, therapy and essential oils, but I still scream every time I see {{trigger}}.",
           "slots": {
             "trigger": {
-              "hint": "Something you see",
               "options": [
                 "a pigeon",
                 "a spreadsheet",
@@ -400,7 +514,6 @@
           "text": "My cat has started {{pet_behavior}}, and I think it's contagious, because yesterday I did it too.",
           "slots": {
             "pet_behavior": {
-              "hint": "Something your cat does (-ing)",
               "options": [
                 "barking at the mailman",
                 "hiding my car keys",
@@ -419,7 +532,6 @@
           "text": "Every time I get a Slack notification from {{coworker}}, I pee a little before I've even read it.",
           "slots": {
             "coworker": {
-              "hint": "A coworker, ideally someone here tonight",
               "options": [
                 "my manager",
                 "the CEO",
@@ -482,7 +594,6 @@
           "text": "My Slack status has been stuck on \"{{status}}\" for weeks, and I've started to believe it.",
           "slots": {
             "status": {
-              "hint": "A Slack status",
               "options": [
                 "In a meeting",
                 "Out sick",
@@ -501,7 +612,6 @@
           "text": "I physically can't stop calling my manager {{wrong_name}}. It's been going on for three months.",
           "slots": {
             "wrong_name": {
-              "hint": "A name or title",
               "options": [
                 "Mom",
                 "Dad",
@@ -520,7 +630,6 @@
           "text": "During my performance review I {{embarrassing_action}}. Lucky for me our HR is on leave.",
           "slots": {
             "embarrassing_action": {
-              "hint": "Something embarrassing you did",
               "options": [
                 "cried a little",
                 "called my manager “Mom”",
@@ -539,7 +648,6 @@
           "text": "I can only give client presentations while {{condition}}. They haven't noticed yet.",
           "slots": {
             "condition": {
-              "hint": "A situation or state",
               "options": [
                 "standing on one leg",
                 "wearing a cape",
@@ -595,7 +703,6 @@
           "text": "I can't use the bathroom unless I'm thinking about {{thought}}.",
           "slots": {
             "thought": {
-              "hint": "A person, topic, or thing",
               "options": [
                 "tax returns",
                 "the CEO",
@@ -614,7 +721,6 @@
           "text": "I sweat uncontrollably whenever I'm near {{trigger}}.",
           "slots": {
             "trigger": {
-              "hint": "A person, place, or thing",
               "options": [
                 "the CEO",
                 "the office fridge",
@@ -633,7 +739,6 @@
           "text": "I've been saving my toenail clippings in a jar labeled \"{{label}}\". Is that a hobby?",
           "slots": {
             "label": {
-              "hint": "A jar label",
               "options": [
                 "Do not eat",
                 "Grandma's jam",
@@ -652,7 +757,6 @@
           "text": "I keep finding {{object}} somewhere it absolutely should not be, and I have no memory of how it got there.",
           "slots": {
             "object": {
-              "hint": "An object",
               "options": [
                 "a TV remote",
                 "a whole lasagna",
@@ -708,7 +812,6 @@
           "text": "Every time I try to look sexy, I end up looking like {{comparison}}.",
           "slots": {
             "comparison": {
-              "hint": "A person, creature, or thing",
               "options": [
                 "a confused penguin doing yoga",
                 "a startled giraffe",
@@ -727,7 +830,6 @@
           "text": "I keep accidentally sending voice memos of me {{embarrassing_activity}} to my mom. It's happened four times this week.",
           "slots": {
             "embarrassing_activity": {
-              "hint": "An activity ending in -ing",
               "options": [
                 "singing in the shower",
                 "practicing my Oscar speech",
@@ -746,7 +848,6 @@
           "text": "I get way too excited whenever I {{innocent_activity}}. I've already been banned from two IKEAs.",
           "slots": {
             "innocent_activity": {
-              "hint": "An innocent activity",
               "options": [
                 "assemble furniture",
                 "see a cucumber",
@@ -765,7 +866,6 @@
           "text": "I keep sending flirty Slack DMs to the client channel. The client keeps replying with {{client_reply}}.",
           "slots": {
             "client_reply": {
-              "hint": "The client's reply",
               "options": [
                 "“Noted.”",
                 "“Per my last email…”",
@@ -821,7 +921,6 @@
           "text": "My partner and I tried {{position}}, and now we both need a chiropractor.",
           "slots": {
             "position": {
-              "hint": "A position or move",
               "options": [
                 "the reverse pretzel",
                 "the folding chair",
@@ -840,7 +939,6 @@
           "text": "I can only climax while thinking about {{unsexy_thing}}.",
           "slots": {
             "unsexy_thing": {
-              "hint": "Something very unsexy",
               "options": [
                 "tax forms",
                 "the quarterly roadmap",
@@ -859,7 +957,6 @@
           "text": "We role-played as {{roleplay}}, and now I can't go grocery shopping without getting aroused.",
           "slots": {
             "roleplay": {
-              "hint": "A role-play pairing",
               "options": [
                 "a cashier and a coupon",
                 "a butcher and a sausage",

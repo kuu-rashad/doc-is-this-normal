@@ -2057,7 +2057,8 @@
         symptom,
         prescription,
         patient: patient ? patient.nickname : "Walk-in Patient",
-        patientAvatar: patient?.avatar ?? null,
+        walkIn: !patient,
+        patientAvatar: patient ? patient.avatar : "walk_in_patient",
         wins: [24, 18, 15, 12, 9, 7][i] ?? 5,
         doctor: { name: `Dr. ${doctor.nickname}`, avatar: doctor.avatar },
       };
@@ -2140,7 +2141,8 @@
       const patient = el("div", "who");
       patient.append(
         circle(entry.patientAvatar, "?"),
-        el("span", "", entry.patientAvatar ? `Patient ${entry.patient}` : entry.patient),
+        // Older winners don't have walkIn; a missing avatar meant a walk-in then.
+        el("span", "", (entry.walkIn ?? !entry.patientAvatar) ? entry.patient : `Patient ${entry.patient}`),
       );
       const complaint = el("div", "complaint");
       complaint.append(patient, el("p", "text", entry.symptom));
