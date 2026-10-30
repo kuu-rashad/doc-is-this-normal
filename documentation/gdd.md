@@ -33,7 +33,7 @@ The game repeats this cycle for the whole party.
 
 - Phase lengths are configurable in the admin panel on the night, with a separate (longer) length for the first Clinic open.
 - If nobody qualifies for the Finals, the Finals are skipped and the next round starts.
-- **Everything from a round retires when it ends**: symptoms, prescriptions and votes are cleared. Only the winner lives on, in the Hall of Fame. Player points carry over between rounds.
+- **Everything from a round retires when it ends**: symptoms, prescriptions and votes are cleared. Only the winner lives on, in the Hall of Fame, and pairs picked as funnier at least once stay in the all-votes list. Player points carry over between rounds.
 
 ## Patient mode (writing a symptom)
 
@@ -106,7 +106,7 @@ Walk-in symptoms have no patient to score. Points add up across rounds; "Reset g
 ## Big screen
 
 - **Top left:** the game logo.
-- **Top right:** buttons for scoring info, mute, and settings. Under them, the phase card (round number, phase name with its colour and icon, countdown "until <next phase>") and the TOP 3 leaderboard with gold, silver and bronze ranks ("Earn your place in the top 3" until anyone scores).
+- **Top right:** buttons for all votes, scoring info, mute, and settings. Under them, the phase card (round number, phase name with its colour and icon, countdown "until <next phase>") and the TOP 3 leaderboard with gold, silver and bronze ranks ("Earn your place in the top 3" until anyone scores).
 - **This round's leaders:** the current finals candidates as clipboard cards (the patient's note with avatar, name and symptom; "Doctor's notes:" with the prescription and the doctor; a badge with how often the pair was picked). Three at a time, cycling every 10 seconds; text shrinks or grows to fit each card.
 - **Hall of Fame:** past winners as speech-bubble + clipboard cards above the players bar, a few at a time with a countdown ring before the next set. An outlined placeholder when there are no winners yet.
 - **Players bar:** every player's avatar and nickname along the bottom, scrolling when they don't all fit.
@@ -130,6 +130,7 @@ Walk-in symptoms have no patient to score. Points add up across rounds; "Reset g
   - reset game (clears all rounds, votes, points and the Hall of Fame; keeps players);
   - delete all players and data.
 - The ⓘ button shows the scoring rules (no password).
+- The leaderboard button lists every pair from all rounds of the game that was picked as funnier at least once, most picks first, with the round it came from (no password). "Reset game" clears it.
 
 ## Content and configuration
 

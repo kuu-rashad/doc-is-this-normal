@@ -544,6 +544,168 @@
               ]
             }
           }
+        },
+        {
+          "id": "mild_06",
+          "text": "My whole body aches whenever I have to deal with {{hassle}}.",
+          "slots": {
+            "hassle": {
+              "options": [
+                "Monday mornings",
+                "the shared fridge",
+                "my landlord",
+                "a 47-slide deck",
+                "IKEA instructions",
+                "the self-checkout machine",
+                "my in-laws",
+                "a client's \"tiny tweak\""
+              ]
+            }
+          }
+        },
+        {
+          "id": "mild_07",
+          "text": "My energy disappears whenever I have to deal with {{drain}}.",
+          "slots": {
+            "drain": {
+              "options": [
+                "small talk in the elevator",
+                "a client's \"quick change\"",
+                "my inbox",
+                "Excel macros",
+                "the group chat",
+                "anyone who says \"synergy\"",
+                "a meeting that could be an email",
+                "my neighbor's leaf blower"
+              ]
+            }
+          }
+        },
+        {
+          "id": "mild_08",
+          "text": "Bedtime has become a staring contest with the ceiling, thanks to {{worry}}.",
+          "slots": {
+            "worry": {
+              "options": [
+                "tomorrow's standup",
+                "a typo I sent the CEO",
+                "that weird noise in the attic",
+                "three espressos at 4 pm",
+                "an unanswered \"we need to talk\"",
+                "my browser history",
+                "the ceiling staring back",
+                "a true crime podcast"
+              ]
+            }
+          }
+        },
+        {
+          "id": "mild_09",
+          "text": "People keep asking why I walk as if I'm {{walk}}.",
+          "slots": {
+            "walk": {
+              "options": [
+                "late for a train",
+                "a cowboy who lost his horse",
+                "carrying an invisible tray",
+                "being chased by bees",
+                "wading through soup",
+                "on a catwalk in Milan",
+                "a crab looking for its keys",
+                "smuggling a melon"
+              ]
+            }
+          }
+        },
+        {
+          "id": "mild_10",
+          "text": "Since the office hamster bit me, I have been permanently {{hamster_state}}.",
+          "slots": {
+            "hamster_state": {
+              "options": [
+                "running on a wheel at night",
+                "hoarding snacks in my cheeks",
+                "suspicious of the vacuum",
+                "sleepy until 6 pm",
+                "nibbling on cables",
+                "afraid of tall people",
+                "chewing pencils",
+                "a little bit fluffy"
+              ]
+            }
+          }
+        },
+        {
+          "id": "mild_11",
+          "text": "I'm still struggling with {{struggle}}; it happens almost every day.",
+          "slots": {
+            "struggle": {
+              "options": [
+                "waving back at strangers",
+                "saying \"you too\" to the waiter",
+                "forgetting why I walked in",
+                "replying-all by accident",
+                "laughing at my own typos",
+                "calling my manager \"mom\"",
+                "getting stuck in revolving doors",
+                "tripping over nothing"
+              ]
+            }
+          }
+        },
+        {
+          "id": "mild_12",
+          "text": "My coworkers keep asking why I am {{oddity}}. I was hoping you could explain it.",
+          "slots": {
+            "oddity": {
+              "options": [
+                "whispering to the coffee machine",
+                "wearing sunglasses indoors",
+                "sitting under my desk",
+                "speaking only in emojis",
+                "humming the Nokia ringtone",
+                "always slightly sticky",
+                "taking notes on a banana",
+                "sitting on a yoga ball like a throne"
+              ]
+            }
+          }
+        },
+        {
+          "id": "mild_13",
+          "text": "My relatives and I all have the same problem: we cannot stop {{family_habit}}.",
+          "slots": {
+            "family_habit": {
+              "options": [
+                "clapping when the plane lands",
+                "arguing about the dishwasher",
+                "saving plastic bags",
+                "pointing at cows from the car",
+                "laughing at funerals",
+                "quoting the same movie",
+                "fighting over the bill",
+                "turning off lights in other houses"
+              ]
+            }
+          }
+        },
+        {
+          "id": "mild_14",
+          "text": "I have stopped enjoying {{joy}}, even though it used to be my favourite thing.",
+          "slots": {
+            "joy": {
+              "options": [
+                "pizza",
+                "long walks on the beach",
+                "karaoke",
+                "the sound of rain",
+                "naps",
+                "bubble wrap",
+                "the office Christmas party",
+                "the sauna"
+              ]
+            }
+          }
         }
       ],
       "premade_symptoms": [
@@ -580,6 +742,69 @@
           "template_id": "mild_05",
           "slots": {
             "coworker": "my manager"
+          }
+        },
+        {
+          "id": "walkin_mild_06",
+          "template_id": "mild_06",
+          "slots": {
+            "hassle": "the printer on the third floor"
+          }
+        },
+        {
+          "id": "walkin_mild_07",
+          "template_id": "mild_07",
+          "slots": {
+            "drain": "people who say \"per my last email\""
+          }
+        },
+        {
+          "id": "walkin_mild_08",
+          "template_id": "mild_08",
+          "slots": {
+            "worry": "something I said in 2009"
+          }
+        },
+        {
+          "id": "walkin_mild_09",
+          "template_id": "mild_09",
+          "slots": {
+            "walk": "a penguin with a secret"
+          }
+        },
+        {
+          "id": "walkin_mild_10",
+          "template_id": "mild_10",
+          "slots": {
+            "hamster_state": "nocturnal"
+          }
+        },
+        {
+          "id": "walkin_mild_11",
+          "template_id": "mild_11",
+          "slots": {
+            "struggle": "pushing doors that say pull"
+          }
+        },
+        {
+          "id": "walkin_mild_12",
+          "template_id": "mild_12",
+          "slots": {
+            "oddity": "always slightly damp"
+          }
+        },
+        {
+          "id": "walkin_mild_13",
+          "template_id": "mild_13",
+          "slots": {
+            "family_habit": "talking about our bowel movements"
+          }
+        },
+        {
+          "id": "walkin_mild_14",
+          "template_id": "mild_14",
+          "slots": {
+            "joy": "Friday afternoons"
           }
         }
       ]
@@ -660,6 +885,276 @@
               ]
             }
           }
+        },
+        {
+          "id": "awkward_06",
+          "text": "I get terrified at the mere thought of {{fear}}.",
+          "slots": {
+            "fear": {
+              "options": [
+                "a surprise one-on-one",
+                "Excel formulas",
+                "the office karaoke night",
+                "the CEO asking \"got a minute?\"",
+                "a camera-on meeting",
+                "an unmuted microphone",
+                "the year-end review",
+                "a goose"
+              ]
+            }
+          }
+        },
+        {
+          "id": "awkward_07",
+          "text": "I burst into tears whenever someone mentions {{tear_trigger}}.",
+          "slots": {
+            "tear_trigger": {
+              "options": [
+                "the deadline",
+                "the Q3 roadmap",
+                "the movie Up",
+                "my old Tamagotchi",
+                "client feedback",
+                "the word \"moist\"",
+                "Mondays",
+                "the last slice of cake"
+              ]
+            }
+          }
+        },
+        {
+          "id": "awkward_08",
+          "text": "At the same time each week, thoughts of {{weekly_sorrow}} leave me sobbing.",
+          "slots": {
+            "weekly_sorrow": {
+              "options": [
+                "the Sunday scaries",
+                "my ex's dog",
+                "the game we shipped late",
+                "Friday's demo",
+                "my lost youth",
+                "the empty coffee machine",
+                "my broken Duolingo streak",
+                "my timesheet"
+              ]
+            }
+          }
+        },
+        {
+          "id": "awkward_09",
+          "text": "Cravings for {{craving}} keep taking over my whole routine.",
+          "slots": {
+            "craving": {
+              "options": [
+                "salty licorice",
+                "chalk",
+                "the office cookies",
+                "ketchup on everything",
+                "cold pizza",
+                "attention",
+                "drama",
+                "raw garlic"
+              ]
+            }
+          }
+        },
+        {
+          "id": "awkward_10",
+          "text": "I keep dragging every conversation back to {{obsession}}, however hard I try not to.",
+          "slots": {
+            "obsession": {
+              "options": [
+                "my CrossFit routine",
+                "the Roman Empire",
+                "my cat's diet",
+                "my ex",
+                "the time I met a celebrity",
+                "my fantasy football team",
+                "a podcast nobody's heard of",
+                "my crypto portfolio"
+              ]
+            }
+          }
+        },
+        {
+          "id": "awkward_11",
+          "text": "Even during important conversations, I lose all focus at the sight of {{distraction}}.",
+          "slots": {
+            "distraction": {
+              "options": [
+                "a dog outside the window",
+                "the CEO's mustache",
+                "a crooked picture frame",
+                "a snack on someone's desk",
+                "a stain on someone's shirt",
+                "a pigeon",
+                "my own face on Google Meet",
+                "a loose thread"
+              ]
+            }
+          }
+        },
+        {
+          "id": "awkward_12",
+          "text": "Since turning forty, my body plays the Windows shutdown sound whenever I {{action}}.",
+          "slots": {
+            "action": {
+              "options": [
+                "bend over",
+                "climb stairs",
+                "sneeze",
+                "sit on the floor",
+                "open a jar",
+                "look at my bank account",
+                "hear a song from this year",
+                "try to stay up past ten"
+              ]
+            }
+          }
+        },
+        {
+          "id": "awkward_13",
+          "text": "I keep seeing {{vision}} whenever I shut my eyes.",
+          "slots": {
+            "vision": {
+              "options": [
+                "falling Tetris blocks",
+                "my manager's face",
+                "a loading spinner",
+                "the spreadsheet I just closed",
+                "the dancing hot dog",
+                "my unread notifications",
+                "a goat staring at me",
+                "the build failing"
+              ]
+            }
+          }
+        },
+        {
+          "id": "awkward_14",
+          "text": "My work is never finished; whenever a deadline approaches, I turn into {{transformation}}.",
+          "slots": {
+            "transformation": {
+              "options": [
+                "a gremlin",
+                "a raccoon in a hoodie",
+                "my father",
+                "a feral cat",
+                "a motivational speaker",
+                "a houseplant",
+                "a werewolf",
+                "a ghost who only answers Slack"
+              ]
+            }
+          }
+        },
+        {
+          "id": "awkward_15",
+          "text": "I keep getting into trouble for {{misdeed}}, but then I do it again.",
+          "slots": {
+            "misdeed": {
+              "options": [
+                "replying-all",
+                "stealing pens",
+                "napping in meeting rooms",
+                "eating other people's lunch",
+                "playing music without headphones",
+                "renaming the Wi-Fi",
+                "changing the CEO's wallpaper",
+                "marking every email as read"
+              ]
+            }
+          }
+        },
+        {
+          "id": "awkward_16",
+          "text": "I keep arriving late because I get caught up in {{rabbit_hole}}.",
+          "slots": {
+            "rabbit_hole": {
+              "options": [
+                "Wikipedia rabbit holes",
+                "petting every dog",
+                "arguing with strangers online",
+                "reorganizing my sock drawer",
+                "a staring contest with a seagull",
+                "choosing a podcast",
+                "the snooze button",
+                "a really good sandwich"
+              ]
+            }
+          }
+        },
+        {
+          "id": "awkward_17",
+          "text": "I cannot begin my day until I have spent fifteen minutes on {{ritual}}.",
+          "slots": {
+            "ritual": {
+              "options": [
+                "staring at the wall",
+                "talking to my plants",
+                "checking my horoscope",
+                "doom-scrolling",
+                "a power pose",
+                "smelling my coffee",
+                "yelling into a pillow",
+                "practicing my firm handshake"
+              ]
+            }
+          }
+        },
+        {
+          "id": "awkward_18",
+          "text": "I keep trying to quit {{habit}}, but every Monday I start again.",
+          "slots": {
+            "habit": {
+              "options": [
+                "sugar",
+                "doom-scrolling",
+                "online shopping",
+                "biting my nails",
+                "my side hustle",
+                "the gym",
+                "texting my ex",
+                "buying houseplants"
+              ]
+            }
+          }
+        },
+        {
+          "id": "awkward_19",
+          "text": "This phase has lasted months: I cannot stop {{phase}}.",
+          "slots": {
+            "phase": {
+              "options": [
+                "buying Crocs",
+                "doing finger guns",
+                "humming the same song",
+                "saying \"yeet\"",
+                "winking at strangers",
+                "collecting rubber ducks",
+                "wearing a cape to work",
+                "rating people's sandwiches"
+              ]
+            }
+          }
+        },
+        {
+          "id": "awkward_20",
+          "text": "I go out for milk and keep coming home with {{haul}}.",
+          "slots": {
+            "haul": {
+              "options": [
+                "a canoe",
+                "a goat",
+                "another tattoo",
+                "a timeshare in Spain",
+                "three new houseplants",
+                "someone else's kid",
+                "a karaoke machine",
+                "no milk"
+              ]
+            }
+          }
         }
       ],
       "premade_symptoms": [
@@ -689,6 +1184,111 @@
           "template_id": "awkward_05",
           "slots": {
             "condition": "intoxicated"
+          }
+        },
+        {
+          "id": "walkin_awkward_06",
+          "template_id": "awkward_06",
+          "slots": {
+            "fear": "an unscheduled phone call"
+          }
+        },
+        {
+          "id": "walkin_awkward_07",
+          "template_id": "awkward_07",
+          "slots": {
+            "tear_trigger": "the budget"
+          }
+        },
+        {
+          "id": "walkin_awkward_08",
+          "template_id": "awkward_08",
+          "slots": {
+            "weekly_sorrow": "the weekly status report"
+          }
+        },
+        {
+          "id": "walkin_awkward_09",
+          "template_id": "awkward_09",
+          "slots": {
+            "craving": "pickles with ice cream"
+          }
+        },
+        {
+          "id": "walkin_awkward_10",
+          "template_id": "awkward_10",
+          "slots": {
+            "obsession": "my sourdough starter"
+          }
+        },
+        {
+          "id": "walkin_awkward_11",
+          "template_id": "awkward_11",
+          "slots": {
+            "distraction": "a stray nose hair"
+          }
+        },
+        {
+          "id": "walkin_awkward_12",
+          "template_id": "awkward_12",
+          "slots": {
+            "action": "get up from the sofa"
+          }
+        },
+        {
+          "id": "walkin_awkward_13",
+          "template_id": "awkward_13",
+          "slots": {
+            "vision": "the Jira board"
+          }
+        },
+        {
+          "id": "walkin_awkward_14",
+          "template_id": "awkward_14",
+          "slots": {
+            "transformation": "a puddle of sweat"
+          }
+        },
+        {
+          "id": "walkin_awkward_15",
+          "template_id": "awkward_15",
+          "slots": {
+            "misdeed": "microwaving fish at the office"
+          }
+        },
+        {
+          "id": "walkin_awkward_16",
+          "template_id": "awkward_16",
+          "slots": {
+            "rabbit_hole": "watching the toaster"
+          }
+        },
+        {
+          "id": "walkin_awkward_17",
+          "template_id": "awkward_17",
+          "slots": {
+            "ritual": "the toilet, reading shampoo labels"
+          }
+        },
+        {
+          "id": "walkin_awkward_18",
+          "template_id": "awkward_18",
+          "slots": {
+            "habit": "my job"
+          }
+        },
+        {
+          "id": "walkin_awkward_19",
+          "template_id": "awkward_19",
+          "slots": {
+            "phase": "speaking in a British accent"
+          }
+        },
+        {
+          "id": "walkin_awkward_20",
+          "template_id": "awkward_20",
+          "slots": {
+            "haul": "a new spouse"
           }
         }
       ]
@@ -769,6 +1369,114 @@
               ]
             }
           }
+        },
+        {
+          "id": "gross_07",
+          "text": "My hands become sticky whenever I {{sticky_trigger}}.",
+          "slots": {
+            "sticky_trigger": {
+              "options": [
+                "think about my ex",
+                "open my inbox",
+                "hold a microphone",
+                "say no to someone",
+                "walk past a bakery",
+                "see a spreadsheet",
+                "go on a date",
+                "hear the word \"deadline\""
+              ]
+            }
+          }
+        },
+        {
+          "id": "gross_08",
+          "text": "Every toilet visit ends with {{bowl_find}} in the bowl.",
+          "slots": {
+            "bowl_find": {
+              "options": [
+                "a mystery coin",
+                "my car keys",
+                "glitter",
+                "something that looks back",
+                "a rubber duck",
+                "corn",
+                "a sense of regret",
+                "my phone, again"
+              ]
+            }
+          }
+        },
+        {
+          "id": "gross_09",
+          "text": "Every attempt to enjoy {{treat}} ends with me gagging.",
+          "slots": {
+            "treat": {
+              "options": [
+                "oysters",
+                "a smoothie",
+                "yogurt",
+                "a hot dog",
+                "mayonnaise",
+                "a good book",
+                "the office coffee",
+                "my partner's cooking"
+              ]
+            }
+          }
+        },
+        {
+          "id": "gross_10",
+          "text": "My body keeps exceeding its quota of {{excess}}.",
+          "slots": {
+            "excess": {
+              "options": [
+                "sweat",
+                "burps",
+                "toe jam",
+                "drool",
+                "nose hair",
+                "farts per meeting",
+                "dandruff",
+                "belly button lint"
+              ]
+            }
+          }
+        },
+        {
+          "id": "gross_11",
+          "text": "Every attempt at {{activity}} leaves me with another inexplicable bruise.",
+          "slots": {
+            "activity": {
+              "options": [
+                "yoga",
+                "flirting",
+                "sleeping",
+                "assembling IKEA furniture",
+                "a team-building exercise",
+                "putting on socks",
+                "eating soup",
+                "a casual stroll"
+              ]
+            }
+          }
+        },
+        {
+          "id": "gross_12",
+          "text": "These days I can only stomach green smoothies and {{food}}.",
+          "slots": {
+            "food": {
+              "options": [
+                "chicken nuggets",
+                "the tears of my enemies",
+                "dry crackers",
+                "pickle juice",
+                "gas station sushi",
+                "cold coffee",
+                "spite",
+                "birthday cake from the office"
+              ]
+            }
+          }
         }
       ],
       "premade_symptoms": [
@@ -798,6 +1506,48 @@
           "template_id": "gross_06",
           "slots": {
             "object": "my laptop"
+          }
+        },
+        {
+          "id": "walkin_gross_07",
+          "template_id": "gross_07",
+          "slots": {
+            "sticky_trigger": "shake hands with the CEO"
+          }
+        },
+        {
+          "id": "walkin_gross_08",
+          "template_id": "gross_08",
+          "slots": {
+            "bowl_find": "a full Lego set"
+          }
+        },
+        {
+          "id": "walkin_gross_09",
+          "template_id": "gross_09",
+          "slots": {
+            "treat": "a romantic dinner"
+          }
+        },
+        {
+          "id": "walkin_gross_10",
+          "template_id": "gross_10",
+          "slots": {
+            "excess": "earwax"
+          }
+        },
+        {
+          "id": "walkin_gross_11",
+          "template_id": "gross_11",
+          "slots": {
+            "activity": "sitting down"
+          }
+        },
+        {
+          "id": "walkin_gross_12",
+          "template_id": "gross_12",
+          "slots": {
+            "food": "regret"
           }
         }
       ]
@@ -878,6 +1628,114 @@
               ]
             }
           }
+        },
+        {
+          "id": "spicy_08",
+          "text": "Since trying an edible, I keep getting performance reviews from {{reviewer}}.",
+          "slots": {
+            "reviewer": {
+              "options": [
+                "my cat",
+                "my toaster",
+                "the moon",
+                "my left hand",
+                "my ex's mom",
+                "the ghost in my closet",
+                "my own reflection",
+                "the office plant"
+              ]
+            }
+          }
+        },
+        {
+          "id": "spicy_09",
+          "text": "Half a drink is enough to make me start {{drunk_act}}.",
+          "slots": {
+            "drunk_act": {
+              "options": [
+                "texting my ex",
+                "taking my shirt off",
+                "slow-dancing alone",
+                "giving the CEO feedback",
+                "crying about whales",
+                "speaking fluent French",
+                "flirting with the bartender",
+                "doing the worm"
+              ]
+            }
+          }
+        },
+        {
+          "id": "spicy_10",
+          "text": "After a few drinks, I keep mistaking {{career}} for a sensible career move.",
+          "slots": {
+            "career": {
+              "options": [
+                "becoming a DJ",
+                "opening a nightclub",
+                "a pyramid scheme",
+                "becoming a stripper",
+                "marrying rich",
+                "professional cuddling",
+                "selling feet pics",
+                "joining a cult"
+              ]
+            }
+          }
+        },
+        {
+          "id": "spicy_11",
+          "text": "My body insists on {{prerequisite}} before anything romantic can happen.",
+          "slots": {
+            "prerequisite": {
+              "options": [
+                "a cup of tea",
+                "doing my taxes",
+                "a full skincare routine",
+                "checking Slack one last time",
+                "a 5k run",
+                "a prayer",
+                "a long bathroom visit",
+                "a signed contract"
+              ]
+            }
+          }
+        },
+        {
+          "id": "spicy_12",
+          "text": "Whenever I feel frustrated in bed, I end up {{substitute}} instead.",
+          "slots": {
+            "substitute": {
+              "options": [
+                "eating cereal",
+                "doing push-ups",
+                "folding laundry",
+                "online shopping",
+                "reorganizing the spice rack",
+                "watching cooking videos",
+                "writing a strongly worded email",
+                "playing Tetris"
+              ]
+            }
+          }
+        },
+        {
+          "id": "spicy_13",
+          "text": "Whenever I feel insecure about my body, I start {{coping}}.",
+          "slots": {
+            "coping": {
+              "options": [
+                "wearing a cape",
+                "doing lunges in the hallway",
+                "oiling myself up",
+                "complimenting strangers' calves",
+                "buying gym memberships",
+                "posting thirst traps",
+                "walking around naked",
+                "eating cake in the shower"
+              ]
+            }
+          }
         }
       ],
       "premade_symptoms": [
@@ -907,6 +1765,48 @@
           "template_id": "spicy_07",
           "slots": {
             "client_reply": "a thumbs-up emoji"
+          }
+        },
+        {
+          "id": "walkin_spicy_08",
+          "template_id": "spicy_08",
+          "slots": {
+            "reviewer": "my mattress"
+          }
+        },
+        {
+          "id": "walkin_spicy_09",
+          "template_id": "spicy_09",
+          "slots": {
+            "drunk_act": "proposing to strangers"
+          }
+        },
+        {
+          "id": "walkin_spicy_10",
+          "template_id": "spicy_10",
+          "slots": {
+            "career": "starting an OnlyFans"
+          }
+        },
+        {
+          "id": "walkin_spicy_11",
+          "template_id": "spicy_11",
+          "slots": {
+            "prerequisite": "a three-hour nap"
+          }
+        },
+        {
+          "id": "walkin_spicy_12",
+          "template_id": "spicy_12",
+          "slots": {
+            "substitute": "answering emails"
+          }
+        },
+        {
+          "id": "walkin_spicy_13",
+          "template_id": "spicy_13",
+          "slots": {
+            "coping": "flexing at my reflection"
           }
         }
       ]
@@ -969,6 +1869,42 @@
               ]
             }
           }
+        },
+        {
+          "id": "after_hours_05",
+          "text": "After sex, my rear end always seems to resemble {{resemblance}}.",
+          "slots": {
+            "resemblance": {
+              "options": [
+                "a baboon's",
+                "a crime scene",
+                "a waffle",
+                "a stop sign",
+                "a squashed peach",
+                "the Japanese flag",
+                "a map of Finland",
+                "a freshly stamped passport"
+              ]
+            }
+          }
+        },
+        {
+          "id": "after_hours_06",
+          "text": "My libido keeps responding to {{turn_on}}, which was not on my list of turn-ons.",
+          "slots": {
+            "turn_on": {
+              "options": [
+                "a well-formatted spreadsheet",
+                "the sound of a fax machine",
+                "IKEA instructions",
+                "a man fixing the printer",
+                "tax returns",
+                "the Teams ringtone",
+                "garlic bread",
+                "a firm handshake"
+              ]
+            }
+          }
         }
       ],
       "premade_symptoms": [
@@ -991,6 +1927,20 @@
           "template_id": "after_hours_04",
           "slots": {
             "roleplay": "a pair of shopping carts"
+          }
+        },
+        {
+          "id": "walkin_after_hours_05",
+          "template_id": "after_hours_05",
+          "slots": {
+            "resemblance": "a smacked tomato"
+          }
+        },
+        {
+          "id": "walkin_after_hours_06",
+          "template_id": "after_hours_06",
+          "slots": {
+            "turn_on": "the CFO's voice"
           }
         }
       ]

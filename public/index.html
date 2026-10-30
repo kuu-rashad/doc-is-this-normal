@@ -1067,6 +1067,122 @@
       right: calc(1.5vw + 2 * (var(--size) + 1vw));
     }
 
+    .corner-button.votes {
+      right: calc(1.5vw + 3 * (var(--size) + 1vw));
+    }
+
+    /* Every pair from every round with at least one vote, opened from the leaderboard button. */
+    #votes {
+      width: min(960px, calc(100vw - 32px));
+      max-height: calc(100vh - 64px);
+      padding: 30px 34px;
+    }
+
+    #votes[open] {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #votes h2 {
+      font-size: 34px;
+    }
+
+    .votes-list {
+      flex: 1 1 auto;
+      min-height: 0;
+      margin: 0 0 20px;
+      padding: 0 6px 0 0;
+      overflow-y: auto;
+      list-style: none;
+    }
+
+    .votes-list li {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 18px;
+      padding: 12px 0;
+    }
+
+    .votes-list li + li {
+      border-top: 2px solid rgb(185 128 73 / 0.3);
+    }
+
+    .votes-list .place {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 1.6em;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--bandage-dark);
+    }
+
+    .votes-list .place small {
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .votes-list .pair {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .votes-list .line {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 0;
+      font-size: 19px;
+      font-weight: 500;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .votes-list .line img {
+      flex: none;
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+      background: var(--white);
+      border: 2px solid var(--navy);
+      border-radius: 50%;
+    }
+
+    .votes-list .line .by {
+      font-weight: 700;
+      color: var(--bandage-dark);
+      white-space: nowrap;
+    }
+
+    .votes-list .score {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px 4px 10px;
+      font-size: 22px;
+      font-weight: 700;
+      background: #74e3b5;
+      border: 3px solid var(--navy);
+      border-radius: 999px;
+    }
+
+    .votes-list .score svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    .votes-list .empty {
+      display: block;
+      font-size: 22px;
+      font-weight: 500;
+      text-align: center;
+    }
+
     /* Scoring rules, opened from the info button: bigger than the settings popup, so it reads
        well from a distance. Points are shown as colour-coded chips. */
     #info {
@@ -1347,6 +1463,17 @@
 </head>
 <body>
   <audio id="music" preload="auto"></audio>
+
+  <button type="button" class="corner-button votes" id="votes-open" aria-label="All votes">
+    <!-- "leaderboard" icon from Google Material Symbols (Apache 2.0) -->
+    <svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M120-120q-17 0-28.5-11.5T80-160v-400q0-17 11.5-28.5T120-600h140q17 0 28.5 11.5T300-560v400q0 17-11.5 28.5T260-120H120Zm290 0q-17 0-28.5-11.5T370-160v-640q0-17 11.5-28.5T410-840h140q17 0 28.5 11.5T590-800v640q0 17-11.5 28.5T550-120H410Zm290 0q-17 0-28.5-11.5T660-160v-320q0-17 11.5-28.5T700-520h140q17 0 28.5 11.5T880-480v320q0 17-11.5 28.5T840-120H700Z"/></svg>
+  </button>
+
+  <dialog class="settings" id="votes">
+    <h2>All votes</h2>
+    <ol class="votes-list" id="votes-list"></ol>
+    <button type="button" data-close>Close</button>
+  </dialog>
 
   <button type="button" class="corner-button info" id="info-open" aria-label="How to score points">
     <!-- "info_i" icon from Google Material Symbols (Apache 2.0) -->
@@ -2112,6 +2239,7 @@
       refitLeaders();
       renderLeaderboard(screen.leaderboard);
       renderRules(screen.scoring);
+      renderVotes(screen.voted ?? []);
     }
 
     // ---------- Sample data (debug) ----------
@@ -2169,6 +2297,7 @@
           ] : [],
         },
         candidates: phase === "finals" ? [] : entries,
+        voted: entries.map((entry, i) => ({ ...entry, round: [3, 1, 2, 3, 1, 2][i] })),
         hallOfFame: [...entries].reverse(),
         players: SAMPLE_PLAYERS,
         leaderboard: [["Wilhelmina-Rose", 128], ["Mia", 96], ["Android", 84]].map(([name, points]) => ({
@@ -2350,6 +2479,49 @@
     }
 
     document.getElementById("info-open").addEventListener("click", () => info.showModal());
+
+    // ---------- All votes (leaderboard button) ----------
+    const votesList = document.getElementById("votes-list");
+    let shownVotes = "";
+
+    function voteLine(avatar, text, by) {
+      const line = el("p", "line");
+      const img = el("img", "");
+      img.src = `/avatars/${avatar}.png`;
+      img.alt = "";
+      const words = el("span", "");
+      words.append(`${text} `, el("span", "by", `— ${by}`));
+      line.append(img, words);
+      return line;
+    }
+
+    function renderVotes(entries) {
+      // Only rebuild when the list changed, so an open panel keeps its scroll position.
+      const key = JSON.stringify(entries);
+      if (key === shownVotes) return;
+      shownVotes = key;
+      if (!entries.length) {
+        votesList.replaceChildren(el("li", "empty", "No votes yet"));
+        return;
+      }
+      votesList.replaceChildren(...entries.map((entry, i) => {
+        const item = el("li", "");
+        const pair = el("div", "pair");
+        pair.append(
+          voteLine(entry.patientAvatar, `“${entry.symptom}”`, entry.patient),
+          voteLine(entry.doctor.avatar, `℞ ${entry.prescription}`, entry.doctor.name),
+        );
+        const score = el("span", "score");
+        score.innerHTML = THUMB_ICON;
+        score.append(String(entry.wins));
+        const place = el("span", "place", String(i + 1));
+        place.append(el("small", "", `Round ${entry.round}`));
+        item.append(place, pair, score);
+        return item;
+      }));
+    }
+
+    document.getElementById("votes-open").addEventListener("click", () => document.getElementById("votes").showModal());
 
     // ---------- Players bar ----------
     const playersTrack = document.getElementById("players-track");

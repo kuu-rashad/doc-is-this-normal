@@ -156,6 +156,13 @@ export class DocGame extends DurableObject {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         entry TEXT NOT NULL
       );
+      -- Pairs from finished rounds that were picked as funnier at least once, for the all-rounds
+      -- list on the big screen. entry is the pair as the screen shows it (no player ids).
+      CREATE TABLE IF NOT EXISTS voted_archive (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        round INTEGER NOT NULL,
+        entry TEXT NOT NULL
+      );
     `);
 
     // Columns added after the first release.
@@ -305,8 +312,11 @@ export class DocGame extends DurableObject {
       this.sql.exec("INSERT INTO hall_of_fame (entry) VALUES (?)", JSON.stringify(winner));
       this.setSetting("reveal", { entry: winner, starred, until: at + this.timing().reveal * MINUTE });
     }
-    this.clearRound();
     const round = this.getSetting("round");
+    for (const entry of this.votedThisRound()) {
+      this.sql.exec("INSERT INTO voted_archive (round, entry) VALUES (?, ?)", round.number, JSON.stringify(entry));
+    }
+    this.clearRound();
     this.setSetting("round", { number: round.number + 1, startedAt: at });
   }
 
@@ -324,6 +334,7 @@ export class DocGame extends DurableObject {
 
   startGame(now) {
     this.sql.exec("DELETE FROM hall_of_fame");
+    this.sql.exec("DELETE FROM voted_archive");
     this.sql.exec("DELETE FROM points");
     this.setSetting("reveal", null);
     this.clearRound();
@@ -429,6 +440,23 @@ export class DocGame extends DurableObject {
     };
   }
 
+  // Every pair of this round picked as funnier at least once.
+  votedThisRound() {
+    return this.prescriptionStats()
+      .filter((row) => row.wins > 0)
+      .map((row) => ({ ...this.toEntry(row), shown: row.shown }));
+  }
+
+  // Those pairs from every round so far: most picks first, then the higher win rate, then
+  // whichever came first.
+  votedAllRounds(currentRound) {
+    const past = this.sql.exec("SELECT round, entry FROM voted_archive ORDER BY id").toArray()
+      .map((row) => ({ ...JSON.parse(row.entry), round: row.round }));
+    const current = this.votedThisRound().map((entry) => ({ ...entry, round: currentRound }));
+    return [...past, ...current].sort((a, b) =>
+      b.wins - a.wins || b.approval - a.approval || a.round - b.round || a.prescriptionId - b.prescriptionId);
+  }
+
   // ---------- Public ----------
 
   getState() {
@@ -442,6 +470,7 @@ export class DocGame extends DurableObject {
     return {
       state,
       candidates: candidates.map((row) => this.toEntry(row)),
+      voted: this.votedAllRounds(state.round),
       hallOfFame: this.sql.exec("SELECT entry FROM hall_of_fame ORDER BY id DESC").toArray().map((row) => JSON.parse(row.entry)),
       players: this.sql.exec("SELECT nickname, avatar FROM players ORDER BY rowid").toArray(),
       // Top 3 by points; ties go to whoever joined first.
