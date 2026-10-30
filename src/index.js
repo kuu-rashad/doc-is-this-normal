@@ -509,10 +509,10 @@ export class DocGame extends DurableObject {
       voted: this.votedAllRounds(state.round),
       hallOfFame: this.sql.exec("SELECT entry FROM hall_of_fame ORDER BY id DESC").toArray().map((row) => JSON.parse(row.entry)),
       players: this.sql.exec("SELECT nickname, avatar FROM players ORDER BY rowid").toArray(),
-      // Top 3 by points; ties go to whoever joined first.
+      // Top 10 by points; ties go to whoever joined first.
       leaderboard: this.sql.exec(
         `SELECT p.nickname, p.avatar, s.points FROM points s JOIN players p ON p.id = s.player_id
-         WHERE s.points > 0 ORDER BY s.points DESC, p.rowid LIMIT 3`,
+         WHERE s.points > 0 ORDER BY s.points DESC, p.rowid LIMIT 10`,
       ).toArray(),
       scoring: config.points,
     };
@@ -525,7 +525,7 @@ export class DocGame extends DurableObject {
   }
 
   // The player's own card on their phone: profile, score, stars, leaderboard place (same order
-  // as the big screen's TOP 3), wins and stars not announced yet, and the scoring rules.
+  // as the big screen's leaderboard), wins and stars not announced yet, and the scoring rules.
   getMe({ playerId }) {
     const me = this.getPlayer({ playerId });
     if (!me) return null;

@@ -101,7 +101,8 @@
       display: none;
     }
 
-    /* Top 3 players by points. */
+    /* Top 10 players by points: the top three in full size, places 4–10 in smaller rows so
+       all ten fit above the "SCAN ME!" bandage. */
     .leaderboard {
       padding: 0.8vw 1.4vw 0.4vw;
       background: var(--pad);
@@ -198,6 +199,25 @@
     .leaderboard .points {
       flex: none;
       font-variant-numeric: tabular-nums;
+    }
+
+    /* Places 4–10: smaller rows, plain rank pills. */
+    .leaderboard li.compact {
+      gap: 0.8vw;
+      padding: 0.12vw 0;
+      font-size: 1.15vw;
+    }
+
+    .leaderboard li.compact .rank {
+      min-width: 2.9vw;
+      height: 1.65vw;
+      background: var(--white);
+    }
+
+    .leaderboard li.compact img {
+      width: 1.8vw;
+      height: 1.8vw;
+      border-width: 0.15vw;
     }
 
     .phase-card[data-phase="second_opinions"] {
@@ -1633,8 +1653,8 @@
 
   <aside class="side">
     <section class="leaderboard" id="leaderboard" hidden>
-      <h2>Top 3</h2>
-      <p class="empty" id="leaderboard-empty" hidden>Earn your place in the top 3</p>
+      <h2>Top 10</h2>
+      <p class="empty" id="leaderboard-empty" hidden>Earn your place in the top 10</p>
       <ol id="leaderboard-list"></ol>
     </section>
   </aside>
@@ -2400,7 +2420,10 @@
         voted: entries.map((entry, i) => ({ ...entry, round: [3, 1, 2, 3, 1, 2][i] })),
         hallOfFame: [...entries].reverse(),
         players: SAMPLE_PLAYERS,
-        leaderboard: [["Wilhelmina-Rose", 128], ["Mia", 96], ["Android", 84]].map(([name, points]) => ({
+        leaderboard: [
+          ["Wilhelmina-Rose", 128], ["Mia", 96], ["Android", 84], ["Sam", 71], ["Lee", 65],
+          ["Jo", 52], ["Bea", 47], ["Toby", 33], ["Kim", 21], ["Max", 12],
+        ].map(([name, points]) => ({
           ...SAMPLE_PLAYERS.find((p) => p.nickname === name),
           points,
         })),
@@ -2566,7 +2589,8 @@
         avatar.src = `/avatars/${row.avatar}.png`;
         avatar.alt = "";
         const rank = el("span", "rank", String(i + 1));
-        rank.append(el("small", "", ["st", "nd", "rd"][i]));
+        rank.append(el("small", "", ["st", "nd", "rd"][i] ?? "th"));
+        if (i >= 3) item.classList.add("compact");
         item.append(rank, avatar, el("span", "name", row.nickname), el("span", "points", `${row.points} pts`));
         return item;
       }));
