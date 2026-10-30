@@ -38,6 +38,10 @@ The game repeats this cycle for the whole party.
 - If nobody qualifies for the Finals, the Finals are skipped and the next round starts.
 - **Everything from a round retires when it ends**: symptoms, prescriptions and votes are cleared. Only the winner lives on, in the Hall of Fame, and pairs picked as funnier at least once stay in the all-votes list. Player points carry over between rounds.
 
+## Highlighted fills
+
+Wherever a symptom or prescription is shown (big screen and phones), the words the player filled into the blank are highlighted like a highlighter stroke, so it's clear what to pay attention to. Prescriptions written with "Write my own" have no blank, so nothing is highlighted in them.
+
 ## Patient mode (writing a symptom)
 
 - The player gets a random symptom template with one blank, e.g. "Whenever I open my inbox, I get an uncontrollable urge to ____."

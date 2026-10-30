@@ -79,3 +79,13 @@ body::after {
 @media (prefers-reduced-motion: reduce) {
   body::after { animation: none; }
 }
+
+/* Words the players filled in, like a highlighter stroke over the letters. */
+mark {
+  color: inherit;
+  background: linear-gradient(transparent 12%, rgb(248 184 78 / 0.8) 12%, rgb(248 184 78 / 0.8) 94%, transparent 94%);
+  border-radius: 0.15em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding: 0 0.08em;
+}

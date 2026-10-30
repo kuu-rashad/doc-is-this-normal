@@ -21,11 +21,20 @@ const TEMPLATES = new Map(
 const PHASES = ["clinic_open", "second_opinions", "finals"];
 const TIMING_KEYS = ["first_clinic_open", "clinic_open", "second_opinions", "finals", "reveal"];
 
+// Filled-in words are wrapped in these two private-use characters, so wherever the sentence is
+// shown the screens can highlight what the player wrote. They travel with the text (into the
+// Hall of Fame too); players can't type them (see cleanText).
+const MARK_START = "\uE000";
+const MARK_END = "\uE001";
+const MARKS = /[\uE000\uE001]/g;
+const unmarked = (text) => text.replace(MARKS, "");
+
 // Fills the blanks, and capitalises the first letter in case the text starts with a blank
 // ("{{cure}} should do it." → "A goat should do it.").
 function fillTemplate(template, slots) {
-  const text = template.text.replace(/\{\{(\w+)\}\}/g, (_, key) => slots[key]);
-  return text.charAt(0).toUpperCase() + text.slice(1);
+  const text = template.text.replace(/\{\{(\w+)\}\}/g, (_, key) => MARK_START + slots[key] + MARK_END);
+  const first = text.startsWith(MARK_START) ? 1 : 0;
+  return text.slice(0, first) + text.charAt(first).toUpperCase() + text.slice(first + 1);
 }
 
 // Prescription frames; like symptom templates, each blank lists its own "Surprise me" options.
@@ -46,12 +55,12 @@ function fillChecked(template, slots, maxLength, what) {
     filled[key] = value;
   }
   const text = fillTemplate(template, filled);
-  if (text.length > maxLength) throw new HttpError(400, `The whole ${what} can be at most ${maxLength} characters`);
+  if (unmarked(text).length > maxLength) throw new HttpError(400, `The whole ${what} can be at most ${maxLength} characters`);
   return text;
 }
 
 function cleanText(value) {
-  return String(value ?? "").trim().replace(/\s+/g, " ");
+  return String(value ?? "").replace(MARKS, "").trim().replace(/\s+/g, " ");
 }
 
 // Players are only "Dr." when they're the one behind a prescription.

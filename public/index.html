@@ -782,11 +782,14 @@
       display: none;
     }
 
-    /* One past winner, like a leader card turned landscape: the clipboard (public/clipboard.png
-       as a 9-slice frame) with the patient's note on the left and the doctor's orders on the
-       right. Sized in em of the strip; the handwriting shrinks to fit (see fitFameCard). The
-       image is 1536px wide and its frame slices scale at 20em per 1536px; the top 1.95em of the
-       frame is the transparent space the clip pokes into. */
+    /* One past winner, like a leader card turned landscape: a clipboard with the patient's note
+       on the left and the doctor's orders on the right. Sized in em of the strip; the handwriting
+       shrinks to fit (see fitFameCard). The card is much wider than public/clipboard.png, and a
+       9-slice frame would stretch the clip in its top edge, so the frame comes from
+       clipboard_frame.png (the same image without the clip) and the clip from clipboard_clip.png
+       (cut from x 385, y 30 of the original), laid on top at its own proportions. Both scale at
+       20em per 1536px of the original; the top 1.95em of the frame is the space the clip pokes
+       into. */
     .fame-card {
       --text: 1.6;
       position: relative;
@@ -797,7 +800,19 @@
       box-sizing: border-box;
       border-style: solid;
       border-width: 3.125em 1.432em 1.875em;
-      border-image: url("/clipboard.png") 240 110 144 fill / 3.125em 1.432em 1.875em;
+      border-image: url("/clipboard_frame.png") 240 110 144 fill / 3.125em 1.432em 1.875em;
+    }
+
+    /* Positions start inside the frame's 3.125em top border. */
+    .fame-card::before {
+      content: "";
+      position: absolute;
+      top: calc(-3.125em + 30em * 20 / 1536);
+      left: 50%;
+      width: calc(765em * 20 / 1536);
+      height: calc(210em * 20 / 1536);
+      background: url("/clipboard_clip.png") center / 100% 100% no-repeat;
+      transform: translateX(-50%);
     }
 
     .fame-card .sheet {
@@ -1992,10 +2007,23 @@
       return node;
     }
 
+    // Sentences come with the words players filled in wrapped in \uE000…\uE001 (see the server's
+    // fillTemplate). Those words are shown highlighted; quote adds curly quotes around it all.
+    function sentenceNodes(text, quote = false) {
+      const nodes = String(text).split(/[\uE000\uE001]/).map((part, i) => (i % 2 ? el("mark", "", part) : part));
+      return quote ? ["“", ...nodes, "”"] : nodes;
+    }
+
+    function sentenceElement(tag, className, text, quote) {
+      const node = el(tag, className);
+      node.append(...sentenceNodes(text, quote));
+      return node;
+    }
+
     // A symptom + prescription pair. Names are left out during the finals.
     function pairElement(entry, { names = true } = {}) {
       const pair = el("div", "pair");
-      pair.append(el("p", "bubble", `“${entry.symptom}”`));
+      pair.append(sentenceElement("p", "bubble", entry.symptom, true));
       if (names && entry.patient) pair.append(el("p", "patient", entry.patient));
 
       const slip = el("div", "slip");
@@ -2007,7 +2035,7 @@
       if (names && entry.doctor.name) signed.append(el("span", "", entry.doctor.name));
       const rx = el("p", "rx");
       rx.append(rxIcon());
-      slip.append(rx, el("p", "written", entry.prescription), signed);
+      slip.append(rx, sentenceElement("p", "written", entry.prescription), signed);
       pair.append(slip);
       return pair;
     }
@@ -2035,8 +2063,8 @@
       for (const line of lines) {
         const item = el("li", "");
         const words = el("p", "line");
-        if (line.kind === "symptom") words.textContent = `“${line.text}”`;
-        else words.append(rxIcon(), ` ${line.text}`);
+        if (line.kind === "symptom") words.append(...sentenceNodes(line.text, true));
+        else words.append(rxIcon(), " ", ...sentenceNodes(line.text));
         item.append(el("span", "count", `★ ${line.stars}`), words, el("span", "by", line.author));
         list.append(item);
       }
@@ -2083,12 +2111,12 @@
       const note = el("div", "note");
       const patient = el("div", "who");
       patient.append(avatarCircle(entry.patientAvatar, "?"), el("span", "", entry.patient));
-      note.append(patient, el("p", "symptom", entry.symptom));
+      note.append(patient, sentenceElement("p", "symptom", entry.symptom));
 
       const doctor = el("div", "doctor");
       doctor.append(avatarCircle(entry.doctor.avatar), el("span", "", entry.doctor.name));
 
-      sheet.append(note, el("p", "notes-label", "Doctor's notes:"), el("p", "prescription", entry.prescription), doctor);
+      sheet.append(note, el("p", "notes-label", "Doctor's notes:"), sentenceElement("p", "prescription", entry.prescription), doctor);
 
       const badge = el("div", "badge");
       badge.innerHTML = THUMB_OUTLINE_ICON;
@@ -2231,13 +2259,14 @@
       ["Bea", "blue"], ["Toby", "red"], ["Kim", "purple_patient"], ["Max", "brown"], ["Zoe", "lime"],
       ["Nia", "green_patient"], ["Felix", "yellow_patient"], ["Wilhelmina-Rose", "blue"], ["Rex", "orange"],
     ].map(([nickname, avatar]) => ({ nickname, avatar }));
+    // Filled-in words are wrapped in \uE000…\uE001, as the server stores them.
     const SAMPLE_PAIRS = [
-      ["Every time I get a Slack notification from Bea, I pee a little before I've even read it.", "Two naps, then call me never.", "Mia", "Android"],
-      ["It started small. First I could only bend spoons. Now I can control every printer in the building, and my neighbors are concerned.", "Unplug everything, apologize to each printer individually, and never make eye contact with a scanner again.", null, "Sam"],
-      ["Whenever I open my inbox, I get an uncontrollable urge to throw my laptop into the sea.", "Prescribe yourself one meeting-free afternoon.", "Lee", "Kim"],
-      ["I accidentally replied-all with my honest opinion of the roadmap, and now I can't stop apologizing to the office plants, the printer and the CEO's dog.", "Write a heartfelt apology on a sticky note, attach one to every plant in the office, and water them twice a day.", "Wilhelmina-Rose", "Felix"],
-      ["My cat has started knocking my coffee off the desk, and I think it's contagious, because yesterday I did it too.", "Switch to a sippy cup and let the cat run your standups.", null, "Zoe"],
-      ["Whenever a client asks for \"one small change\", I start sweating pure panic.", "Bill them for the sweat.", "Toby", "Nia"],
+      ["Every time I get a Slack notification from \uE000Bea\uE001, I pee a little before I've even read it.", "Two naps, then call me never.", "Mia", "Android"],
+      ["It started small. First I could only bend spoons. Now I can \uE000control every printer in the building\uE001, and my neighbors are concerned.", "Unplug everything, apologize to each printer individually, and never make eye contact with a scanner again.", null, "Sam"],
+      ["Whenever I open my inbox, I get an uncontrollable urge to \uE000throw my laptop into the sea\uE001.", "Prescribe yourself \uE000one meeting-free afternoon\uE001.", "Lee", "Kim"],
+      ["I accidentally replied-all with my honest opinion of \uE000the roadmap\uE001, and now I can't stop apologizing to the office plants, the printer and the CEO's dog.", "Write a heartfelt apology on a sticky note, attach one to every plant in the office, and water them twice a day.", "Wilhelmina-Rose", "Felix"],
+      ["My cat has started \uE000knocking my coffee off the desk\uE001, and I think it's contagious, because yesterday I did it too.", "Switch to \uE000a sippy cup\uE001 and let the cat run your standups.", null, "Zoe"],
+      ["Whenever a client asks for \"one small change\", I start sweating pure panic.", "Bill them for \uE000the sweat\uE001.", "Toby", "Nia"],
     ];
 
     function sampleEntry([symptom, prescription, patientName, doctorName], i) {
@@ -2337,14 +2366,14 @@
       const patient = el("div", "who");
       patient.append(circle(entry.patientAvatar, "?"), el("span", "", entry.patient));
       const note = el("div", "note");
-      note.append(el("p", "text", entry.symptom), patient);
+      note.append(sentenceElement("p", "text", entry.symptom), patient);
 
       const doctor = el("div", "who");
       doctor.append(circle(entry.doctor.avatar), el("span", "", entry.doctor.name));
       const rx = el("div", "rx-row");
       rx.append(rxIcon());
       const orders = el("div", "orders");
-      orders.append(rx, el("p", "text", entry.prescription), doctor);
+      orders.append(rx, sentenceElement("p", "text", entry.prescription), doctor);
 
       const sheet = el("div", "sheet");
       sheet.append(note, orders);
@@ -2482,14 +2511,14 @@
     const votesList = document.getElementById("votes-list");
     let shownVotes = "";
 
-    function voteLine(avatar, text, by, prescription) {
+    function voteLine(avatar, text, by, prescription = false) {
       const line = el("p", "line");
       const img = el("img", "");
       img.src = `/avatars/${avatar}.png`;
       img.alt = "";
       const words = el("span", "");
       if (prescription) words.append(rxIcon(), " ");
-      words.append(`${text} `, el("span", "by", `— ${by}`));
+      words.append(...sentenceNodes(text, !prescription), " ", el("span", "by", `— ${by}`));
       line.append(img, words);
       return line;
     }
@@ -2507,7 +2536,7 @@
         const item = el("li", "");
         const pair = el("div", "pair");
         pair.append(
-          voteLine(entry.patientAvatar, `“${entry.symptom}”`, entry.patient),
+          voteLine(entry.patientAvatar, entry.symptom, entry.patient),
           voteLine(entry.doctor.avatar, entry.prescription, entry.doctor.name, true),
         );
         const score = el("span", "score");

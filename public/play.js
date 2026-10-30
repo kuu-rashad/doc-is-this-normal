@@ -84,6 +84,18 @@ function shuffle(items) {
 
 const pickRandom = (items) => items[Math.floor(Math.random() * items.length)];
 
+// Sentences come with the words players filled in wrapped in \uE000…\uE001 (see the server's
+// fillTemplate). Shows the sentence in node with those words highlighted, optionally in quotes.
+function showSentence(node, text, quote = false) {
+  const parts = String(text).split(/[\uE000\uE001]/).map((part, i) => {
+    if (i % 2 === 0) return part;
+    const mark = document.createElement("mark");
+    mark.textContent = part;
+    return mark;
+  });
+  node.replaceChildren(...(quote ? ["“", ...parts, "”"] : parts));
+}
+
 for (const back of document.querySelectorAll("[data-back]")) back.addEventListener("click", () => showHome());
 
 // ---------- Join / edit profile ----------
@@ -427,7 +439,7 @@ async function startPrescription() {
   if (status === 404) return showHome("No patients are waiting right now. Try again in a moment!");
   if (!ok) return showHome(data.error);
   prescriptionSymptom = data;
-  $("prescription-symptom").textContent = `“${data.text}”`;
+  showSentence($("prescription-symptom"), data.text, true);
   // Without frames (e.g. an older server version) only "write my own" is possible.
   prescriptionFrames = shuffle(data.templates ?? []);
   frameIndex = 0;
@@ -518,7 +530,7 @@ async function startVote({ afterPrescription = false } = {}) {
     card.setAttribute("role", "button");
     card.dataset.id = pair.id;
     card.append(
-      sentenceLine(pair.id, "symptom", `“${pair.symptom}”`),
+      sentenceLine(pair.id, "symptom", pair.symptom),
       sentenceLine(pair.id, "prescription", pair.prescription),
     );
     options.append(card);
@@ -539,7 +551,7 @@ function sentenceLine(id, kind, text) {
     line.append(rx);
   }
   const words = document.createElement("p");
-  words.textContent = text;
+  showSentence(words, text, kind === "symptom");
   const starButton = document.createElement("button");
   starButton.type = "button";
   starButton.className = "star";
@@ -620,14 +632,14 @@ function renderFinals({ finalists, choice }) {
     card.setAttribute("aria-pressed", String(choice === i));
     const symptom = document.createElement("p");
     symptom.className = "symptom";
-    symptom.textContent = `“${finalist.symptom}”`;
+    showSentence(symptom, finalist.symptom, true);
     const prescription = document.createElement("p");
     prescription.className = "prescription";
     const avatar = document.createElement("img");
     avatar.src = `/avatars/${finalist.doctor.avatar}.png`;
     avatar.alt = "";
     const text = document.createElement("span");
-    text.textContent = finalist.prescription;
+    showSentence(text, finalist.prescription);
     prescription.append(avatar, text);
     card.append(symptom, prescription);
     // Picking saves straight away; picking again changes the vote.
