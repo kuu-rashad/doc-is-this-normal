@@ -21,7 +21,7 @@
 - The phone remembers the player with a random id saved in the browser, so returning players skip straight to the home screen.
 - Players can change their nickname or avatar from the home screen at any time.
 - New players can join during any phase.
-- Names are shown as plain nicknames everywhere, except that a player is called "Dr. <nickname>" when they're the author of a prescription.
+- Names are shown as plain nicknames, except next to their writing: a player is "Patient <nickname>" as the author of a symptom and "Dr. <nickname>" as the author of a prescription. Walk-ins stay "Walk-in Patient".
 
 ## The round
 
@@ -86,14 +86,14 @@ Wherever a symptom or prescription is shown (big screen and phones), the words t
 
 - When Second opinions ends, every symptom is ranked by its best pair's **win rate** (times picked as funnier ÷ times shown). A pair needs at least 3 showings to count.
 - The top 3 symptoms become the finalists (one pair each).
-- On the big screen: chime, large countdown, and the finalists side by side without names.
+- On the big screen: chime, large countdown, and the finalists side by side, each on its own panel: the pair, then its patient's and doctor's full characters standing side by side right below it, names below. The finalists stay clear of the bandage in the corner, and their size is fitted to the space.
 - On phones: a ballot with the same finalists. Each player picks one favourite and can change their pick until the Finals end.
 - Players can vote for pairs that contain their own writing.
 - Winner: most finals votes; ties go to the higher win rate, then the earlier prescription.
 
 ## Reveal
 
-- At the end of the Finals the big screen shows "Winner!" with the winning pair and the names of its patient and doctor, for the reveal length.
+- At the end of the Finals the big screen shows "Winner!" with the winning pair and its patient's and doctor's full characters side by side, names below, for the reveal length.
 - Below it, the round's 3 most starred individual sentences (symptoms or prescriptions) with their star counts and authors.
 - The winner joins the Hall of Fame.
 
@@ -119,7 +119,7 @@ Walk-in symptoms have no patient to score. Points add up across rounds; "Reset g
 - **Players bar:** every player's avatar and nickname along the bottom, scrolling when they don't all fit.
 - **QR code:** on a bandage in the bottom-right corner ("SCAN ME!"), styled like blood on the pad.
 - **Finals view:** big countdown and the finalists side by side; most other sections are hidden.
-- **Reveal view:** the winning pair with names, and the round's most starred sentences.
+- **Reveal view:** the winning pair with its patient's and doctor's avatars and names, and the round's most starred sentences.
 - **Background:** blue gradient with a slowly scrolling pattern of crosses and syringes.
 
 ### Sound

@@ -68,6 +68,11 @@ function doctorName(nickname) {
   return `Dr. ${nickname}`;
 }
 
+// Players are "Patient <nickname>" wherever they appear as the author of a symptom.
+function patientName(nickname) {
+  return `Patient ${nickname}`;
+}
+
 class HttpError extends Error {
   constructor(status, message) {
     super(message);
@@ -316,7 +321,7 @@ export class DocGame extends DurableObject {
     const playerName = (id) => this.getPlayer({ playerId: id })?.nickname;
     const symptoms = this.sql.exec("SELECT text, author_id, stars, id FROM symptoms WHERE stars > 0").toArray()
       .map((row) => ({ kind: "symptom", text: row.text, stars: row.stars, order: row.id,
-        author: row.author_id ? playerName(row.author_id) ?? "" : config.premade_patient_name }));
+        author: row.author_id ? patientName(playerName(row.author_id) ?? "") : config.premade_patient_name }));
     const prescriptions = this.sql.exec("SELECT text, author_id, stars, id FROM prescriptions WHERE stars > 0").toArray()
       .map((row) => ({ kind: "prescription", text: row.text, stars: row.stars, order: row.id,
         author: doctorName(playerName(row.author_id) ?? "") }));
@@ -460,7 +465,8 @@ export class DocGame extends DurableObject {
       round: phase.round,
       phase: phase.name,
       phaseEndsAt: phase.endsAt,
-      finalists: finalists.map(({ symptom, prescription, doctor }) => ({ symptom, prescription, doctor: { avatar: doctor.avatar } })),
+      // Everything the screens show about each finalist; the authors' player ids stay here.
+      finalists: finalists.map(({ authors, ...entry }) => entry),
       reveal: reveal && reveal.until > now ? reveal.entry : null,
       revealStarred: reveal && reveal.until > now ? reveal.starred ?? [] : [],
     };

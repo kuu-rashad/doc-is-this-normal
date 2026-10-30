@@ -286,7 +286,7 @@
     }
 
     /* One symptom + prescription pair: the complaint as a speech bubble, the prescription as a
-       handwritten slip with the doctor's avatar. Sized in em, so the same pair works
+       handwritten slip, and the patient and doctor below. Sized in em, so the same pair works
        big (Hall of Fame, reveal) and small (three side by side in the finals). */
     .pair {
       display: flex;
@@ -320,13 +320,6 @@
       transform: skewY(40deg) rotate(45deg);
     }
 
-    .patient {
-      margin: -0.6em 0 0 3.2em;
-      font-size: 0.8em;
-      font-weight: 700;
-      color: var(--white);
-    }
-
     .slip {
       position: relative;
       margin-left: 1.5em;
@@ -357,26 +350,46 @@
       overflow-wrap: anywhere;
     }
 
-    .slip .signed {
+    /* The patient and the doctor behind the pair, side by side and slightly overlapping: their
+       whole characters, standing on the bottom of the view, with big names below. */
+    .cast {
       display: flex;
+      justify-content: center;
+    }
+
+    .cast figure {
+      flex: 0 1 10em;
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 0.5em;
-      margin-top: 0.6em;
+      min-width: 0;
+      margin: 0 -0.3em;
     }
 
-    .slip .signed img {
-      width: 2.8em;
-      height: 2.8em;
+    .cast img {
+      width: 100%;
+      max-width: 10em;
+      height: 10em;
       object-fit: contain;
-      background: var(--pad);
-      border: 0.12em solid var(--navy);
-      border-radius: 50%;
+      object-position: bottom;
     }
 
-    .slip .signed span {
-      font-family: "Caveat", cursive;
-      font-size: 1.4em;
+    .cast figcaption {
+      box-sizing: border-box;
+      max-width: 100%;
+      margin-top: 0.1em;
+      /* Keeps a long name clear of its overlapping neighbour. */
+      padding: 0 0.25em;
+      font-size: 1.3em;
+      /* Room for two lines, so the characters stand on one line however the names wrap. */
+      min-height: 2em;
       font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      overflow-wrap: anywhere;
+      color: var(--white);
+      -webkit-text-stroke: 0.2em var(--navy);
+      paint-order: stroke fill;
     }
 
     /* Default view: Hall of Fame carousel, kept clear of the bandage in the corner. */
@@ -564,7 +577,9 @@
       pointer-events: none;
       top: 1.5vw;
       left: 3vw;
-      right: 3vw;
+      /* Clear of the bandage and its "SCAN ME!" in the bottom-right corner (about 25vw wide). */
+      right: 26vw;
+      bottom: 1vw;
       display: none;
       flex-direction: column;
       align-items: center;
@@ -595,10 +610,26 @@
     .finalists {
       display: grid;
       grid-template-columns: repeat(var(--count, 3), minmax(0, 30vw));
+      align-content: center;
+      align-items: start;
       justify-content: center;
       gap: 2vw;
+      flex: 1;
+      min-height: 0;
       width: 100%;
       font-size: 1.5vw;
+    }
+
+    /* Each finalist on its own darker panel, so its characters read as part of it. */
+    .finalists .pair {
+      gap: 1.2em;
+      padding: 1em 1em 0.6em;
+      background: rgb(11 20 51 / 0.28);
+      border-radius: 1.4em;
+    }
+
+    .finalists .cast {
+      margin-top: -0.4em;
     }
 
     /* Reveal: the winner, big, with the patient's and doctor's names. */
@@ -2020,27 +2051,56 @@
       return node;
     }
 
-    // A symptom + prescription pair. Names are left out during the finals.
-    function pairElement(entry, { names = true } = {}) {
+    // The patient's name as shown: "Patient <nickname>", like "Dr. <nickname>" for doctors (the
+    // server adds that one). Walk-ins keep their own name; older winners have no walkIn, and a
+    // missing avatar meant a walk-in then.
+    function patientName(entry) {
+      return (entry.walkIn ?? !entry.patientAvatar) ? entry.patient : `Patient ${entry.patient}`;
+    }
+
+    // A symptom + prescription pair, with the patient and the doctor side by side below it.
+    function pairElement(entry) {
       const pair = el("div", "pair");
       pair.append(sentenceElement("p", "bubble", entry.symptom, true));
-      if (names && entry.patient) pair.append(el("p", "patient", entry.patient));
 
       const slip = el("div", "slip");
-      const avatar = el("img", "");
-      avatar.src = `/avatars/${entry.doctor.avatar}.png`;
-      avatar.alt = "";
-      const signed = el("div", "signed");
-      signed.append(avatar);
-      if (names && entry.doctor.name) signed.append(el("span", "", entry.doctor.name));
       const rx = el("p", "rx");
       rx.append(rxIcon());
-      slip.append(rx, sentenceElement("p", "written", entry.prescription), signed);
+      slip.append(rx, sentenceElement("p", "written", entry.prescription));
       pair.append(slip);
+
+      const person = (avatar, name) => {
+        const figure = el("figure", "");
+        const img = el("img", "");
+        img.alt = "";
+        if (avatar) img.src = `/avatars/${avatar}.png`;
+        else img.hidden = true;
+        figure.append(img, el("figcaption", "", name ?? ""));
+        return figure;
+      };
+      const cast = el("div", "cast");
+      cast.append(person(entry.patientAvatar, patientName(entry)), person(entry.doctor?.avatar, entry.doctor?.name));
+      pair.append(cast);
       return pair;
     }
 
     // Largest text (between 1vw and 1.9vw) at which the winner and the starred lines still fit.
+    // Largest text (up to 1.9vw) at which the finalists fit the space under the countdown.
+    function fitFinals() {
+      const list = document.getElementById("finalists");
+      if (getComputedStyle(list).display === "none" || !list.children.length) return;
+      const fits = () => list.scrollHeight <= list.clientHeight + 1;
+      let low = innerWidth * 0.007;
+      let high = innerWidth * 0.019;
+      for (let i = 0; i < 10; i++) {
+        const mid = (low + high) / 2;
+        list.style.fontSize = `${mid}px`;
+        if (fits()) low = mid;
+        else high = mid;
+      }
+      list.style.fontSize = `${low}px`;
+    }
+
     function fitReveal() {
       const reveal = document.getElementById("reveal");
       if (getComputedStyle(reveal).display === "none") return;
@@ -2110,7 +2170,7 @@
 
       const note = el("div", "note");
       const patient = el("div", "who");
-      patient.append(avatarCircle(entry.patientAvatar, "?"), el("span", "", entry.patient));
+      patient.append(avatarCircle(entry.patientAvatar, "?"), el("span", "", patientName(entry)));
       note.append(patient, sentenceElement("p", "symptom", entry.symptom));
 
       const doctor = el("div", "doctor");
@@ -2199,7 +2259,7 @@
         shownFinalists = finalistsKey;
         const list = document.getElementById("finalists");
         list.style.setProperty("--count", state.finalists.length || 3);
-        list.replaceChildren(...state.finalists.map((entry) => pairElement(entry, { names: false })));
+        list.replaceChildren(...state.finalists.map((entry) => pairElement(entry)));
       }
       const revealKey = JSON.stringify([state.reveal, state.revealStarred]);
       if (revealKey !== shownReveal) {
@@ -2209,6 +2269,7 @@
         if (state.reveal) reveal.append(pairElement(state.reveal));
         if (state.revealStarred?.length) reveal.append(mostStarredElement(state.revealStarred));
       }
+      fitFinals();
       fitReveal();
       renderLeaders();
       renderTimers();
@@ -2296,13 +2357,13 @@
           phase,
           phaseEndsAt: debug.endsAt,
           finalists: phase === "finals"
-            ? entries.slice(0, 3).map(({ symptom, prescription, doctor }) => ({ symptom, prescription, doctor: { avatar: doctor.avatar } }))
+            ? entries.slice(0, 3)
             : [],
           reveal: reveal ? entries[1] : null,
           revealStarred: reveal ? [
             { kind: "prescription", text: entries[0].prescription, stars: 7, author: entries[0].doctor.name },
-            { kind: "symptom", text: entries[3].symptom, stars: 5, author: entries[3].patient },
-            { kind: "symptom", text: entries[1].symptom, stars: 4, author: entries[1].patient },
+            { kind: "symptom", text: entries[3].symptom, stars: 5, author: patientName(entries[3]) },
+            { kind: "symptom", text: entries[1].symptom, stars: 4, author: patientName(entries[1]) },
           ] : [],
         },
         candidates: phase === "finals" ? [] : entries,
@@ -2364,7 +2425,7 @@
       const card = el("div", "fame-card");
 
       const patient = el("div", "who");
-      patient.append(circle(entry.patientAvatar, "?"), el("span", "", entry.patient));
+      patient.append(circle(entry.patientAvatar, "?"), el("span", "", patientName(entry)));
       const note = el("div", "note");
       note.append(sentenceElement("p", "text", entry.symptom), patient);
 
@@ -2536,7 +2597,7 @@
         const item = el("li", "");
         const pair = el("div", "pair");
         pair.append(
-          voteLine(entry.patientAvatar, entry.symptom, entry.patient),
+          voteLine(entry.patientAvatar, entry.symptom, patientName(entry)),
           voteLine(entry.doctor.avatar, entry.prescription, entry.doctor.name, true),
         );
         const score = el("span", "score");
@@ -2619,6 +2680,7 @@
     }).observe(side);
 
     window.addEventListener("resize", () => {
+      fitFinals();
       updateSideSpace();
       refitLeaders();
       fitReveal();
