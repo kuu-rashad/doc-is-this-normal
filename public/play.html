@@ -237,10 +237,15 @@
       border: 0;
     }
 
+    /* Four to a row. On short screens the grid narrows (and the avatars shrink with it) so the
+       Join button stays on screen; about 390px of the form is everything but the avatars. */
     .avatars {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      width: min(100%, (100dvh - 390px) * 4 / 3);
+      min-width: 220px;
+      margin: 0 auto;
     }
 
     .avatars input {
@@ -249,21 +254,29 @@
       pointer-events: none;
     }
 
+    /* The square comes from the label; the image only fills it, so its own 384px size can never
+       make the tile bigger (some phone browsers let it). */
     .avatars label {
+      position: relative;
+      display: block;
+      min-width: 0;
       margin: 0;
-      padding: 4px;
+      padding: 0;
       aspect-ratio: 1;
+      overflow: hidden;
       background: var(--white);
-      border: 4px solid var(--navy);
-      border-radius: 18px;
+      border: 3px solid var(--navy);
+      border-radius: 14px;
       cursor: pointer;
       transition: transform 0.1s, background-color 0.1s;
     }
 
     .avatars img {
+      position: absolute;
+      inset: 4px;
       display: block;
-      width: 100%;
-      height: 100%;
+      width: calc(100% - 8px);
+      height: calc(100% - 8px);
       object-fit: contain;
     }
 
