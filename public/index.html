@@ -6,7 +6,7 @@
   <title>Doc, Is This Normal?</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@500;700&family=Gochi+Hand&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/base.css">
   <style>
     html, body {
@@ -466,6 +466,7 @@
     /* The patient's note, clipped on slightly crooked. */
     .leader-card .note {
       flex: none;
+      margin: 0 -0.4em 0 0.1em;
       padding: 0.8em 1em 0.9em;
       background:
         repeating-linear-gradient(transparent 0 1.7em, rgb(11 20 51 / 0.08) 1.7em calc(1.7em + 1px)),
@@ -473,15 +474,15 @@
       border: 0.22em solid var(--navy);
       border-radius: 1em;
       box-shadow: 0.25em 0.3em 0 rgb(11 20 51 / 0.25);
-      transform: rotate(-2deg);
+      transform: rotate(-3deg);
     }
 
     .leader-card .who {
       display: flex;
       align-items: center;
-      gap: 0.6em;
-      margin-bottom: 0.4em;
-      font-size: 1.35em;
+      gap: 0.5em;
+      margin-bottom: 0.3em;
+      font-size: 1.7em;
       font-weight: 700;
     }
 
@@ -489,8 +490,8 @@
       flex: none;
       display: grid;
       place-items: center;
-      width: 2.6em;
-      height: 2.6em;
+      width: 2.8em;
+      height: 2.8em;
       box-sizing: border-box;
       overflow: hidden;
       font-weight: 700;
@@ -505,26 +506,27 @@
       object-fit: contain;
     }
 
+    /* The patient's words and the "Doctor's notes:" label are handwritten. */
     .leader-card .symptom {
       margin: 0;
-      font-size: 1.45em;
-      font-weight: 600;
-      line-height: 1.25;
+      font-family: "Gochi Hand", cursive;
+      font-size: 1.95em;
+      line-height: 1.1;
       overflow-wrap: anywhere;
     }
 
     .leader-card .notes-label {
-      margin: 0.2em 0 -0.3em;
-      font-size: 1.3em;
-      font-weight: 700;
+      margin: 0.1em 0 -0.4em;
+      font-family: "Gochi Hand", cursive;
+      font-size: 1.8em;
       color: var(--bandage-dark);
     }
 
     .leader-card .prescription {
       margin: 0;
-      font-size: 2em;
+      font-size: 2.4em;
       font-weight: 700;
-      line-height: 1.15;
+      line-height: 1.1;
       overflow-wrap: anywhere;
     }
 
@@ -532,8 +534,8 @@
       margin-top: auto;
       display: flex;
       align-items: center;
-      gap: 0.6em;
-      font-size: 1.35em;
+      gap: 0.5em;
+      font-size: 1.7em;
       font-weight: 700;
     }
 
@@ -546,7 +548,7 @@
       align-items: center;
       gap: 0.25em;
       padding: 0.1em 0.55em 0.1em 0.4em;
-      font-size: 2em;
+      font-size: 2.2em;
       font-weight: 700;
       background: #74e3b5;
       border: 0.12em solid var(--navy);
@@ -556,10 +558,7 @@
     .leader-card .badge svg {
       width: 1.05em;
       height: 1.05em;
-      fill: var(--white);
-      stroke: var(--navy);
-      stroke-width: 60;
-      paint-order: stroke fill;
+      fill: var(--navy);
     }
 
     .leaders-slide.fading {
@@ -1904,7 +1903,8 @@
       sheet.append(note, el("p", "notes-label", "Doctor's notes:"), el("p", "prescription", entry.prescription), doctor);
 
       const badge = el("div", "badge");
-      badge.innerHTML = THUMB_ICON;
+      // "thumb_up" (outline) icon from Google Material Symbols (Apache 2.0)
+      badge.innerHTML = '<svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M855-632q24 0 42 18t18 42v81.84q0 7.16 1.5 14.66T915-461L789-171q-8.88 21.25-29.59 36.12Q738.69-120 716-120H272v-512l225-238q13.6-14 32.19-16.5Q547.77-889 565-879q17 10 25.5 27.5t4.2 36.5L556-632h299Zm-523 25v427h397l126-299v-93H482l53-249-203 214ZM139-120q-24.75 0-42.37-17.63Q79-155.25 79-180v-392q0-24.75 17.63-42.38Q114.25-632 139-632h133v60H139v392h133v60H139Zm193-60v-427 427Z"/></svg>';
       badge.append(String(entry.wins ?? entry.thumbsUp ?? 0));
 
       card.append(sheet, badge);
@@ -1917,7 +1917,7 @@
       const sheet = card.querySelector(".sheet");
       const width = card.clientWidth;
       let low = width / 70;
-      let high = width / 26;
+      let high = width / 19;
       for (let i = 0; i < 10; i++) {
         const mid = (low + high) / 2;
         card.style.fontSize = `${mid}px`;
