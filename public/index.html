@@ -387,8 +387,9 @@
       left: 4vw;
       top: calc(var(--logo-bottom) + 0.6vw);
       bottom: calc(var(--players-bar) + var(--fame-height, 0px) + 1vw);
-      /* Up to the right-hand column (phase card and leaderboard, about 24vw wide at 1.5vw from the edge). */
-      right: 27.5vw;
+      /* Up to the right-hand column (phase card and leaderboard), which is at least 24vw wide but
+         grows with long names; --side-space is measured from it in JS. */
+      right: calc(var(--side-space, 25.5vw) + 2vw);
       display: flex;
       flex-direction: column;
       font-size: 1.35vw;
@@ -2577,7 +2578,22 @@
       }
     }
 
+    // Keep the leaders clear of the right-hand column, however wide its content makes it.
+    const side = document.querySelector(".side");
+    let sideSpace = 0;
+    function updateSideSpace() {
+      const space = Math.ceil(innerWidth - side.getBoundingClientRect().left);
+      if (space === sideSpace) return false;
+      sideSpace = space;
+      document.documentElement.style.setProperty("--side-space", `${space}px`);
+      return true;
+    }
+    new ResizeObserver(() => {
+      if (updateSideSpace()) refitLeaders();
+    }).observe(side);
+
     window.addEventListener("resize", () => {
+      updateSideSpace();
       refitLeaders();
       fitReveal();
       fitPlayers();
