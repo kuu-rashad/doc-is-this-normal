@@ -360,6 +360,10 @@ function createFillIn({ preview, slots, idPrefix, limit, counter, onChange }) {
       box.id = `${idPrefix}-${key}`;
       box.maxLength = SLOT_LIMIT;
       box.autocomplete = "off";
+      // Phone keyboards capitalise the first letter of every field. Only let them when the blank
+      // starts a sentence; mid-sentence, players can still type capitals themselves.
+      const before = template.text.split(`{{${key}}}`)[0].trim();
+      box.setAttribute("autocapitalize", !before || /[.!?]$/.test(before) ? "sentences" : "none");
       // No hint: players write whatever they like.
       box.setAttribute("aria-label", "Fill in the blank");
       field.append(box);
