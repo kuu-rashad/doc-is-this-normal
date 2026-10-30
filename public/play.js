@@ -644,9 +644,11 @@ function updateVotes() {
 $("vote-options").addEventListener("click", (event) => {
   const starButton = event.target.closest(".star");
   if (starButton) {
-    // One star per vote; tapping the starred one again removes it.
+    // One star per vote; tapping the starred one again removes it. Starring a line also picks
+    // its pair, since a star only goes with a pick.
     const next = { kind: starButton.dataset.kind, id: Number(starButton.dataset.id) };
     star = star?.id === next.id && star.kind === next.kind ? null : next;
+    if (star) pick = star.id;
   } else {
     const card = event.target.closest(".pair-card");
     if (!card) return;
