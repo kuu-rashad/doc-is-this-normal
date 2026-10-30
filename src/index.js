@@ -708,6 +708,7 @@ export class DocGame extends DurableObject {
 
     const winner = body?.winner == null ? null : Number(body.winner);
     if (winner !== null && winner !== a && winner !== b) throw new HttpError(400, "Unknown pick");
+    if (winner === null && body?.star) throw new HttpError(400, "Pick the funnier one too");
     const star = body?.star ?? null;
     if (star && (!["symptom", "prescription"].includes(star.kind) || ![a, b].includes(Number(star.id)))) {
       throw new HttpError(400, "Unknown star");

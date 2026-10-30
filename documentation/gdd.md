@@ -77,7 +77,7 @@ Wherever a symptom or prescription is shown (big screen and phones), the words t
 ## Voting
 
 - A vote shows two symptom + prescription **pairs**, which may come from different symptoms.
-- The player taps the funnier pair, and can optionally star any one of the four sentences (two symptoms, two prescriptions). Both are optional; with neither, the vote is a skip.
+- The player taps the funnier pair, and can optionally star any one of the four sentences (two symptoms, two prescriptions). A star can only be sent together with a pick; with neither, the vote is a skip.
 - Pairs that have been shown the least come first, and a player never sees the same two pairs twice.
 - Players never get pairs they wrote any part of (their symptom or their prescription), so they can't pick or star their own writing.
 - One prescription is enough to make a symptom + prescription pair; voting opens as soon as the round has two pairs.

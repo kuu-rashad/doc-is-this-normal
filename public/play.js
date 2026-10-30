@@ -584,7 +584,9 @@ function updateVotes() {
     button.setAttribute("aria-pressed", String(on));
     button.textContent = on ? "★" : "☆";
   }
+  // Nothing chosen skips; a star alone can't be sent, it goes with a pick.
   $("vote-submit").textContent = pick !== null || star ? "Send" : "Skip";
+  $("vote-submit").disabled = star !== null && pick === null;
 }
 
 $("vote-options").addEventListener("click", (event) => {
