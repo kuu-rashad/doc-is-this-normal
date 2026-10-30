@@ -24,7 +24,7 @@
     "prescription": 2,
     "vote": 1,
     "pair_win": 1,
-    "star_received": 1,
+    "star_received": 3,
     "final_places": [
       10,
       8,
@@ -995,5 +995,6 @@
         }
       ]
     }
-  ]
+  ],
+  "most_starred_shown": 3
 }

@@ -117,7 +117,8 @@ export class DocGame extends DurableObject {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         author_id TEXT,
         text TEXT NOT NULL,
-        created_at INTEGER NOT NULL
+        created_at INTEGER NOT NULL,
+        stars INTEGER NOT NULL DEFAULT 0
       );
       CREATE TABLE IF NOT EXISTS prescriptions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -127,6 +128,7 @@ export class DocGame extends DurableObject {
         created_at INTEGER NOT NULL,
         shown INTEGER NOT NULL DEFAULT 0,
         wins INTEGER NOT NULL DEFAULT 0,
+        stars INTEGER NOT NULL DEFAULT 0,
         UNIQUE (symptom_id, author_id)
       );
       CREATE TABLE IF NOT EXISTS assignments (
@@ -156,13 +158,17 @@ export class DocGame extends DurableObject {
       );
     `);
 
-    const columns = this.sql.exec("PRAGMA table_info(prescriptions)").toArray().map((c) => c.name);
-    if (!columns.includes("shown")) {
+    // Columns added after the first release.
+    const columnsOf = (table) => this.sql.exec(`PRAGMA table_info(${table})`).toArray().map((c) => c.name);
+    const rxColumns = columnsOf("prescriptions");
+    if (!rxColumns.includes("shown")) {
       this.sql.exec(`
         ALTER TABLE prescriptions ADD COLUMN shown INTEGER NOT NULL DEFAULT 0;
         ALTER TABLE prescriptions ADD COLUMN wins INTEGER NOT NULL DEFAULT 0;
       `);
     }
+    if (!rxColumns.includes("stars")) this.sql.exec("ALTER TABLE prescriptions ADD COLUMN stars INTEGER NOT NULL DEFAULT 0");
+    if (!columnsOf("symptoms").includes("stars")) this.sql.exec("ALTER TABLE symptoms ADD COLUMN stars INTEGER NOT NULL DEFAULT 0");
 
     if (!this.getSetting("round")) this.startGame(Date.now());
   }
@@ -272,7 +278,23 @@ export class DocGame extends DurableObject {
   // Everything from this round retires; only the winner lives on in the Hall of Fame.
   // ranked: the finalists, best first (or null when the finals were skipped). The top places
   // earn points for both the patient and the doctor behind the pair.
+  // The round's most-starred sentences (symptoms and prescriptions alike), most stars first.
+  mostStarred() {
+    const playerName = (id) => this.getPlayer({ playerId: id })?.nickname;
+    const symptoms = this.sql.exec("SELECT text, author_id, stars, id FROM symptoms WHERE stars > 0").toArray()
+      .map((row) => ({ kind: "symptom", text: row.text, stars: row.stars, order: row.id,
+        author: row.author_id ? playerName(row.author_id) ?? "" : config.premade_patient_name }));
+    const prescriptions = this.sql.exec("SELECT text, author_id, stars, id FROM prescriptions WHERE stars > 0").toArray()
+      .map((row) => ({ kind: "prescription", text: row.text, stars: row.stars, order: row.id,
+        author: doctorName(playerName(row.author_id) ?? "") }));
+    return [...symptoms, ...prescriptions]
+      .sort((a, b) => b.stars - a.stars || a.order - b.order)
+      .slice(0, config.most_starred_shown)
+      .map(({ order, ...line }) => line);
+  }
+
   endRound(at, ranked) {
+    const starred = this.mostStarred();
     if (ranked?.length) {
       ranked.slice(0, config.points.final_places.length).forEach((entry, place) => {
         this.addPoints(entry.authors?.patient, config.points.final_places[place]);
@@ -281,7 +303,7 @@ export class DocGame extends DurableObject {
       // Player ids double as their login, so they never leave the server.
       const { authors, ...winner } = ranked[0];
       this.sql.exec("INSERT INTO hall_of_fame (entry) VALUES (?)", JSON.stringify(winner));
-      this.setSetting("reveal", { entry: winner, until: at + this.timing().reveal * MINUTE });
+      this.setSetting("reveal", { entry: winner, starred, until: at + this.timing().reveal * MINUTE });
     }
     this.clearRound();
     const round = this.getSetting("round");
@@ -403,6 +425,7 @@ export class DocGame extends DurableObject {
       phaseEndsAt: phase.endsAt,
       finalists: finalists.map(({ symptom, prescription, doctor }) => ({ symptom, prescription, doctor: { avatar: doctor.avatar } })),
       reveal: reveal && reveal.until > now ? reveal.entry : null,
+      revealStarred: reveal && reveal.until > now ? reveal.starred ?? [] : [],
     };
   }
 
@@ -473,9 +496,9 @@ export class DocGame extends DurableObject {
 
   // ---------- Doctor mode ----------
 
-  // A random symptom that isn't the player's own and that they haven't treated yet. Voting needs
-  // two prescriptions on the same symptom, so symptoms with exactly one come first (one more makes
-  // them votable), then untreated ones, then the rest. Asking again returns the same one, so a
+  // A random symptom that isn't the player's own and that they haven't treated yet, favouring
+  // those with the fewest prescriptions (every prescription already makes a votable pair, so this
+  // spreads them over as many patients as possible). Asking again returns the same one, so a
   // reload keeps it.
   getPrescriptionTask({ playerId }) {
     this.requirePlayer(playerId);
@@ -493,9 +516,7 @@ export class DocGame extends DurableObject {
       `SELECT s.id, s.text FROM symptoms s
        WHERE (s.author_id IS NULL OR s.author_id != ?)
          AND NOT EXISTS (SELECT 1 FROM prescriptions p WHERE p.symptom_id = s.id AND p.author_id = ?)
-       ORDER BY CASE (SELECT COUNT(*) FROM prescriptions p WHERE p.symptom_id = s.id)
-                  WHEN 1 THEN 0 WHEN 0 THEN 1 ELSE 2 END,
-                (SELECT COUNT(*) FROM prescriptions p WHERE p.symptom_id = s.id), RANDOM()
+       ORDER BY (SELECT COUNT(*) FROM prescriptions p WHERE p.symptom_id = s.id), RANDOM()
        LIMIT 1`,
       playerId, playerId,
     );
@@ -542,7 +563,7 @@ export class DocGame extends DurableObject {
 
   pairFor(prescriptionId) {
     return this.one(
-      `SELECT p.id, p.text AS prescription, p.author_id AS doctor_id, s.text AS symptom, s.author_id AS patient_id
+      `SELECT p.id, p.text AS prescription, p.author_id AS doctor_id, s.id AS symptom_id, s.text AS symptom, s.author_id AS patient_id
        FROM prescriptions p JOIN symptoms s ON s.id = p.symptom_id WHERE p.id = ?`,
       prescriptionId,
     );
@@ -605,6 +626,8 @@ export class DocGame extends DurableObject {
     }
     if (star) {
       const starred = pairs.find((pair) => pair.id === Number(star.id));
+      if (star.kind === "symptom") this.sql.exec("UPDATE symptoms SET stars = stars + 1 WHERE id = ?", starred.symptom_id);
+      else this.sql.exec("UPDATE prescriptions SET stars = stars + 1 WHERE id = ?", starred.id);
       this.addPoints(star.kind === "symptom" ? starred.patient_id : starred.doctor_id, config.points.star_received);
     }
     return { ok: true };

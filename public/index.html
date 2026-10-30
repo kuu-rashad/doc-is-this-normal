@@ -506,8 +506,9 @@
       object-fit: contain;
     }
 
-    /* The patient's words and the "Doctor's notes:" label are handwritten. */
-    .leader-card .symptom {
+    /* The patient's words, the "Doctor's notes:" label and the prescription are handwritten. */
+    .leader-card .symptom,
+    .leader-card .prescription {
       margin: 0;
       font-family: "Gochi Hand", cursive;
       font-size: 1.95em;
@@ -520,14 +521,6 @@
       font-family: "Gochi Hand", cursive;
       font-size: 1.8em;
       color: var(--bandage-dark);
-    }
-
-    .leader-card .prescription {
-      margin: 0;
-      font-size: 2.4em;
-      font-weight: 700;
-      line-height: 1.1;
-      overflow-wrap: anywhere;
     }
 
     .leader-card .doctor {
@@ -622,16 +615,73 @@
     }
 
     /* Reveal: the winner, big, with the patient's and doctor's names. */
+    /* The winner and the most-starred lines; the text size is fitted to the space (fitReveal). */
     .reveal-view {
       position: fixed;
       pointer-events: none;
       top: calc(var(--logo-bottom) + 1vw);
+      bottom: 1.5vw;
       left: 6vw;
-      width: 54vw;
+      width: 56vw;
       display: none;
       flex-direction: column;
-      gap: 1.6vw;
-      font-size: 1.9vw;
+      gap: 0.8em;
+      font-size: 1.6vw;
+      overflow: hidden;
+    }
+
+    /* Most-starred lines of the round, under the winner. */
+    .most-starred {
+      padding: 0.7em 1em;
+      font-size: 0.75em;
+      background: var(--pad);
+      border: 0.2em solid var(--navy);
+      border-radius: 1em;
+    }
+
+    .most-starred h3 {
+      margin: 0 0 0.4em;
+      font-size: 1.1em;
+      font-weight: 700;
+    }
+
+    .most-starred ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .most-starred li {
+      display: flex;
+      align-items: baseline;
+      gap: 0.7em;
+      padding: 0.3em 0;
+    }
+
+    .most-starred li + li {
+      border-top: 0.1em solid rgb(185 128 73 / 0.3);
+    }
+
+    .most-starred .count {
+      flex: none;
+      padding: 0.05em 0.5em;
+      font-weight: 700;
+      background: #f8b84e;
+      border: 0.12em solid var(--navy);
+      border-radius: 999px;
+    }
+
+    .most-starred .line {
+      flex: 1;
+      margin: 0;
+      font-weight: 500;
+      overflow-wrap: anywhere;
+    }
+
+    .most-starred .by {
+      flex: none;
+      font-weight: 700;
+      color: var(--bandage-dark);
     }
 
     body.finals .leaders,
@@ -1859,6 +1909,36 @@
       return pair;
     }
 
+    // Largest text (between 1vw and 1.9vw) at which the winner and the starred lines still fit.
+    function fitReveal() {
+      const reveal = document.getElementById("reveal");
+      if (getComputedStyle(reveal).display === "none") return;
+      let low = innerWidth * 0.01;
+      let high = innerWidth * 0.019;
+      for (let i = 0; i < 10; i++) {
+        const mid = (low + high) / 2;
+        reveal.style.fontSize = `${mid}px`;
+        if (reveal.scrollHeight > reveal.clientHeight + 1) high = mid;
+        else low = mid;
+      }
+      reveal.style.fontSize = `${low}px`;
+    }
+
+    // The round's most-starred sentences, shown under the winner at the reveal.
+    function mostStarredElement(lines) {
+      const box = el("section", "most-starred");
+      box.append(el("h3", "", "★ Most starred lines"));
+      const list = el("ol", "");
+      for (const line of lines) {
+        const item = el("li", "");
+        const words = el("p", "line", line.kind === "symptom" ? `“${line.text}”` : `℞ ${line.text}`);
+        item.append(el("span", "count", `★ ${line.stars}`), words, el("span", "by", line.author));
+        list.append(item);
+      }
+      box.append(list);
+      return box;
+    }
+
     function formatTime(ms) {
       const left = Math.max(0, ms);
       return `${Math.floor(left / 60000)}:${String(Math.floor((left % 60000) / 1000)).padStart(2, "0")}`;
@@ -1986,13 +2066,15 @@
         list.style.setProperty("--count", state.finalists.length || 3);
         list.replaceChildren(...state.finalists.map((entry) => pairElement(entry, { names: false })));
       }
-      const revealKey = JSON.stringify(state.reveal);
+      const revealKey = JSON.stringify([state.reveal, state.revealStarred]);
       if (revealKey !== shownReveal) {
         shownReveal = revealKey;
         const reveal = document.getElementById("reveal");
         reveal.replaceChildren(el("h2", "", "Winner!"));
         if (state.reveal) reveal.append(pairElement(state.reveal));
+        if (state.revealStarred?.length) reveal.append(mostStarredElement(state.revealStarred));
       }
+      fitReveal();
       renderLeaders();
       renderTimers();
 
@@ -2080,6 +2162,11 @@
             ? entries.slice(0, 3).map(({ symptom, prescription, doctor }) => ({ symptom, prescription, doctor: { avatar: doctor.avatar } }))
             : [],
           reveal: reveal ? entries[1] : null,
+          revealStarred: reveal ? [
+            { kind: "prescription", text: entries[0].prescription, stars: 7, author: entries[0].doctor.name },
+            { kind: "symptom", text: entries[3].symptom, stars: 5, author: entries[3].patient },
+            { kind: "symptom", text: entries[1].symptom, stars: 4, author: entries[1].patient },
+          ] : [],
         },
         candidates: phase === "finals" ? [] : entries,
         hallOfFame: [...entries].reverse(),
@@ -2319,6 +2406,7 @@
 
     window.addEventListener("resize", () => {
       refitLeaders();
+      fitReveal();
       fitPlayers();
       if (screen) renderFame(screen.hallOfFame);
     });

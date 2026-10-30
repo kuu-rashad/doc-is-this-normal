@@ -38,7 +38,7 @@ The game repeats this cycle for the whole party.
 ## Patient mode (writing a symptom)
 
 - The player gets a random symptom template with one blank, e.g. "Whenever I open my inbox, I get an uncontrollable urge to ____."
-- The blank is free text (up to 40 characters; the whole symptom up to 160), with a short hint above it.
+- The blank is free text with no hint, so players write whatever they like (up to 40 characters; the whole symptom up to 160).
 - **Surprise me** fills the blank at random from the template's pool, for players who can't think of anything.
 - (Suggestion chips under each blank exist in the code but are switched off for now.)
 - After submitting, the player goes straight on to treat a patient.
@@ -58,7 +58,7 @@ The game repeats this cycle for the whole party.
 ## Doctor mode (writing a prescription)
 
 - The player gets a symptom from the pool: never their own, and never one they've already treated.
-- Symptoms with exactly one prescription come first (one more makes them votable), then untreated ones, then the rest.
+- Symptoms with the fewest prescriptions come first (untreated ones before treated ones), so prescriptions spread across all patients.
 - The symptom is shown as a quote from the patient. Below it is a random prescription frame with one blank, e.g. "Take ____ and call me in the morning."
   - The dice button next to the frame switches to another wording.
   - **Surprise me** fills the blank at random.
@@ -73,7 +73,7 @@ The game repeats this cycle for the whole party.
 - The player taps the funnier pair, and can optionally star any one of the four sentences (two symptoms, two prescriptions). Both are optional; with neither, the vote is a skip.
 - Pairs that have been shown the least come first, and a player never sees the same two pairs twice.
 - Players can vote on pairs that include their own writing.
-- Voting opens as soon as the round has two prescriptions.
+- One prescription is enough to make a symptom + prescription pair; voting opens as soon as the round has two pairs.
 
 ## Finals
 
@@ -87,6 +87,7 @@ The game repeats this cycle for the whole party.
 ## Reveal
 
 - At the end of the Finals the big screen shows "Winner!" with the winning pair and the names of its patient and doctor, for the reveal length.
+- Below it, the round's 3 most starred individual sentences (symptoms or prescriptions) with their star counts and authors.
 - The winner joins the Hall of Fame.
 
 ## Scoring
@@ -97,7 +98,7 @@ The game repeats this cycle for the whole party.
 | Submit a prescription | +2 |
 | Vote (pick a pair, star a sentence, or make a first finals pick per round) | +1 |
 | Your pair is picked as the funnier one | +1 to its patient and +1 to its doctor |
-| Your sentence gets a star | +1 to its author |
+| Your sentence gets a star | +3 to its author |
 | Finals: 1st / 2nd / 3rd place | +10 / +8 / +6 to both the patient and the doctor |
 
 Walk-in symptoms have no patient to score. Points add up across rounds; "Reset game" sets them back to 0.
@@ -111,7 +112,7 @@ Walk-in symptoms have no patient to score. Points add up across rounds; "Reset g
 - **Players bar:** every player's avatar and nickname along the bottom, scrolling when they don't all fit.
 - **QR code:** on a bandage in the bottom-right corner ("SCAN ME!"), styled like blood on the pad.
 - **Finals view:** big countdown and the finalists side by side; most other sections are hidden.
-- **Reveal view:** the winning pair with names.
+- **Reveal view:** the winning pair with names, and the round's most starred sentences.
 - **Background:** blue gradient with a slowly scrolling pattern of crosses and syringes.
 
 ### Sound
@@ -134,10 +135,12 @@ Walk-in symptoms have no patient to score. Points add up across rounds; "Reset g
 
 All game content and tuning lives in `assets/gameconfig.json`:
 
-- symptom templates (by tier) with hints and random-fill pools, and the walk-in symptoms;
-- prescription frames and their fill pools (shared pools, or pools written for one frame);
-- phase lengths, finalist count and minimum showings, text limits, and point values;
-- the walk-in patient's name.
+- symptom templates (by tier) with their Surprise me options, and the walk-in symptoms;
+- prescription frames, each with its own Surprise me options;
+- phase lengths, finalist count and minimum showings, text limits, point values, and how many most-starred sentences the reveal shows;
+- the walk-in patient's name and avatar.
+
+`documentation/content.md` lists all templates in an easier-to-edit form.
 
 ## Not done yet / ideas
 
