@@ -80,7 +80,7 @@ Wherever a symptom or prescription is shown (big screen and phones), the words t
 
 - A vote shows two symptom + prescription **pairs**, which may come from different symptoms.
 - The player taps the funnier pair, and can optionally star any one of the four sentences (two symptoms, two prescriptions). A star can only be sent together with a pick; with neither, the vote is a skip.
-- Pairs with a player's symptom come before walk-in pairs, and among them the ones shown the least come first. A player never sees the same two pairs twice.
+- Pairs with a player's symptom come before walk-in pairs, and among them the ones shown the least come first. Each pair is shown to a player only once (skips included), so a vote is always two pairs they haven't seen; once they've seen everything, voting runs out until new prescriptions come in.
 - Players never get pairs they wrote any part of (their symptom or their prescription), so they can't pick or star their own writing.
 - One prescription is enough to make a symptom + prescription pair; voting opens as soon as the round has two pairs.
 
@@ -115,7 +115,7 @@ Walk-in symptoms have no patient to score. Points add up across rounds; "Reset g
 ## Big screen
 
 - **Top left:** the game logo.
-- **Top right:** buttons for all votes, scoring info, mute, and settings. Under them, the TOP 10 leaderboard: the top three in full size with gold, silver and bronze ranks, places 4–10 in smaller rows ("Earn your place in the top 10" until anyone scores).
+- **Top right:** buttons for all votes, scoring info, mute, and settings. Under them, the TOP 7 leaderboard: the top three in full size with gold, silver and bronze ranks, places 4–7 in smaller rows ("Earn your place in the top 7" until anyone scores).
 - **Top centre:** the phase card (round number, phase name with its colour and icon, countdown "until <next phase>"), between the logo and the corner buttons. Hidden during the Finals, which show their own countdown there.
 - **This round's leaders:** the current finals candidates as clipboard cards (the patient's note with avatar, name and symptom; "Doctor's notes:" with the prescription and the doctor; a badge with how often the pair was picked). Three at a time, cycling every 10 seconds; text shrinks or grows to fit each card.
 - **Hall of Fame:** past winners as speech-bubble + clipboard cards above the players bar, a few at a time with a countdown ring before the next set. An outlined placeholder when there are no winners yet.

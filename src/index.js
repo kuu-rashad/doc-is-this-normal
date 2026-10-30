@@ -527,10 +527,10 @@ export class DocGame extends DurableObject {
       voted: this.votedAllRounds(state.round),
       hallOfFame: this.sql.exec("SELECT entry FROM hall_of_fame ORDER BY id DESC").toArray().map((row) => JSON.parse(row.entry)),
       players: this.sql.exec("SELECT nickname, avatar FROM players ORDER BY rowid").toArray(),
-      // Top 10 by points; ties go to whoever joined first.
+      // Top 7 by points; ties go to whoever joined first.
       leaderboard: this.sql.exec(
         `SELECT p.nickname, p.avatar, s.points FROM points s JOIN players p ON p.id = s.player_id
-         WHERE s.points > 0 ORDER BY s.points DESC, p.rowid LIMIT 10`,
+         WHERE s.points > 0 ORDER BY s.points DESC, p.rowid LIMIT 7`,
       ).toArray(),
       scoring: config.points,
     };
@@ -698,25 +698,21 @@ export class DocGame extends DurableObject {
   getVoteTask({ playerId }) {
     this.requirePlayer(playerId);
     this.requirePhase(["clinic_open", "second_opinions"], PHASE_MESSAGES.voting);
-    // Never pairs the player wrote any part of: no voting (or starring) for yourself. Pairs with a
+    // Each pair is shown to a player once, ever: a vote is two pairs they haven't seen in any
+    // earlier vote (skips included), so votes run out until new prescriptions come in. Never
+    // pairs the player wrote any part of: no voting (or starring) for yourself. Pairs with a
     // player's symptom come first, the least shown first; walk-in pairs fill in after them.
-    const pairs = this.sql.exec(
+    const unseen = this.sql.exec(
       `SELECT p.id FROM prescriptions p JOIN symptoms s ON s.id = p.symptom_id
        WHERE p.author_id != ? AND (s.author_id IS NULL OR s.author_id != ?)
-       ORDER BY s.author_id IS NULL, p.shown, RANDOM()`,
-      playerId, playerId,
+         AND NOT EXISTS (SELECT 1 FROM pair_votes v WHERE v.player_id = ? AND p.id IN (v.a_id, v.b_id))
+       ORDER BY s.author_id IS NULL, p.shown, RANDOM()
+       LIMIT 2`,
+      playerId, playerId, playerId,
     ).toArray().map((row) => row.id);
-    const seen = new Set(
-      this.sql.exec("SELECT a_id, b_id FROM pair_votes WHERE player_id = ?", playerId).toArray().map((row) => `${row.a_id}-${row.b_id}`),
-    );
-    for (const a of pairs) {
-      for (const b of pairs) {
-        if (a === b || seen.has(`${Math.min(a, b)}-${Math.max(a, b)}`)) continue;
-        const shown = [this.pairFor(a), this.pairFor(b)].map(({ id, symptom, prescription }) => ({ id, symptom, prescription }));
-        return { round: this.getSetting("round").number, pairs: shown };
-      }
-    }
-    return null;
+    if (unseen.length < 2) return null;
+    const shown = unseen.map((id) => this.pairFor(id)).map(({ id, symptom, prescription }) => ({ id, symptom, prescription }));
+    return { round: this.getSetting("round").number, pairs: shown };
   }
 
   // body: { ids: [two pair ids], winner: pair id or null, star: { kind: "symptom" | "prescription",
@@ -732,8 +728,8 @@ export class DocGame extends DurableObject {
     if (pairs.some((pair) => pair.doctor_id === playerId || pair.patient_id === playerId)) {
       throw new HttpError(400, "You can't vote on your own writing");
     }
-    if (this.one("SELECT 1 FROM pair_votes WHERE player_id = ? AND a_id = ? AND b_id = ?", playerId, a, b)) {
-      throw new HttpError(409, "You already voted on these two");
+    if (this.one("SELECT 1 FROM pair_votes WHERE player_id = ? AND (a_id IN (?, ?) OR b_id IN (?, ?))", playerId, a, b, a, b)) {
+      throw new HttpError(409, "You've already seen one of these");
     }
 
     const winner = body?.winner == null ? null : Number(body.winner);

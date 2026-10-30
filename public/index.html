@@ -101,8 +101,7 @@
       display: none;
     }
 
-    /* Top 10 players by points: the top three in full size, places 4–10 in smaller rows so
-       all ten fit above the "SCAN ME!" bandage. */
+    /* Top 7 players by points: the top three in full size, places 4–7 in smaller rows. */
     .leaderboard {
       padding: 0.8vw 1.4vw 0.4vw;
       background: var(--pad);
@@ -201,7 +200,7 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* Places 4–10: smaller rows, plain rank pills. */
+    /* Places 4–7: smaller rows, plain rank pills. */
     .leaderboard li.compact {
       gap: 0.8vw;
       padding: 0.12vw 0;
@@ -1653,8 +1652,8 @@
 
   <aside class="side">
     <section class="leaderboard" id="leaderboard" hidden>
-      <h2>Top 10</h2>
-      <p class="empty" id="leaderboard-empty" hidden>Earn your place in the top 10</p>
+      <h2>Top 7</h2>
+      <p class="empty" id="leaderboard-empty" hidden>Earn your place in the top 7</p>
       <ol id="leaderboard-list"></ol>
     </section>
   </aside>
@@ -2422,7 +2421,7 @@
         players: SAMPLE_PLAYERS,
         leaderboard: [
           ["Wilhelmina-Rose", 128], ["Mia", 96], ["Android", 84], ["Sam", 71], ["Lee", 65],
-          ["Jo", 52], ["Bea", 47], ["Toby", 33], ["Kim", 21], ["Max", 12],
+          ["Jo", 52], ["Bea", 47],
         ].map(([name, points]) => ({
           ...SAMPLE_PLAYERS.find((p) => p.nickname === name),
           points,
