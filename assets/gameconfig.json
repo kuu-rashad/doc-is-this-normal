@@ -40,41 +40,11 @@
         "slots": {
           "cure": {
             "options": [
-              "a strongly worded email",
-              "two business days off",
               "an exorcism",
-              "a nap under your desk",
               "a hug from HR",
-              "more cowbell",
-              "a decaf intervention",
-              "less eye contact with the printer",
-              "a sabbatical in Lapland",
-              "a fax machine",
-              "a goat",
-              "emotional support pigeons",
-              "a bigger monitor",
-              "leeches",
-              "a mute button for your whole life",
-              "three espressos",
-              "a sauna and a long silence",
-              "a team-building retreat",
-              "a Jira ticket",
-              "a second opinion from the intern",
               "a vacation from your own brain",
-              "a note excusing you from Mondays",
-              "duct tape",
-              "a priest",
-              "a raise",
-              "a new personality",
-              "bubble wrap",
-              "a rubber duck",
-              "a weighted blanket and a lawyer",
-              "a stern talking-to",
-              "airplane mode",
-              "ice cream for dinner",
-              "an emotional support houseplant",
-              "more sleep and fewer opinions",
-              "a spreadsheet about your feelings"
+              "emotional support pigeons",
+              "a new personality"
             ]
           }
         }
@@ -85,41 +55,11 @@
         "slots": {
           "cure": {
             "options": [
-              "a strongly worded email",
-              "two business days off",
-              "an exorcism",
-              "a nap under your desk",
-              "a hug from HR",
-              "more cowbell",
-              "a decaf intervention",
-              "less eye contact with the printer",
-              "a sabbatical in Lapland",
-              "a fax machine",
-              "a goat",
-              "emotional support pigeons",
-              "a bigger monitor",
-              "leeches",
-              "a mute button for your whole life",
-              "three espressos",
-              "a sauna and a long silence",
-              "a team-building retreat",
-              "a Jira ticket",
-              "a second opinion from the intern",
-              "a vacation from your own brain",
-              "a note excusing you from Mondays",
               "duct tape",
-              "a priest",
-              "a raise",
-              "a new personality",
-              "bubble wrap",
-              "a rubber duck",
-              "a weighted blanket and a lawyer",
-              "a stern talking-to",
-              "airplane mode",
-              "ice cream for dinner",
-              "an emotional support houseplant",
-              "more sleep and fewer opinions",
-              "a spreadsheet about your feelings"
+              "a goat",
+              "leeches",
+              "a Jira ticket",
+              "three espressos"
             ]
           }
         }
@@ -130,41 +70,11 @@
         "slots": {
           "action": {
             "options": [
-              "move to the woods",
-              "delete Slack",
-              "scream into a pillow",
-              "apologize to the printer",
-              "quit Google Meet forever",
-              "eat a whole cucumber",
-              "reply-all with an apology",
-              "dance it out",
               "marry the office plant",
               "join a monastery",
-              "switch to decaf",
-              "hand in your badge",
-              "adopt a goat",
-              "sit in the sauna until it stops",
-              "talk to a rubber duck",
-              "change your name",
-              "burn the spreadsheet",
-              "mute everyone",
-              "wear a helmet",
-              "call your mother",
-              "touch grass",
-              "lie down on the floor for a while",
-              "learn to whistle",
-              "ignore it until it goes away",
-              "sleep for a week",
-              "blame the intern",
-              "start a podcast about it",
               "fake your own death",
-              "move back in with your parents",
-              "take up knitting",
-              "write a haiku about it",
-              "book a one-way ticket to Lapland",
-              "turn yourself off and on again",
-              "unplug your router",
-              "hide under your desk professionally"
+              "apologize to the printer",
+              "move back in with your parents"
             ]
           }
         }
@@ -175,41 +85,11 @@
         "slots": {
           "cure": {
             "options": [
-              "a strongly worded email",
-              "two business days off",
-              "an exorcism",
-              "a nap under your desk",
-              "a hug from HR",
-              "more cowbell",
-              "a decaf intervention",
-              "less eye contact with the printer",
-              "a sabbatical in Lapland",
-              "a fax machine",
-              "a goat",
-              "emotional support pigeons",
-              "a bigger monitor",
-              "leeches",
-              "a mute button for your whole life",
-              "three espressos",
-              "a sauna and a long silence",
-              "a team-building retreat",
-              "a Jira ticket",
-              "a second opinion from the intern",
-              "a vacation from your own brain",
-              "a note excusing you from Mondays",
-              "duct tape",
               "a priest",
-              "a raise",
-              "a new personality",
-              "bubble wrap",
-              "a rubber duck",
-              "a weighted blanket and a lawyer",
-              "a stern talking-to",
-              "airplane mode",
-              "ice cream for dinner",
-              "an emotional support houseplant",
-              "more sleep and fewer opinions",
-              "a spreadsheet about your feelings"
+              "more cowbell",
+              "a sauna and a long silence",
+              "a mute button for your whole life",
+              "a stern talking-to"
             ]
           }
         }
@@ -220,41 +100,11 @@
         "slots": {
           "action": {
             "options": [
-              "move to the woods",
-              "delete Slack",
-              "scream into a pillow",
-              "apologize to the printer",
-              "quit Google Meet forever",
-              "eat a whole cucumber",
-              "reply-all with an apology",
-              "dance it out",
-              "marry the office plant",
-              "join a monastery",
-              "switch to decaf",
-              "hand in your badge",
-              "adopt a goat",
-              "sit in the sauna until it stops",
-              "talk to a rubber duck",
-              "change your name",
-              "burn the spreadsheet",
-              "mute everyone",
-              "wear a helmet",
-              "call your mother",
               "touch grass",
-              "lie down on the floor for a while",
-              "learn to whistle",
-              "ignore it until it goes away",
-              "sleep for a week",
-              "blame the intern",
-              "start a podcast about it",
-              "fake your own death",
-              "move back in with your parents",
-              "take up knitting",
+              "scream into a pillow",
+              "call your mother",
               "write a haiku about it",
-              "book a one-way ticket to Lapland",
-              "turn yourself off and on again",
-              "unplug your router",
-              "hide under your desk professionally"
+              "unplug your router"
             ]
           }
         }
@@ -266,18 +116,9 @@
           "take": {
             "options": [
               "my hand",
-              "care",
-              "your hand off my leg",
-              "a long hard look at yourself",
               "your pants off",
-              "the stairs",
+              "a long hard look at yourself",
               "a hint",
-              "it slow",
-              "one for the team",
-              "my number",
-              "a cold shower",
-              "a deep breath and your clothes off",
-              "two of these",
               "the rest of the year off"
             ]
           }
@@ -291,14 +132,8 @@
             "options": [
               "your pants",
               "that attitude",
-              "your wedding ring",
-              "my glasses",
-              "work tomorrow",
               "your tinfoil hat",
-              "the cone of shame",
               "that ridiculous lanyard",
-              "your LinkedIn profile",
-              "the training wheels",
               "your socks, slowly"
             ]
           }
@@ -312,14 +147,8 @@
             "options": [
               "some butter",
               "your ex's tears",
-              "my business card",
-              "a little prayer",
-              "the client's feedback",
               "a rotisserie chicken",
               "the intern",
-              "both hands",
-              "whatever's in the office fridge",
-              "your quarterly bonus",
               "a warm spoon"
             ]
           }
@@ -332,14 +161,9 @@
           "say": {
             "options": [
               "ahh",
-              "my name",
-              "sorry",
               "the safe word",
-              "yes to the promotion",
               "goodbye to your dignity",
-              "something nice about the client",
               "that again, slower",
-              "“per my last email”",
               "what you said at the Christmas party"
             ]
           }
@@ -354,13 +178,8 @@
               "yourself",
               "your marriage",
               "your manager",
-              "the sauna",
-              "your conscience",
-              "me",
-              "the CEO",
               "your personality",
-              "the whole company",
-              "your partner"
+              "the whole company"
             ]
           }
         }
@@ -372,15 +191,9 @@
           "yours": {
             "options": [
               "browser history",
-              "search history",
               "love life",
               "left buttock",
-              "tax return",
-              "DMs",
-              "tongue",
               "Spotify Wrapped",
-              "sock drawer",
-              "group chats",
               "life choices"
             ]
           }
@@ -393,15 +206,10 @@
           "swallow": {
             "options": [
               "your pride",
-              "this pill",
               "the evidence",
-              "your words",
-              "the key",
-              "two of these",
-              "a whistle",
+              "the USB stick",
               "the whole thing",
-              "your feelings",
-              "the USB stick"
+              "your feelings"
             ]
           }
         }
@@ -412,41 +220,11 @@
         "slots": {
           "cure": {
             "options": [
-              "a strongly worded email",
-              "two business days off",
-              "an exorcism",
-              "a nap under your desk",
-              "a hug from HR",
-              "more cowbell",
-              "a decaf intervention",
-              "less eye contact with the printer",
-              "a sabbatical in Lapland",
-              "a fax machine",
-              "a goat",
-              "emotional support pigeons",
-              "a bigger monitor",
-              "leeches",
-              "a mute button for your whole life",
-              "three espressos",
-              "a sauna and a long silence",
-              "a team-building retreat",
-              "a Jira ticket",
-              "a second opinion from the intern",
-              "a vacation from your own brain",
-              "a note excusing you from Mondays",
-              "duct tape",
-              "a priest",
-              "a raise",
-              "a new personality",
-              "bubble wrap",
               "a rubber duck",
-              "a weighted blanket and a lawyer",
-              "a stern talking-to",
-              "airplane mode",
-              "ice cream for dinner",
-              "an emotional support houseplant",
-              "more sleep and fewer opinions",
-              "a spreadsheet about your feelings"
+              "a fax machine",
+              "a bigger monitor",
+              "a raise",
+              "a weighted blanket and a lawyer"
             ]
           }
         }
@@ -468,7 +246,8 @@
                 "quit my job",
                 "throw my laptop out of the window",
                 "fake my own death",
-                "become a goat farmer"
+                "become a goat farmer",
+                "move to a cabin in the woods"
               ]
             }
           }
@@ -483,10 +262,7 @@
                 "fly to the grocery store",
                 "summon pigeons at will",
                 "control every printer in the building",
-                "see through walls",
-                "levitate the neighbor's car",
-                "melt cutlery by staring at it",
-                "hear what their houseplants think"
+                "see through walls"
               ]
             }
           }
@@ -501,10 +277,7 @@
                 "a spreadsheet",
                 "my landlord",
                 "a man in a fedora",
-                "the color beige",
-                "a Gantt chart",
-                "an unread Slack thread",
-                "a clown on a unicycle"
+                "the color beige"
               ]
             }
           }
@@ -519,10 +292,7 @@
                 "hiding my car keys",
                 "licking the windows",
                 "judging my outfits",
-                "sleeping in the dishwasher",
-                "eating socks",
-                "knocking my coffee off the desk",
-                "staring at the wall for hours"
+                "sleeping in the dishwasher"
               ]
             }
           }
@@ -537,10 +307,7 @@
                 "the CEO",
                 "HR, who is on leave",
                 "the intern",
-                "IT support",
-                "that one guy from Finance",
-                "the client",
-                "my team lead"
+                "IT support"
               ]
             }
           }
@@ -555,10 +322,7 @@
                 "the shared fridge",
                 "my landlord",
                 "a 47-slide deck",
-                "IKEA instructions",
-                "the self-checkout machine",
-                "my in-laws",
-                "a client's \"tiny tweak\""
+                "IKEA instructions"
               ]
             }
           }
@@ -573,10 +337,7 @@
                 "a client's \"quick change\"",
                 "my inbox",
                 "Excel macros",
-                "the group chat",
-                "anyone who says \"synergy\"",
-                "a meeting that could be an email",
-                "my neighbor's leaf blower"
+                "the group chat"
               ]
             }
           }
@@ -591,10 +352,7 @@
                 "a typo I sent the CEO",
                 "that weird noise in the attic",
                 "three espressos at 4 pm",
-                "an unanswered \"we need to talk\"",
-                "my browser history",
-                "the ceiling staring back",
-                "a true crime podcast"
+                "an unanswered \"we need to talk\""
               ]
             }
           }
@@ -609,10 +367,7 @@
                 "a cowboy who lost his horse",
                 "carrying an invisible tray",
                 "being chased by bees",
-                "wading through soup",
-                "on a catwalk in Milan",
-                "a crab looking for its keys",
-                "smuggling a melon"
+                "wading through soup"
               ]
             }
           }
@@ -627,10 +382,7 @@
                 "hoarding snacks in my cheeks",
                 "suspicious of the vacuum",
                 "sleepy until 6 pm",
-                "nibbling on cables",
-                "afraid of tall people",
-                "chewing pencils",
-                "a little bit fluffy"
+                "nibbling on cables"
               ]
             }
           }
@@ -645,10 +397,7 @@
                 "saying \"you too\" to the waiter",
                 "forgetting why I walked in",
                 "replying-all by accident",
-                "laughing at my own typos",
-                "calling my manager \"mom\"",
-                "getting stuck in revolving doors",
-                "tripping over nothing"
+                "laughing at my own typos"
               ]
             }
           }
@@ -663,10 +412,7 @@
                 "wearing sunglasses indoors",
                 "sitting under my desk",
                 "speaking only in emojis",
-                "humming the Nokia ringtone",
-                "always slightly sticky",
-                "taking notes on a banana",
-                "sitting on a yoga ball like a throne"
+                "humming the Nokia ringtone"
               ]
             }
           }
@@ -681,10 +427,7 @@
                 "arguing about the dishwasher",
                 "saving plastic bags",
                 "pointing at cows from the car",
-                "laughing at funerals",
-                "quoting the same movie",
-                "fighting over the bill",
-                "turning off lights in other houses"
+                "laughing at funerals"
               ]
             }
           }
@@ -699,10 +442,7 @@
                 "long walks on the beach",
                 "karaoke",
                 "the sound of rain",
-                "naps",
-                "bubble wrap",
-                "the office Christmas party",
-                "the sauna"
+                "naps"
               ]
             }
           }
@@ -824,10 +564,7 @@
                 "Out sick",
                 "On vacation 🏖️",
                 "Do not disturb",
-                "Focusing",
-                "Living my best life",
-                "Hiding from the client",
-                "Probably napping"
+                "Focusing"
               ]
             }
           }
@@ -842,10 +579,7 @@
                 "Dad",
                 "Your Majesty",
                 "Coach",
-                "babe",
-                "Captain",
-                "Sensei",
-                "Grandma"
+                "babe"
               ]
             }
           }
@@ -860,10 +594,7 @@
                 "called my manager “Mom”",
                 "fell asleep",
                 "ate a whole rotisserie chicken",
-                "asked for a hug",
-                "negotiated in a pirate accent",
-                "shared my screen with Tinder open",
-                "burped the alphabet"
+                "asked for a hug"
               ]
             }
           }
@@ -878,10 +609,7 @@
                 "wearing a cape",
                 "eating soup",
                 "holding my cat",
-                "lying on the floor",
-                "sitting in a bathtub",
-                "wearing no pants",
-                "whispering"
+                "lying on the floor"
               ]
             }
           }
@@ -896,10 +624,7 @@
                 "Excel formulas",
                 "the office karaoke night",
                 "the CEO asking \"got a minute?\"",
-                "a camera-on meeting",
-                "an unmuted microphone",
-                "the year-end review",
-                "a goose"
+                "a camera-on meeting"
               ]
             }
           }
@@ -914,10 +639,7 @@
                 "the Q3 roadmap",
                 "the movie Up",
                 "my old Tamagotchi",
-                "client feedback",
-                "the word \"moist\"",
-                "Mondays",
-                "the last slice of cake"
+                "client feedback"
               ]
             }
           }
@@ -932,10 +654,7 @@
                 "my ex's dog",
                 "the game we shipped late",
                 "Friday's demo",
-                "my lost youth",
-                "the empty coffee machine",
-                "my broken Duolingo streak",
-                "my timesheet"
+                "my lost youth"
               ]
             }
           }
@@ -950,10 +669,7 @@
                 "chalk",
                 "the office cookies",
                 "ketchup on everything",
-                "cold pizza",
-                "attention",
-                "drama",
-                "raw garlic"
+                "cold pizza"
               ]
             }
           }
@@ -968,10 +684,7 @@
                 "the Roman Empire",
                 "my cat's diet",
                 "my ex",
-                "the time I met a celebrity",
-                "my fantasy football team",
-                "a podcast nobody's heard of",
-                "my crypto portfolio"
+                "the time I met a celebrity"
               ]
             }
           }
@@ -986,10 +699,7 @@
                 "the CEO's mustache",
                 "a crooked picture frame",
                 "a snack on someone's desk",
-                "a stain on someone's shirt",
-                "a pigeon",
-                "my own face on Google Meet",
-                "a loose thread"
+                "a stain on someone's shirt"
               ]
             }
           }
@@ -1004,10 +714,7 @@
                 "climb stairs",
                 "sneeze",
                 "sit on the floor",
-                "open a jar",
-                "look at my bank account",
-                "hear a song from this year",
-                "try to stay up past ten"
+                "open a jar"
               ]
             }
           }
@@ -1022,10 +729,7 @@
                 "my manager's face",
                 "a loading spinner",
                 "the spreadsheet I just closed",
-                "the dancing hot dog",
-                "my unread notifications",
-                "a goat staring at me",
-                "the build failing"
+                "the dancing hot dog"
               ]
             }
           }
@@ -1040,10 +744,7 @@
                 "a raccoon in a hoodie",
                 "my father",
                 "a feral cat",
-                "a motivational speaker",
-                "a houseplant",
-                "a werewolf",
-                "a ghost who only answers Slack"
+                "a motivational speaker"
               ]
             }
           }
@@ -1058,10 +759,7 @@
                 "stealing pens",
                 "napping in meeting rooms",
                 "eating other people's lunch",
-                "playing music without headphones",
-                "renaming the Wi-Fi",
-                "changing the CEO's wallpaper",
-                "marking every email as read"
+                "playing music without headphones"
               ]
             }
           }
@@ -1076,10 +774,7 @@
                 "petting every dog",
                 "arguing with strangers online",
                 "reorganizing my sock drawer",
-                "a staring contest with a seagull",
-                "choosing a podcast",
-                "the snooze button",
-                "a really good sandwich"
+                "a staring contest with a seagull"
               ]
             }
           }
@@ -1094,10 +789,7 @@
                 "talking to my plants",
                 "checking my horoscope",
                 "doom-scrolling",
-                "a power pose",
-                "smelling my coffee",
-                "yelling into a pillow",
-                "practicing my firm handshake"
+                "a power pose"
               ]
             }
           }
@@ -1112,10 +804,7 @@
                 "doom-scrolling",
                 "online shopping",
                 "biting my nails",
-                "my side hustle",
-                "the gym",
-                "texting my ex",
-                "buying houseplants"
+                "my side hustle"
               ]
             }
           }
@@ -1130,10 +819,7 @@
                 "doing finger guns",
                 "humming the same song",
                 "saying \"yeet\"",
-                "winking at strangers",
-                "collecting rubber ducks",
-                "wearing a cape to work",
-                "rating people's sandwiches"
+                "winking at strangers"
               ]
             }
           }
@@ -1148,10 +834,7 @@
                 "a goat",
                 "another tattoo",
                 "a timeshare in Spain",
-                "three new houseplants",
-                "someone else's kid",
-                "a karaoke machine",
-                "no milk"
+                "three new houseplants"
               ]
             }
           }
@@ -1308,10 +991,7 @@
                 "the CEO",
                 "Excel macros",
                 "my high school gym teacher",
-                "the company retreat",
-                "lukewarm soup",
-                "the client's feedback",
-                "the quarterly roadmap"
+                "the company retreat"
               ]
             }
           }
@@ -1326,10 +1006,7 @@
                 "the office fridge",
                 "a printer",
                 "my ex",
-                "the client",
-                "a Google Meet invite",
-                "a whiteboard",
-                "anyone from HR"
+                "the client"
               ]
             }
           }
@@ -1344,10 +1021,7 @@
                 "Grandma's jam",
                 "Q3 results",
                 "Emergency snacks",
-                "Souvenirs",
-                "Party mix",
-                "Office treats",
-                "Gifts for the client"
+                "Souvenirs"
               ]
             }
           }
@@ -1362,10 +1036,7 @@
                 "a whole lasagna",
                 "my manager's stapler",
                 "a live hamster",
-                "a traffic cone",
-                "my passport",
-                "a Christmas ornament",
-                "a rubber chicken"
+                "a traffic cone"
               ]
             }
           }
@@ -1380,10 +1051,7 @@
                 "open my inbox",
                 "hold a microphone",
                 "say no to someone",
-                "walk past a bakery",
-                "see a spreadsheet",
-                "go on a date",
-                "hear the word \"deadline\""
+                "walk past a bakery"
               ]
             }
           }
@@ -1398,10 +1066,7 @@
                 "my car keys",
                 "glitter",
                 "something that looks back",
-                "a rubber duck",
-                "corn",
-                "a sense of regret",
-                "my phone, again"
+                "a rubber duck"
               ]
             }
           }
@@ -1416,10 +1081,7 @@
                 "a smoothie",
                 "yogurt",
                 "a hot dog",
-                "mayonnaise",
-                "a good book",
-                "the office coffee",
-                "my partner's cooking"
+                "mayonnaise"
               ]
             }
           }
@@ -1434,10 +1096,7 @@
                 "burps",
                 "toe jam",
                 "drool",
-                "nose hair",
-                "farts per meeting",
-                "dandruff",
-                "belly button lint"
+                "nose hair"
               ]
             }
           }
@@ -1452,10 +1111,7 @@
                 "flirting",
                 "sleeping",
                 "assembling IKEA furniture",
-                "a team-building exercise",
-                "putting on socks",
-                "eating soup",
-                "a casual stroll"
+                "a team-building exercise"
               ]
             }
           }
@@ -1470,10 +1126,7 @@
                 "the tears of my enemies",
                 "dry crackers",
                 "pickle juice",
-                "gas station sushi",
-                "cold coffee",
-                "spite",
-                "birthday cake from the office"
+                "gas station sushi"
               ]
             }
           }
@@ -1567,10 +1220,7 @@
                 "a startled giraffe",
                 "a wet cat",
                 "a malfunctioning robot",
-                "a nervous flamingo on ice",
-                "a deflating balloon",
-                "my grandpa doing the worm",
-                "a raccoon caught in headlights"
+                "a nervous flamingo on ice"
               ]
             }
           }
@@ -1585,10 +1235,7 @@
                 "practicing my Oscar speech",
                 "flirting with my mirror",
                 "rapping about cheese",
-                "crying at a dog video",
-                "rehearsing a breakup",
-                "moaning at a pastry",
-                "talking dirty to my plants"
+                "crying at a dog video"
               ]
             }
           }
@@ -1603,10 +1250,7 @@
                 "see a cucumber",
                 "test-sit a sofa",
                 "smell fresh bread",
-                "eat Swedish meatballs",
-                "peel a banana",
-                "hear an Allen key drop",
-                "browse the lighting section"
+                "eat Swedish meatballs"
               ]
             }
           }
@@ -1621,10 +1265,7 @@
                 "“Per my last email…”",
                 "“Let's take this offline”",
                 "“😳”",
-                "“Love this energy”",
-                "“Can you send the invoice?”",
-                "“👍”",
-                "“Approved!”"
+                "“Love this energy”"
               ]
             }
           }
@@ -1639,10 +1280,7 @@
                 "my toaster",
                 "the moon",
                 "my left hand",
-                "my ex's mom",
-                "the ghost in my closet",
-                "my own reflection",
-                "the office plant"
+                "my ex's mom"
               ]
             }
           }
@@ -1657,10 +1295,7 @@
                 "taking my shirt off",
                 "slow-dancing alone",
                 "giving the CEO feedback",
-                "crying about whales",
-                "speaking fluent French",
-                "flirting with the bartender",
-                "doing the worm"
+                "crying about whales"
               ]
             }
           }
@@ -1675,10 +1310,7 @@
                 "opening a nightclub",
                 "a pyramid scheme",
                 "becoming a stripper",
-                "marrying rich",
-                "professional cuddling",
-                "selling feet pics",
-                "joining a cult"
+                "marrying rich"
               ]
             }
           }
@@ -1693,10 +1325,7 @@
                 "doing my taxes",
                 "a full skincare routine",
                 "checking Slack one last time",
-                "a 5k run",
-                "a prayer",
-                "a long bathroom visit",
-                "a signed contract"
+                "a 5k run"
               ]
             }
           }
@@ -1711,10 +1340,7 @@
                 "doing push-ups",
                 "folding laundry",
                 "online shopping",
-                "reorganizing the spice rack",
-                "watching cooking videos",
-                "writing a strongly worded email",
-                "playing Tetris"
+                "reorganizing the spice rack"
               ]
             }
           }
@@ -1729,10 +1355,7 @@
                 "doing lunges in the hallway",
                 "oiling myself up",
                 "complimenting strangers' calves",
-                "buying gym memberships",
-                "posting thirst traps",
-                "walking around naked",
-                "eating cake in the shower"
+                "buying gym memberships"
               ]
             }
           }
@@ -1826,10 +1449,7 @@
                 "the folding chair",
                 "the IKEA manual",
                 "the flying squirrel",
-                "the starfish",
-                "the plank",
-                "the human pyramid",
-                "the Rubik's cube"
+                "the starfish"
               ]
             }
           }
@@ -1844,10 +1464,7 @@
                 "the quarterly roadmap",
                 "my dentist",
                 "cold soup",
-                "Excel formulas",
-                "my grandma's casserole",
-                "a broken printer",
-                "the HR handbook"
+                "Excel formulas"
               ]
             }
           }
@@ -1862,10 +1479,7 @@
                 "a butcher and a sausage",
                 "a shelf-stacker and a melon",
                 "a security guard and a shoplifter",
-                "a farmer and a cucumber",
-                "two rival bakers",
-                "a barcode scanner and a barcode",
-                "a pirate and a parrot"
+                "a farmer and a cucumber"
               ]
             }
           }
@@ -1880,10 +1494,7 @@
                 "a crime scene",
                 "a waffle",
                 "a stop sign",
-                "a squashed peach",
-                "the Japanese flag",
-                "a map of Finland",
-                "a freshly stamped passport"
+                "a squashed peach"
               ]
             }
           }
@@ -1898,10 +1509,7 @@
                 "the sound of a fax machine",
                 "IKEA instructions",
                 "a man fixing the printer",
-                "tax returns",
-                "the Teams ringtone",
-                "garlic bread",
-                "a firm handshake"
+                "tax returns"
               ]
             }
           }
