@@ -286,7 +286,7 @@
     }
 
     /* One symptom + prescription pair: the complaint as a speech bubble, the prescription as a
-       handwritten slip with a stamp and the doctor's avatar. Sized in em, so the same pair works
+       handwritten slip with the doctor's avatar. Sized in em, so the same pair works
        big (Hall of Fame, reveal) and small (three side by side in the finals). */
     .pair {
       display: flex;
@@ -342,7 +342,8 @@
 
     .slip .rx {
       margin: 0;
-      font-size: 1.1em;
+      font-size: 1.5em;
+      line-height: 1;
       font-weight: 700;
       color: var(--bandage-dark);
     }
@@ -376,21 +377,6 @@
       font-family: "Caveat", cursive;
       font-size: 1.4em;
       font-weight: 700;
-    }
-
-    .stamp {
-      position: absolute;
-      top: 0.5em;
-      right: 0.7em;
-      padding: 0.15em 0.5em;
-      font-size: 0.85em;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      color: #c0392b;
-      border: 0.18em solid #c0392b;
-      border-radius: 0.4em;
-      opacity: 0.8;
-      transform: rotate(12deg);
     }
 
     /* Default view: Hall of Fame carousel, kept clear of the bandage in the corner. */
@@ -2011,6 +1997,14 @@
     let shownFinalists = "";
     let shownReveal = "";
 
+    // The Rx sign, see .rx-icon in base.css.
+    function rxIcon() {
+      const icon = el("span", "rx-icon");
+      icon.setAttribute("role", "img");
+      icon.setAttribute("aria-label", "Rx");
+      return icon;
+    }
+
     function el(tag, className, text) {
       const node = document.createElement(tag);
       node.className = className;
@@ -2031,7 +2025,9 @@
       const signed = el("div", "signed");
       signed.append(avatar);
       if (names && entry.doctor.name) signed.append(el("span", "", entry.doctor.name));
-      slip.append(el("p", "rx", "℞"), el("p", "written", entry.prescription), signed, el("span", "stamp", "APPROVED"));
+      const rx = el("p", "rx");
+      rx.append(rxIcon());
+      slip.append(rx, el("p", "written", entry.prescription), signed);
       pair.append(slip);
       return pair;
     }
@@ -2058,7 +2054,9 @@
       const list = el("ol", "");
       for (const line of lines) {
         const item = el("li", "");
-        const words = el("p", "line", line.kind === "symptom" ? `“${line.text}”` : `℞ ${line.text}`);
+        const words = el("p", "line");
+        if (line.kind === "symptom") words.textContent = `“${line.text}”`;
+        else words.append(rxIcon(), ` ${line.text}`);
         item.append(el("span", "count", `★ ${line.stars}`), words, el("span", "by", line.author));
         list.append(item);
       }
@@ -2366,7 +2364,9 @@
       const doctor = el("div", "who");
       doctor.append(circle(entry.doctor.avatar), el("span", "", entry.doctor.name));
       const paper = el("div", "paper");
-      paper.append(el("p", "rx", "℞"), el("p", "text", entry.prescription), doctor);
+      const rx = el("p", "rx");
+      rx.append(rxIcon());
+      paper.append(rx, el("p", "text", entry.prescription), doctor);
       const board = el("div", "board");
       board.append(paper);
 
@@ -2484,12 +2484,13 @@
     const votesList = document.getElementById("votes-list");
     let shownVotes = "";
 
-    function voteLine(avatar, text, by) {
+    function voteLine(avatar, text, by, prescription) {
       const line = el("p", "line");
       const img = el("img", "");
       img.src = `/avatars/${avatar}.png`;
       img.alt = "";
       const words = el("span", "");
+      if (prescription) words.append(rxIcon(), " ");
       words.append(`${text} `, el("span", "by", `— ${by}`));
       line.append(img, words);
       return line;
@@ -2509,7 +2510,7 @@
         const pair = el("div", "pair");
         pair.append(
           voteLine(entry.patientAvatar, `“${entry.symptom}”`, entry.patient),
-          voteLine(entry.doctor.avatar, `℞ ${entry.prescription}`, entry.doctor.name),
+          voteLine(entry.doctor.avatar, entry.prescription, entry.doctor.name, true),
         );
         const score = el("span", "score");
         score.innerHTML = THUMB_ICON;

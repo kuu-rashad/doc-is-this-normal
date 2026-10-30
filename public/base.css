@@ -64,6 +64,18 @@ body::after {
   to   { background-position: var(--pattern-size) calc(-1 * var(--pattern-size)); }
 }
 
+/* The Rx sign (public/icon_rx.png, white on transparent) used as a mask, so it takes the
+   text colour around it. Sized like a letter of the surrounding text. */
+.rx-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  background-color: currentColor;
+  -webkit-mask: url("/icon_rx.png") center / contain no-repeat;
+  mask: url("/icon_rx.png") center / contain no-repeat;
+}
+
 @media (prefers-reduced-motion: reduce) {
   body::after { animation: none; }
 }

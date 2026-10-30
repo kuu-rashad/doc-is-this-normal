@@ -450,7 +450,9 @@ function sentenceLine(id, kind, text) {
   if (kind === "prescription") {
     const rx = document.createElement("span");
     rx.className = "rx";
-    rx.textContent = "℞";
+    rx.classList.add("rx-icon");
+    rx.setAttribute("role", "img");
+    rx.setAttribute("aria-label", "Rx");
     line.append(rx);
   }
   const words = document.createElement("p");
