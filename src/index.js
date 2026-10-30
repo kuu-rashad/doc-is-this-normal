@@ -669,7 +669,13 @@ export class DocGame extends DurableObject {
   getVoteTask({ playerId }) {
     this.requirePlayer(playerId);
     this.requirePhase(["clinic_open", "second_opinions"], PHASE_MESSAGES.voting);
-    const pairs = this.sql.exec("SELECT id FROM prescriptions ORDER BY shown, RANDOM()").toArray().map((row) => row.id);
+    // Never pairs the player wrote any part of: no voting (or starring) for yourself.
+    const pairs = this.sql.exec(
+      `SELECT p.id FROM prescriptions p JOIN symptoms s ON s.id = p.symptom_id
+       WHERE p.author_id != ? AND (s.author_id IS NULL OR s.author_id != ?)
+       ORDER BY p.shown, RANDOM()`,
+      playerId, playerId,
+    ).toArray().map((row) => row.id);
     const seen = new Set(
       this.sql.exec("SELECT a_id, b_id FROM pair_votes WHERE player_id = ?", playerId).toArray().map((row) => `${row.a_id}-${row.b_id}`),
     );
@@ -693,6 +699,9 @@ export class DocGame extends DurableObject {
     if (!Number.isInteger(a) || !Number.isInteger(b) || a === b) throw new HttpError(400, "Unknown pairs");
     const pairs = [this.pairFor(a), this.pairFor(b)];
     if (pairs.some((pair) => !pair)) throw new HttpError(400, "Unknown pairs");
+    if (pairs.some((pair) => pair.doctor_id === playerId || pair.patient_id === playerId)) {
+      throw new HttpError(400, "You can't vote on your own writing");
+    }
     if (this.one("SELECT 1 FROM pair_votes WHERE player_id = ? AND a_id = ? AND b_id = ?", playerId, a, b)) {
       throw new HttpError(409, "You already voted on these two");
     }
