@@ -701,8 +701,6 @@
       bottom: calc(var(--players-bar) + 0.6vw);
       /* Everything in the strip is sized in em, so this one value scales the whole strip. */
       font-size: 0.55vw;
-      /* Bottom padding keeps the speech bubbles' tails inside the clipped area. */
-      padding-bottom: 1.2em;
       /* A fixed height, so the area above doesn't jump when the strip pages to longer winners. */
       height: 10.4vw;
       box-sizing: border-box;
@@ -755,15 +753,15 @@
     }
 
     /* Empty Hall of Fame: a rounded outline holding the space the winner cards will take, with
-       the message in the middle. Sized to roughly match a card (2em above it is the cards' room
-       for the clip and badge; the strip's em is 0.55vw). */
+       the message in the middle. Sized to match a card's frame (the strip's em is 0.55vw; a card
+       is 17.6em tall, the top 1.95em of it the space for the clip). */
     .fame-empty {
       display: flex;
       align-items: center;
       justify-content: center;
       box-sizing: border-box;
-      min-height: 6.1vw;
-      margin: 1.1vw 0 0;
+      min-height: 8.6vw;
+      margin: 1.07vw 0 0;
       padding: 1vw 2vw;
       font-size: 1.4vw;
       font-weight: 700;
@@ -784,27 +782,113 @@
       display: none;
     }
 
+    /* One past winner, like a leader card turned landscape: the clipboard (public/clipboard.png
+       as a 9-slice frame) with the patient's note on the left and the doctor's orders on the
+       right. Sized in em of the strip; the handwriting shrinks to fit (see fitFameCard). The
+       image is 1536px wide and its frame slices scale at 20em per 1536px; the top 1.95em of the
+       frame is the transparent space the clip pokes into. */
     .fame-card {
+      --text: 1.6;
       position: relative;
-      display: flex;
-      align-items: stretch;
       flex: none;
-      /* Room above for the clip and the thumbs-up badge. */
-      padding-top: 2em;
+      display: flex;
+      width: 46em;
+      height: 17.6em;
+      box-sizing: border-box;
+      border-style: solid;
+      border-width: 3.125em 1.432em 1.875em;
+      border-image: url("/clipboard.png") 240 110 144 fill / 3.125em 1.432em 1.875em;
+    }
+
+    .fame-card .sheet {
+      flex: 1;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 1.4em;
+      padding: 0.6em 0.8em 0.4em 0.5em;
+    }
+
+    .fame-card .note,
+    .fame-card .orders {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+      overflow: hidden;
+    }
+
+    /* The patient's note, clipped on slightly crooked. */
+    .fame-card .note {
+      padding: 0.9em 1em 0.8em;
+      background: var(--white);
+      border-radius: 0.6em;
+      box-shadow: 0.2em 0.25em 0 rgb(11 20 51 / 0.2);
+      transform: rotate(-1.5deg);
+    }
+
+    .fame-card .orders {
+      padding: 0.2em 0 0.3em;
+    }
+
+    .fame-card .rx-row {
+      flex: none;
+      display: flex;
+      align-items: center;
+      gap: 0.6em;
+      font-size: 2em;
+      line-height: 1;
+    }
+
+    /* A blank line after the Rx, as on a prescription pad. */
+    .fame-card .rx-row::after {
+      content: "";
+      width: 4em;
+      height: 0.18em;
+      background: rgb(185 128 73 / 0.35);
+      border-radius: 999px;
+    }
+
+    .fame-card .text {
+      margin: 0;
+      font-family: "Gochi Hand", cursive;
+      font-size: calc(var(--text) * 1em);
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+
+    .fame-card .who {
+      flex: none;
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      min-width: 0;
+      font-size: 1.5em;
+      font-weight: 700;
+    }
+
+    .fame-card .orders .who {
+      justify-content: flex-end;
+    }
+
+    .fame-card .who span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .fame-card .circle {
       flex: none;
-      width: 5.4em;
-      height: 5.4em;
+      width: 2.6em;
+      height: 2.6em;
       box-sizing: border-box;
       display: grid;
       place-items: center;
       overflow: hidden;
-      font-size: 1em;
       font-weight: 700;
-      color: var(--navy);
-      border: 0.22em solid var(--navy);
+      background: var(--pad);
+      border: 0.14em solid var(--navy);
       border-radius: 50%;
     }
 
@@ -814,133 +898,28 @@
       object-fit: contain;
     }
 
-    .fame-card .who {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.4em;
-      flex: none;
-      width: 6.4em;
-    }
-
-    .fame-card .who span {
-      max-width: 100%;
-      font-size: 0.9em;
-      font-weight: 700;
-      line-height: 1.1;
-      text-align: center;
-      text-transform: uppercase;
-      overflow-wrap: anywhere;
-    }
-
-    /* The patient's complaint: a speech bubble with its tail at the bottom-left. */
-    .fame-card .complaint {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 1em;
-      width: 22em;
-      box-sizing: border-box;
-      padding: 1em 1.2em;
-      background: var(--pad);
-      border: 0.22em solid var(--navy);
-      border-radius: 1.4em;
-    }
-
-    .fame-card .complaint::after {
-      content: "";
-      position: absolute;
-      left: 1.6em;
-      bottom: -1.05em;
-      width: 1.3em;
-      height: 1.3em;
-      background: var(--pad);
-      border-right: 0.22em solid var(--navy);
-      border-bottom: 0.22em solid var(--navy);
-      transform: skewY(40deg) rotate(45deg);
-    }
-
-    .fame-card .complaint .circle {
-      background: #f4897b;
-    }
-
-    .fame-card .text {
-      margin: 0;
-      font-size: 1.2em;
-      font-weight: 700;
-      line-height: 1.2;
-      overflow-wrap: anywhere;
-    }
-
-    /* The prescription on public/clipboard.png, used as a 9-slice frame: the corners and the clip
-       keep their shape and only the plain sides and paper stretch. The image is 1536px wide and
-       the board 20em, so 1px of the image = 20/1536 em; the slice sizes below follow from that.
-       The image has transparent margins (47px left, 150px above the frame, 89px below), so the
-       board is shifted to line its frame up with the speech bubble. */
-    .fame-card .board {
-      display: flex;
-      width: 20em;
-      box-sizing: border-box;
-      margin: -1.95em 0 -1.16em -0.83em;
-      border-style: solid;
-      border-width: 3.125em 1.432em 1.875em;
-      border-image: url("/clipboard.png") 240 110 144 fill / 3.125em 1.432em 1.875em;
-    }
-
-    .fame-card .paper {
-      display: flex;
-      align-items: center;
-      gap: 0.8em;
-      flex: 1;
-      padding: 0.2em 0.4em 0 0.3em;
-    }
-
-    .fame-card .rx {
-      align-self: flex-start;
-      margin: 0;
-      font-size: 2.2em;
-      font-weight: 700;
-      line-height: 1;
-    }
-
-    .fame-card .paper .text {
-      flex: 1;
-      font-size: 1.1em;
-      font-weight: 500;
-    }
-
-    .fame-card .board .circle {
-      background: #74e3b5;
-    }
-
-    /* Thumbs-up count, sitting on the seam between the bubble and the clipboard. */
+    /* Times the pair was picked as funnier, on the top-right corner of the frame. */
     .fame-card .badge {
       position: absolute;
-      /* Centred on the top edge of the bubble and clipboard (2em down the card, in badge em). */
-      top: calc(2em / 1.3);
-      transform: translate(-50%, -50%);
-      /* On the seam, 22em into the card. The badge's own text is 1.3× bigger, so its em is too. */
-      left: calc(22em / 1.3);
-      z-index: 1;
+      /* Up on the frame, above the paper. Offsets start inside the frame's border (3.125em of
+         the strip at the top, 1.432em at the right), and the badge's em is twice the strip's. */
+      top: -1.45em;
+      right: -0.4em;
       display: flex;
       align-items: center;
-      gap: 0.3em;
-      padding: 0.15em 0.7em 0.15em 0.5em;
-      font-size: 1.3em;
+      gap: 0.25em;
+      padding: 0.1em 0.5em 0.1em 0.4em;
+      font-size: 2em;
       font-weight: 700;
-      line-height: 1.2;
-      background: #f4897b;
-      border: 0.18em solid var(--navy);
-      border-radius: 999px;
+      background: #74e3b5;
+      border: 0.12em solid var(--navy);
+      border-radius: 0.6em;
     }
 
     .fame-card .badge svg {
-      width: 1.1em;
-      height: 1.1em;
-      fill: var(--white);
-      stroke: var(--navy);
-      stroke-width: 60;
-      paint-order: stroke fill;
+      width: 1.05em;
+      height: 1.05em;
+      fill: var(--navy);
     }
 
     /* Everyone who has joined, along the bottom. Scrolls sideways when they don't all fit. */
@@ -2094,6 +2073,9 @@
       return circle;
     }
 
+    // "thumb_up" (outline) icon from Google Material Symbols (Apache 2.0)
+    const THUMB_OUTLINE_ICON = '<svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M855-632q24 0 42 18t18 42v81.84q0 7.16 1.5 14.66T915-461L789-171q-8.88 21.25-29.59 36.12Q738.69-120 716-120H272v-512l225-238q13.6-14 32.19-16.5Q547.77-889 565-879q17 10 25.5 27.5t4.2 36.5L556-632h299Zm-523 25v427h397l126-299v-93H482l53-249-203 214ZM139-120q-24.75 0-42.37-17.63Q79-155.25 79-180v-392q0-24.75 17.63-42.38Q114.25-632 139-632h133v60H139v392h133v60H139Zm193-60v-427 427Z"/></svg>';
+
     function leaderCardElement(entry) {
       const card = el("article", "leader-card");
       const sheet = el("div", "sheet");
@@ -2109,8 +2091,7 @@
       sheet.append(note, el("p", "notes-label", "Doctor's notes:"), el("p", "prescription", entry.prescription), doctor);
 
       const badge = el("div", "badge");
-      // "thumb_up" (outline) icon from Google Material Symbols (Apache 2.0)
-      badge.innerHTML = '<svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M855-632q24 0 42 18t18 42v81.84q0 7.16 1.5 14.66T915-461L789-171q-8.88 21.25-29.59 36.12Q738.69-120 716-120H272v-512l225-238q13.6-14 32.19-16.5Q547.77-889 565-879q17 10 25.5 27.5t4.2 36.5L556-632h299Zm-523 25v427h397l126-299v-93H482l53-249-203 214ZM139-120q-24.75 0-42.37-17.63Q79-155.25 79-180v-392q0-24.75 17.63-42.38Q114.25-632 139-632h133v60H139v392h133v60H139Zm193-60v-427 427Z"/></svg>';
+      badge.innerHTML = THUMB_OUTLINE_ICON;
       badge.append(String(entry.wins ?? entry.thumbsUp ?? 0));
 
       card.append(sheet, badge);
@@ -2348,36 +2329,51 @@
       return node;
     }
 
-    // A winning pair as a card: the complaint as a speech bubble, the prescription on a clipboard,
-    // and its thumbs-up count on the seam.
+    // A winning pair as a landscape clipboard: the patient's note on the left, the doctor's
+    // orders on the right, and the thumbs-up count on the corner.
     function fameCardElement(entry) {
       const card = el("div", "fame-card");
 
       const patient = el("div", "who");
-      patient.append(
-        circle(entry.patientAvatar, "?"),
-        // Older winners don't have walkIn; a missing avatar meant a walk-in then.
-        el("span", "", (entry.walkIn ?? !entry.patientAvatar) ? entry.patient : `Patient ${entry.patient}`),
-      );
-      const complaint = el("div", "complaint");
-      complaint.append(patient, el("p", "text", entry.symptom));
+      patient.append(circle(entry.patientAvatar, "?"), el("span", "", entry.patient));
+      const note = el("div", "note");
+      note.append(el("p", "text", entry.symptom), patient);
 
       const doctor = el("div", "who");
       doctor.append(circle(entry.doctor.avatar), el("span", "", entry.doctor.name));
-      const paper = el("div", "paper");
-      const rx = el("p", "rx");
+      const rx = el("div", "rx-row");
       rx.append(rxIcon());
-      paper.append(rx, el("p", "text", entry.prescription), doctor);
-      const board = el("div", "board");
-      board.append(paper);
+      const orders = el("div", "orders");
+      orders.append(rx, el("p", "text", entry.prescription), doctor);
+
+      const sheet = el("div", "sheet");
+      sheet.append(note, orders);
 
       const badge = el("div", "badge");
-      badge.innerHTML = THUMB_ICON;
+      badge.innerHTML = THUMB_OUTLINE_ICON;
       // How often the pair was picked as the funnier one (older winners stored it as thumbsUp).
       badge.append(String(entry.wins ?? entry.thumbsUp ?? 0));
 
-      card.append(complaint, board, badge);
+      card.append(sheet, badge);
       return card;
+    }
+
+    // The largest handwriting (as a multiple of the card's em) at which both the note and the
+    // orders fit. Everything is in em, so a card only needs fitting once, when first shown.
+    function fitFameCard(card) {
+      if (card.dataset.fitted) return;
+      const parts = [card.querySelector(".note"), card.querySelector(".orders")];
+      const overflows = () => parts.some((part) => part.scrollHeight > part.clientHeight + 1);
+      let low = 0.8;
+      let high = 2.4;
+      for (let i = 0; i < 10; i++) {
+        const mid = (low + high) / 2;
+        card.style.setProperty("--text", mid);
+        if (overflows()) high = mid;
+        else low = mid;
+      }
+      card.style.setProperty("--text", low);
+      card.dataset.fitted = "1";
     }
 
     // Shown in the default view whether or not anyone has won yet; the players bar and this strip
@@ -2416,6 +2412,7 @@
       const pages = Math.ceil(cards.length / perPage);
       famePage %= pages;
       cards.forEach((card, i) => (card.hidden = Math.floor(i / perPage) !== famePage));
+      for (const card of cards) if (!card.hidden) fitFameCard(card);
       fameStrip.classList.toggle("paging", pages > 1);
       return pages;
     }

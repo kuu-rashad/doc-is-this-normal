@@ -176,6 +176,15 @@ export class DocGame extends DurableObject {
     }
     if (!rxColumns.includes("stars")) this.sql.exec("ALTER TABLE prescriptions ADD COLUMN stars INTEGER NOT NULL DEFAULT 0");
     if (!columnsOf("symptoms").includes("stars")) this.sql.exec("ALTER TABLE symptoms ADD COLUMN stars INTEGER NOT NULL DEFAULT 0");
+    // points.stars: stars the player's lines have received in this game. new_wins / new_stars:
+    // pair wins and stars their phone hasn't announced yet.
+    if (!columnsOf("points").includes("stars")) {
+      this.sql.exec(`
+        ALTER TABLE points ADD COLUMN stars INTEGER NOT NULL DEFAULT 0;
+        ALTER TABLE points ADD COLUMN new_wins INTEGER NOT NULL DEFAULT 0;
+        ALTER TABLE points ADD COLUMN new_stars INTEGER NOT NULL DEFAULT 0;
+      `);
+    }
 
     if (!this.getSetting("round")) this.startGame(Date.now());
   }
@@ -204,6 +213,14 @@ export class DocGame extends DurableObject {
        ON CONFLICT (player_id) DO UPDATE SET points = points + excluded.points`,
       playerId, amount,
     );
+  }
+
+  // Counts a pair win or a star for the player's phone to announce (and, for stars, their total).
+  addNews(playerId, kind) {
+    if (!playerId) return;
+    this.sql.exec("INSERT INTO points (player_id, points) VALUES (?, 0) ON CONFLICT (player_id) DO NOTHING", playerId);
+    if (kind === "win") this.sql.exec("UPDATE points SET new_wins = new_wins + 1 WHERE player_id = ?", playerId);
+    else this.sql.exec("UPDATE points SET stars = stars + 1, new_stars = new_stars + 1 WHERE player_id = ?", playerId);
   }
 
   requirePlayer(id) {
@@ -488,6 +505,40 @@ export class DocGame extends DurableObject {
     return this.one("SELECT nickname, avatar FROM players WHERE id = ?", playerId);
   }
 
+  // The player's own card on their phone: profile, score, stars, leaderboard place (same order
+  // as the big screen's TOP 3), wins and stars not announced yet, and the scoring rules.
+  getMe({ playerId }) {
+    const me = this.getPlayer({ playerId });
+    if (!me) return null;
+    const stats = this.one(
+      `SELECT s.points, s.stars, s.new_wins, s.new_stars,
+              (SELECT COUNT(*) FROM points o JOIN players q ON q.id = o.player_id
+               WHERE o.points > s.points OR (o.points = s.points AND q.rowid < p.rowid)) + 1 AS place
+       FROM points s JOIN players p ON p.id = s.player_id WHERE s.player_id = ?`,
+      playerId,
+    );
+    return {
+      ...me,
+      points: stats?.points ?? 0,
+      stars: stats?.stars ?? 0,
+      // Only players with points are on the leaderboard.
+      place: stats?.points > 0 ? stats.place : null,
+      news: { wins: stats?.new_wins ?? 0, stars: stats?.new_stars ?? 0 },
+      scoring: config.points,
+    };
+  }
+
+  // The phone has announced these; newer ones that arrived meanwhile stay for next time.
+  seenNews({ playerId, body }) {
+    this.requirePlayer(playerId);
+    const count = (value) => Math.max(0, Math.floor(Number(value) || 0));
+    this.sql.exec(
+      "UPDATE points SET new_wins = MAX(0, new_wins - ?), new_stars = MAX(0, new_stars - ?) WHERE player_id = ?",
+      count(body?.wins), count(body?.stars), playerId,
+    );
+    return { ok: true };
+  }
+
   savePlayer({ playerId, body: { nickname, avatar } }) {
     const key = nickname.toLowerCase();
     if (this.one("SELECT 1 FROM players WHERE nickname_key = ? AND id != ?", key, playerId)) {
@@ -650,14 +701,18 @@ export class DocGame extends DurableObject {
     if (winner !== null) {
       this.sql.exec("UPDATE prescriptions SET wins = wins + 1 WHERE id = ?", winner);
       const won = pairs.find((pair) => pair.id === winner);
-      this.addPoints(won.patient_id, config.points.pair_win);
-      this.addPoints(won.doctor_id, config.points.pair_win);
+      for (const author of new Set([won.patient_id, won.doctor_id])) {
+        this.addPoints(author, config.points.pair_win);
+        this.addNews(author, "win");
+      }
     }
     if (star) {
       const starred = pairs.find((pair) => pair.id === Number(star.id));
       if (star.kind === "symptom") this.sql.exec("UPDATE symptoms SET stars = stars + 1 WHERE id = ?", starred.symptom_id);
       else this.sql.exec("UPDATE prescriptions SET stars = stars + 1 WHERE id = ?", starred.id);
-      this.addPoints(star.kind === "symptom" ? starred.patient_id : starred.doctor_id, config.points.star_received);
+      const author = star.kind === "symptom" ? starred.patient_id : starred.doctor_id;
+      this.addPoints(author, config.points.star_received);
+      this.addNews(author, "star");
     }
     return { ok: true };
   }
@@ -748,7 +803,8 @@ const routes = [
   ["POST", /^\/api\/admin\/restart-round$/, "restartRound"],
   ["POST", /^\/api\/reset$/, "resetGame"],
   ["POST", /^\/api\/reset-everything$/, "resetEverything"],
-  ["GET", /^\/api\/players\/([^/]+)$/, "getPlayer"],
+  ["GET", /^\/api\/players\/([^/]+)$/, "getMe"],
+  ["POST", /^\/api\/players\/([^/]+)\/news-seen$/, "seenNews"],
   ["PUT", /^\/api\/players\/([^/]+)$/, "savePlayer"],
   ["GET", /^\/api\/players\/([^/]+)\/symptom-template$/, "getSymptomTemplate"],
   ["POST", /^\/api\/players\/([^/]+)\/symptoms$/, "addSymptom"],

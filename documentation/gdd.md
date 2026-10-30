@@ -13,7 +13,10 @@
 
 1. The player scans the QR code on the big screen, which opens `/play`.
 2. They enter a nickname (up to 16 characters, unique, case-insensitive) and pick one of 12 avatars (shown in a random order; avatars don't need to be unique).
-3. They land on the phone home screen, which shows their avatar and nickname, the current phase, the time left in it, and only the actions that phase allows.
+3. They land on the phone home screen, which shows their avatar and nickname with their points, stars received and leaderboard place, the current phase, the time left in it, and only the actions that phase allows. In Clinic open the three actions are numbered 1–3 with arrows between them, in the order to do them.
+
+- A "How to score" button at the bottom of the home screen shows the scoring rules.
+- When the player's pair is picked as funnier or one of their lines gets a star, the home screen announces it with the points earned (e.g. "Someone starred your line! +3").
 
 - The phone remembers the player with a random id saved in the browser, so returning players skip straight to the home screen.
 - Players can change their nickname or avatar from the home screen at any time.
@@ -147,5 +150,4 @@ All game content and tuning lives in `assets/gameconfig.json`:
 
 - Unlocking spicier tiers in later rounds instead of mixing all tiers from round 1.
 - A way for the admin to remove inappropriate entries or players without resetting the game.
-- Showing players their own score on their phone, and the scoring rules on the phone.
 - Exporting the Hall of Fame and scores after the party.

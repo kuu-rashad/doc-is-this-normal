@@ -120,24 +120,63 @@ joinForm.addEventListener("submit", async (event) => {
     updateJoinButton();
     return;
   }
-  player = data;
+  player = { ...player, ...data };
   showHome();
 });
 
 // ---------- Home: phase, time left, and that phase's actions ----------
 
 async function refreshState() {
-  const { ok, data } = await request("/api/state");
+  const [{ ok, data }, me] = await Promise.all([request("/api/state"), api("GET", "")]);
+  if (me.ok) {
+    player = me.data;
+    announceNews(player.news);
+  }
   if (!ok) return;
   state = data;
   clockOffset = data.now - Date.now();
   renderHome();
 }
 
+const ordinal = (n) => `${n}${["th", "st", "nd", "rd"][n % 100 >= 11 && n % 100 <= 13 ? 0 : n % 10] ?? "th"}`;
+
+function renderStats() {
+  $("me-points").textContent = `${player.points ?? 0} pts`;
+  $("me-stars").textContent = `★ ${player.stars ?? 0}`;
+  const place = $("me-place");
+  place.hidden = !player.place;
+  place.className = `stat place${player.place && player.place <= 3 ? ` place-${player.place}` : ""}`;
+  if (player.place) place.textContent = ordinal(player.place);
+}
+
+// Pair wins and stars since the last check, shown on the home screen until the player leaves it.
+function announceNews(news) {
+  if (!news || (!news.wins && !news.stars)) return;
+  const { pair_win: win, star_received: star } = player.scoring;
+  const box = $("home-news");
+  if (news.wins) {
+    box.append(Object.assign(document.createElement("span"), {
+      textContent: news.wins === 1
+        ? `Your pair was picked as the funnier one! +${win}`
+        : `Your pairs were picked ${news.wins} times! +${news.wins * win}`,
+    }));
+  }
+  if (news.stars) {
+    box.append(Object.assign(document.createElement("span"), {
+      textContent: news.stars === 1
+        ? `Someone starred your line! +${star}`
+        : `Your lines got ${news.stars} stars! +${news.stars * star}`,
+    }));
+  }
+  box.hidden = false;
+  api("POST", "/news-seen", news);
+}
+
 function renderHome() {
   if (!player || !state) return;
   $("me-avatar").src = `/avatars/${player.avatar}.png`;
   $("me-name").textContent = player.nickname;
+  renderStats();
   $("phase-name").textContent = PHASE_NAMES[state.phase];
   // Each button lists the phases it's available in.
   for (const button of document.querySelectorAll("[data-phases]")) {
@@ -155,6 +194,8 @@ function renderTimer() {
 }
 
 async function showHome(notice) {
+  $("home-news").replaceChildren();
+  $("home-news").hidden = true;
   $("home-notice").textContent = notice ?? "";
   $("home-notice").hidden = !notice;
   renderHome();
@@ -181,6 +222,48 @@ $("home-prescribe").addEventListener("click", () => startPrescription());
 $("home-vote").addEventListener("click", () => startVote());
 $("home-finals").addEventListener("click", () => startFinals());
 $("home-edit").addEventListener("click", () => showJoinForm());
+
+// ---------- Scoring rules (info button) ----------
+
+function renderRules(scoring) {
+  const [first, second, third] = scoring.final_places;
+  const fill = (id, rules) => $(id).replaceChildren(...rules.map(([label, points, chip]) => {
+    const item = document.createElement("li");
+    const text = document.createElement("span");
+    text.textContent = label;
+    const badge = document.createElement("span");
+    badge.className = `chip ${chip}`;
+    badge.textContent = `+${points}`;
+    item.append(text, badge);
+    return item;
+  }));
+  // Small amounts get a colour per amount (1 and 2 points); anything else stays white.
+  const amount = (points) => (points <= 2 ? `points-${points}` : "");
+  fill("rules-overall", [
+    ["Submit a symptom", scoring.symptom, amount(scoring.symptom)],
+    ["Submit a prescription", scoring.prescription, amount(scoring.prescription)],
+    ["Vote (pick the funnier pair, star a line, or pick a finalist)", scoring.vote, amount(scoring.vote)],
+    ["Your symptom or prescription is in the pair picked as funnier", scoring.pair_win, amount(scoring.pair_win)],
+    ["Your line gets a star", scoring.star_received, amount(scoring.star_received)],
+  ]);
+  fill("rules-finals", [
+    ["Your symptom or prescription wins", first, "place-1"],
+    ["…comes 2nd", second, "place-2"],
+    ["…comes 3rd", third, "place-3"],
+  ]);
+}
+
+$("rules-open").addEventListener("click", () => {
+  if (player?.scoring) renderRules(player.scoring);
+  $("rules").showModal();
+});
+$("rules-close").addEventListener("click", () => $("rules").close());
+// Tapping the dark area outside the popup closes it too.
+$("rules").addEventListener("click", (event) => {
+  const box = $("rules").getBoundingClientRect();
+  const outside = event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom;
+  if (event.target === $("rules") && outside) $("rules").close();
+});
 
 // ---------- Fill-in-the-blank (symptoms and prescriptions) ----------
 
