@@ -166,6 +166,57 @@ function renderStats() {
   if (player.place) place.textContent = ordinal(player.place);
 }
 
+// What each kind of award in the feed says.
+const FEED_TEXT = {
+  symptom: "You wrote a symptom",
+  prescription: "You wrote a prescription",
+  vote: "You voted",
+  finals_vote: "You picked a finalist",
+  pair_win: "Your pair was picked as funnier",
+  star: "Someone starred your line",
+  final_1: "Your pair won the Finals!",
+  final_2: "Your pair came 2nd in the Finals",
+  final_3: "Your pair came 3rd in the Finals",
+};
+let shownFeed = "";
+
+// The player's awards, newest first. Only rebuilt when it changed, so the scroll position stays.
+function renderFeed() {
+  const feed = player.feed ?? [];
+  const key = JSON.stringify(feed);
+  if (key === shownFeed) return;
+  shownFeed = key;
+  $("feed").hidden = !feed.length;
+  $("feed-list").replaceChildren(...feed.map((event) => {
+    const item = document.createElement("li");
+    const what = document.createElement("p");
+    what.className = "what";
+    what.textContent = FEED_TEXT[event.kind] ?? "Points";
+    if (event.line) {
+      const line = document.createElement("span");
+      line.className = "line";
+      showSentence(line, event.line, true);
+      what.append(line);
+    }
+    const chips = document.createElement("span");
+    chips.className = "chips";
+    const points = document.createElement("span");
+    points.className = "chip";
+    points.textContent = `+${event.points}`;
+    chips.append(points);
+    if (event.stars) {
+      const stars = document.createElement("span");
+      stars.className = "chip star";
+      stars.textContent = `★${event.stars}`;
+      chips.append(stars);
+    }
+    item.append(what, chips);
+    return item;
+  }));
+  // Newest first, so show the top.
+  $("feed-list").scrollTop = 0;
+}
+
 // Pair wins and stars since the last check, shown on the home screen until the player leaves it.
 function announceNews(news) {
   if (!news || (!news.wins && !news.stars)) return;
@@ -194,6 +245,7 @@ function renderHome() {
   $("me-avatar").src = `/avatars/${player.avatar}.png`;
   $("me-name").textContent = player.nickname;
   renderStats();
+  renderFeed();
   $("phase-name").textContent = PHASE_NAMES[state.phase];
   // Each button lists the phases it's available in.
   for (const button of document.querySelectorAll("[data-phases]")) {

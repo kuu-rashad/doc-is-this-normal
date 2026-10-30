@@ -16,6 +16,7 @@
 3. They land on the phone home screen, which shows their avatar and nickname with their points, stars received and leaderboard place, the current phase, the time left in it, and only the actions that phase allows. In Clinic open the three actions are numbered 1–3 with arrows between them, in the order to do them.
 
 - A "How to score" button at the bottom of the home screen shows the scoring rules.
+- "Your points" on the home screen is a scrollable feed of everything the player has scored this game, newest first: what it was for (wrote a symptom or prescription, voted, picked a finalist, pair picked as funnier, line starred, Finals place), the sentence it was about with its fill highlighted, and the points and stars.
 - When the player's pair is picked as funnier or one of their lines gets a star, the home screen announces it with the points earned (e.g. "Someone starred your line! +3").
 
 - The phone remembers the player with a random id saved in the browser, so returning players skip straight to the home screen.
@@ -30,7 +31,7 @@ The game repeats this cycle for the whole party.
 | Phase | Default length | What players can do on their phones |
 |---|---|---|
 | Clinic open | 45 min in round 1, 30 min after | Write a symptom, treat a patient, vote |
-| Second opinions | 15 min | Vote only (a grace period for the clinic) |
+| Second opinions | 15 min | Vote only (a grace period for the clinic); the phone says "The clinic is closed to new patients. Vote for the funniest pairs before the Finals!" |
 | Finals | 15 min | Pick one favourite among the finalists |
 | Reveal | 2 min, on the big screen | The next round's Clinic open has already started |
 

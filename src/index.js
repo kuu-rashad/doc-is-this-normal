@@ -166,6 +166,17 @@ export class DocGame extends DurableObject {
         player_id TEXT PRIMARY KEY,
         points INTEGER NOT NULL
       );
+      -- Every award, for the feed on the player's phone. kind: symptom, prescription, vote,
+      -- finals_vote, pair_win, star, final_1, final_2 or final_3; line: the sentence it was for.
+      CREATE TABLE IF NOT EXISTS point_events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        player_id TEXT NOT NULL,
+        round INTEGER NOT NULL,
+        kind TEXT NOT NULL,
+        points INTEGER NOT NULL,
+        stars INTEGER NOT NULL DEFAULT 0,
+        line TEXT
+      );
       CREATE TABLE IF NOT EXISTS hall_of_fame (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         entry TEXT NOT NULL
@@ -220,12 +231,17 @@ export class DocGame extends DurableObject {
   }
 
   // Points add up across rounds; see "points" in the config for what earns them.
-  addPoints(playerId, amount) {
+  // Adds the points and logs the award for the player's feed (see point_events).
+  addPoints(playerId, amount, kind, { line = null, stars = 0 } = {}) {
     if (!playerId || !amount) return;
     this.sql.exec(
       `INSERT INTO points (player_id, points) VALUES (?, ?)
        ON CONFLICT (player_id) DO UPDATE SET points = points + excluded.points`,
       playerId, amount,
+    );
+    this.sql.exec(
+      "INSERT INTO point_events (player_id, round, kind, points, stars, line) VALUES (?, ?, ?, ?, ?, ?)",
+      playerId, this.getSetting("round")?.number ?? 1, kind, amount, stars, line,
     );
   }
 
@@ -335,8 +351,9 @@ export class DocGame extends DurableObject {
     const starred = this.mostStarred();
     if (ranked?.length) {
       ranked.slice(0, config.points.final_places.length).forEach((entry, place) => {
-        this.addPoints(entry.authors?.patient, config.points.final_places[place]);
-        this.addPoints(entry.authors?.doctor, config.points.final_places[place]);
+        const kind = `final_${place + 1}`;
+        this.addPoints(entry.authors?.patient, config.points.final_places[place], kind, { line: entry.symptom });
+        this.addPoints(entry.authors?.doctor, config.points.final_places[place], kind, { line: entry.prescription });
       });
       // Player ids double as their login, so they never leave the server.
       const { authors, ...winner } = ranked[0];
@@ -367,6 +384,7 @@ export class DocGame extends DurableObject {
     this.sql.exec("DELETE FROM hall_of_fame");
     this.sql.exec("DELETE FROM voted_archive");
     this.sql.exec("DELETE FROM points");
+    this.sql.exec("DELETE FROM point_events");
     this.setSetting("reveal", null);
     this.clearRound();
     this.setSetting("round", { number: 1, startedAt: now });
@@ -543,6 +561,11 @@ export class DocGame extends DurableObject {
       // Only players with points are on the leaderboard.
       place: stats?.points > 0 ? stats.place : null,
       news: { wins: stats?.new_wins ?? 0, stars: stats?.new_stars ?? 0 },
+      // The latest awards, newest first.
+      feed: this.sql.exec(
+        "SELECT round, kind, points, stars, line FROM point_events WHERE player_id = ? ORDER BY id DESC LIMIT 100",
+        playerId,
+      ).toArray(),
       scoring: config.points,
     };
   }
@@ -589,7 +612,7 @@ export class DocGame extends DurableObject {
     const text = fillChecked(template, body?.slots, LIMITS.symptom_characters, "symptom");
 
     this.sql.exec("INSERT INTO symptoms (author_id, text, created_at) VALUES (?, ?, ?)", playerId, text, Date.now());
-    this.addPoints(playerId, config.points.symptom);
+    this.addPoints(playerId, config.points.symptom, "symptom", { line: text });
     return { ok: true };
   }
 
@@ -655,7 +678,7 @@ export class DocGame extends DurableObject {
       "INSERT OR IGNORE INTO prescriptions (symptom_id, author_id, text, created_at) VALUES (?, ?, ?, ?)",
       symptom.id, playerId, text, Date.now(),
     );
-    if (rowsWritten) this.addPoints(playerId, config.points.prescription);
+    if (rowsWritten) this.addPoints(playerId, config.points.prescription, "prescription", { line: text });
     this.sql.exec("DELETE FROM assignments WHERE player_id = ?", playerId);
     return { ok: true };
   }
@@ -729,12 +752,14 @@ export class DocGame extends DurableObject {
 
     // Picking a favourite or starring a line counts as voting. The picked pair scores for its
     // patient and doctor; a star scores for whoever wrote that line (premade symptoms have no one).
-    if (winner !== null || star) this.addPoints(playerId, config.points.vote);
+    if (winner !== null || star) this.addPoints(playerId, config.points.vote, "vote");
     if (winner !== null) {
       this.sql.exec("UPDATE prescriptions SET wins = wins + 1 WHERE id = ?", winner);
       const won = pairs.find((pair) => pair.id === winner);
       for (const author of new Set([won.patient_id, won.doctor_id])) {
-        this.addPoints(author, config.points.pair_win);
+        this.addPoints(author, config.points.pair_win, "pair_win", {
+          line: author === won.patient_id ? won.symptom : won.prescription,
+        });
         this.addNews(author, "win");
       }
     }
@@ -743,7 +768,10 @@ export class DocGame extends DurableObject {
       if (star.kind === "symptom") this.sql.exec("UPDATE symptoms SET stars = stars + 1 WHERE id = ?", starred.symptom_id);
       else this.sql.exec("UPDATE prescriptions SET stars = stars + 1 WHERE id = ?", starred.id);
       const author = star.kind === "symptom" ? starred.patient_id : starred.doctor_id;
-      this.addPoints(author, config.points.star_received);
+      this.addPoints(author, config.points.star_received, "star", {
+        line: star.kind === "symptom" ? starred.symptom : starred.prescription,
+        stars: 1,
+      });
       this.addNews(author, "star");
     }
     return { ok: true };
@@ -768,7 +796,7 @@ export class DocGame extends DurableObject {
     // The first pick each round scores; changing it later doesn't.
     const firstPick = !this.one("SELECT 1 FROM finals_votes WHERE player_id = ?", playerId);
     this.sql.exec("INSERT OR REPLACE INTO finals_votes (player_id, choice) VALUES (?, ?)", playerId, choice);
-    if (firstPick) this.addPoints(playerId, config.points.vote);
+    if (firstPick) this.addPoints(playerId, config.points.vote, "finals_vote");
     return { choice };
   }
 
