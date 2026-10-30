@@ -30,6 +30,7 @@ async function request(url, method = "GET", body) {
   try {
     const response = await fetch(url, {
       method,
+      cache: "no-store",
       headers: body ? { "Content-Type": "application/json" } : {},
       body: body && JSON.stringify(body),
     });
@@ -139,14 +140,18 @@ joinForm.addEventListener("submit", async (event) => {
 // ---------- Home: phase, time left, and that phase's actions ----------
 
 async function refreshState() {
-  const [{ ok, data }, me] = await Promise.all([request("/api/state"), api("GET", "")]);
+  // The server's clock against this one, measured at the midpoint of the state request so a
+  // slow connection doesn't put the countdown behind.
+  const sent = Date.now();
+  const timedState = request("/api/state").then((result) => ({ ...result, received: Date.now() }));
+  const [{ ok, data, received }, me] = await Promise.all([timedState, api("GET", "")]);
   if (me.ok) {
     player = me.data;
     announceNews(player.news);
   }
   if (!ok) return;
   state = data;
-  clockOffset = data.now - Date.now();
+  clockOffset = data.now - (sent + received) / 2;
   renderHome();
 }
 
@@ -217,9 +222,13 @@ async function showHome(notice) {
 
 // While the home screen is open (and the phone is awake), check the phase every 10 seconds,
 // and right away once the countdown runs out. Other screens are never interrupted.
+// The countdown is redrawn four times a second, so it turns over within a moment of the big
+// screen's (both count from the server's clock).
+setInterval(() => {
+  if (currentScreen() === "home" && !document.hidden) renderTimer();
+}, 250);
 setInterval(() => {
   if (currentScreen() !== "home" || document.hidden) return;
-  renderTimer();
   if (state && Date.now() + clockOffset > state.phaseEndsAt + 1000) refreshState();
 }, 1000);
 setInterval(() => {

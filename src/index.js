@@ -868,32 +868,40 @@ function cleanPlayer(body) {
 }
 
 export default {
+  // Every API answer is live game state: browsers (TV browsers especially) must never reuse one.
   async fetch(request, env) {
-    const { pathname } = new URL(request.url);
-    const route = routes.find(([method, pattern]) => method === request.method && pattern.test(pathname));
-    if (!route) return Response.json({ error: "Not found" }, { status: 404 });
-
-    const [, pattern, action] = route;
-    const playerId = pathname.match(pattern)[1]?.toLowerCase();
-    if (playerId !== undefined && !UUID.test(playerId)) {
-      return Response.json({ error: "Not found" }, { status: 404 });
-    }
-
-    if (ADMIN_ACTIONS.has(action)) {
-      const denied = await checkAdmin(request, env);
-      if (denied) return denied;
-      if (action === "adminLogin") return Response.json({ ok: true });
-    }
-
-    let body = request.method === "GET" ? null : await request.json().catch(() => null);
-    try {
-      if (action === "savePlayer") body = cleanPlayer(body);
-    } catch (error) {
-      return Response.json({ error: error.message }, { status: error.status });
-    }
-
-    const game = env.DOC_GAME.get(env.DOC_GAME.idFromName("doc-game"));
-    const { status, data } = await game.run(action, playerId, body);
-    return Response.json(data, { status });
+    const response = await handleApi(request, env);
+    response.headers.set("Cache-Control", "no-store");
+    return response;
   },
 };
+
+// Routes the request to the game, or answers it straight away (unknown routes, admin checks).
+async function handleApi(request, env) {
+  const { pathname } = new URL(request.url);
+  const route = routes.find(([method, pattern]) => method === request.method && pattern.test(pathname));
+  if (!route) return Response.json({ error: "Not found" }, { status: 404 });
+
+  const [, pattern, action] = route;
+  const playerId = pathname.match(pattern)[1]?.toLowerCase();
+  if (playerId !== undefined && !UUID.test(playerId)) {
+    return Response.json({ error: "Not found" }, { status: 404 });
+  }
+
+  if (ADMIN_ACTIONS.has(action)) {
+    const denied = await checkAdmin(request, env);
+    if (denied) return denied;
+    if (action === "adminLogin") return Response.json({ ok: true });
+  }
+
+  let body = request.method === "GET" ? null : await request.json().catch(() => null);
+  try {
+    if (action === "savePlayer") body = cleanPlayer(body);
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: error.status });
+  }
+
+  const game = env.DOC_GAME.get(env.DOC_GAME.idFromName("doc-game"));
+  const { status, data } = await game.run(action, playerId, body);
+  return Response.json(data, { status });
+}
