@@ -3,6 +3,7 @@
   "placeholder_format": "{{slot_id}}",
   "premade_patient_name": "Walk-in Patient",
   "premade_patient_avatar": "walk_in_patient",
+  "walk_ins_per_round": 12,
   "timing_minutes": {
     "first_clinic_open": 45,
     "clinic_open": 30,

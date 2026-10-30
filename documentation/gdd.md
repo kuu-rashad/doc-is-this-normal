@@ -52,7 +52,8 @@ Wherever a symptom or prescription is shown (big screen and phones), the words t
 
 ### Walk-in patients
 
-- Every round starts with a set of premade "walk-in" symptoms, one per template, so early doctors always have someone to treat.
+- Every round starts with a random 12 of the premade "walk-in" symptoms (there's one per template; the number is `walk_ins_per_round` in the config), so early doctors always have someone to treat.
+- They're filler: doctors and voters get players' writing first, and walk-ins only when there isn't enough of it.
 - Their patient is shown as "Walk-in Patient" (configurable).
 
 ### Template guidelines
@@ -65,7 +66,7 @@ Wherever a symptom or prescription is shown (big screen and phones), the words t
 ## Doctor mode (writing a prescription)
 
 - The player gets a symptom from the pool: never their own, and never one they've already treated.
-- Symptoms with the fewest prescriptions come first (untreated ones before treated ones), so prescriptions spread across all patients.
+- Players' symptoms come before walk-ins; among them, the ones with the fewest prescriptions come first, so prescriptions spread across all patients. Walk-ins are handed out only when no player's symptom is left for that doctor.
 - The symptom is shown as a quote from the patient. Below it is a random prescription frame with one blank, e.g. "Take ____ and call me in the morning."
   - The dice button next to the frame switches to another wording.
   - **Surprise me** fills the blank at random.
@@ -78,7 +79,7 @@ Wherever a symptom or prescription is shown (big screen and phones), the words t
 
 - A vote shows two symptom + prescription **pairs**, which may come from different symptoms.
 - The player taps the funnier pair, and can optionally star any one of the four sentences (two symptoms, two prescriptions). A star can only be sent together with a pick; with neither, the vote is a skip.
-- Pairs that have been shown the least come first, and a player never sees the same two pairs twice.
+- Pairs with a player's symptom come before walk-in pairs, and among them the ones shown the least come first. A player never sees the same two pairs twice.
 - Players never get pairs they wrote any part of (their symptom or their prescription), so they can't pick or star their own writing.
 - One prescription is enough to make a symptom + prescription pair; voting opens as soon as the round has two pairs.
 
@@ -147,7 +148,7 @@ All game content and tuning lives in `assets/gameconfig.json`:
 - symptom templates (by tier) with their Surprise me options, and the walk-in symptoms;
 - prescription frames, each with its own Surprise me options;
 - phase lengths, finalist count and minimum showings, text limits, point values, and how many most-starred sentences the reveal shows;
-- the walk-in patient's name and avatar.
+- the walk-in patient's name and avatar, and how many walk-ins each round starts with.
 
 `documentation/content.md` lists all templates in an easier-to-edit form.
 

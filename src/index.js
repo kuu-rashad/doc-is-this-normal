@@ -373,15 +373,19 @@ export class DocGame extends DurableObject {
   }
 
   // Premade symptoms join each round's pool, so early doctors always have something to treat.
+  // A random few (walk_ins_per_round in the config) each round, so they vary between rounds.
   seedPremadeSymptoms() {
-    for (const category of config.categories) {
-      for (const premade of category.premade_symptoms ?? []) {
-        const template = TEMPLATES.get(premade.template_id);
-        this.sql.exec(
-          "INSERT INTO symptoms (author_id, text, created_at) VALUES (NULL, ?, 0)",
-          fillTemplate(template, premade.slots),
-        );
-      }
+    const all = config.categories.flatMap((category) => category.premade_symptoms ?? []);
+    for (let i = all.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [all[i], all[j]] = [all[j], all[i]];
+    }
+    for (const premade of all.slice(0, config.walk_ins_per_round ?? all.length)) {
+      const template = TEMPLATES.get(premade.template_id);
+      this.sql.exec(
+        "INSERT INTO symptoms (author_id, text, created_at) VALUES (NULL, ?, 0)",
+        fillTemplate(template, premade.slots),
+      );
     }
   }
 
@@ -607,11 +611,13 @@ export class DocGame extends DurableObject {
     const templates = [...PRESCRIPTION_TEMPLATES.values()];
     if (current) return { ...current, round, templates };
 
+    // Players' symptoms come first, the least treated of them first; walk-ins only when no
+    // player's symptom is left for this doctor.
     const symptom = this.one(
       `SELECT s.id, s.text FROM symptoms s
        WHERE (s.author_id IS NULL OR s.author_id != ?)
          AND NOT EXISTS (SELECT 1 FROM prescriptions p WHERE p.symptom_id = s.id AND p.author_id = ?)
-       ORDER BY (SELECT COUNT(*) FROM prescriptions p WHERE p.symptom_id = s.id), RANDOM()
+       ORDER BY s.author_id IS NULL, (SELECT COUNT(*) FROM prescriptions p WHERE p.symptom_id = s.id), RANDOM()
        LIMIT 1`,
       playerId, playerId,
     );
@@ -669,11 +675,12 @@ export class DocGame extends DurableObject {
   getVoteTask({ playerId }) {
     this.requirePlayer(playerId);
     this.requirePhase(["clinic_open", "second_opinions"], PHASE_MESSAGES.voting);
-    // Never pairs the player wrote any part of: no voting (or starring) for yourself.
+    // Never pairs the player wrote any part of: no voting (or starring) for yourself. Pairs with a
+    // player's symptom come first, the least shown first; walk-in pairs fill in after them.
     const pairs = this.sql.exec(
       `SELECT p.id FROM prescriptions p JOIN symptoms s ON s.id = p.symptom_id
        WHERE p.author_id != ? AND (s.author_id IS NULL OR s.author_id != ?)
-       ORDER BY p.shown, RANDOM()`,
+       ORDER BY s.author_id IS NULL, p.shown, RANDOM()`,
       playerId, playerId,
     ).toArray().map((row) => row.id);
     const seen = new Set(
