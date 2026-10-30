@@ -89,7 +89,7 @@ Wherever a symptom or prescription is shown (big screen and phones), the words t
 - When Second opinions ends, every symptom is ranked by its best pair's **win rate** (times picked as funnier ÷ times shown). A pair needs at least 3 showings to count.
 - The top 3 symptoms become the finalists (one pair each).
 - On the big screen: chime, large countdown, and the finalists side by side, each on its own panel: the pair, then its patient's and doctor's full characters standing side by side right below it, names below. The finalists stay clear of the bandage in the corner, and their size is fitted to the space.
-- On phones: a ballot with the same finalists. Each player picks one favourite and can change their pick until the Finals end.
+- On phones: a ballot with the same finalists. Each player taps one favourite and presses "Cast my vote"; a confirmation then says their vote is in and the winner is revealed on the big screen when the Finals end. They can change their vote until then ("Change my vote").
 - Players can vote for pairs that contain their own writing.
 - Winner: most finals votes; ties go to the higher win rate, then the earlier prescription.
 

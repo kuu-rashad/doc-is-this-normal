@@ -684,21 +684,30 @@ voteForm.addEventListener("submit", async (event) => {
 
 // ---------- Finals ----------
 
+// The ballot: tap a finalist to select it, then cast the vote. The saved vote can be changed
+// until the Finals end.
+let finalists = [];
+let savedChoice = null;
+let selectedChoice = null;
+
 async function startFinals() {
   const { ok, data } = await api("GET", "/finals");
   if (!ok) return showHome(data.error);
-  renderFinals(data);
+  finalists = data.finalists;
+  savedChoice = data.choice;
+  selectedChoice = data.choice;
+  renderFinals();
   show("finals");
 }
 
-function renderFinals({ finalists, choice }) {
+function renderFinals() {
   const list = $("finalists");
   list.replaceChildren();
   finalists.forEach((finalist, i) => {
     const card = document.createElement("button");
     card.type = "button";
     card.className = "finalist";
-    card.setAttribute("aria-pressed", String(choice === i));
+    card.setAttribute("aria-pressed", String(selectedChoice === i));
     const symptom = document.createElement("p");
     symptom.className = "symptom";
     showSentence(symptom, finalist.symptom, true);
@@ -711,15 +720,36 @@ function renderFinals({ finalists, choice }) {
     showSentence(text, finalist.prescription);
     prescription.append(avatar, text);
     card.append(symptom, prescription);
-    // Picking saves straight away; picking again changes the vote.
-    card.addEventListener("click", async () => {
-      const { ok, data } = await api("POST", "/finals", { choice: i });
-      if (!ok) return showError($("finals"), data.error);
-      renderFinals({ finalists, choice: data.choice });
+    card.addEventListener("click", () => {
+      selectedChoice = i;
+      renderFinals();
     });
     list.append(card);
   });
+
+  const voted = savedChoice !== null;
+  const changed = selectedChoice !== savedChoice;
+  const submit = $("finals-submit");
+  submit.disabled = selectedChoice === null || !changed;
+  submit.textContent = !voted ? "Cast my vote" : changed ? "Change my vote" : "Vote cast";
+  $("finals-done").hidden = !voted || changed;
+  $("finals-back").hidden = voted && !changed;
 }
+
+$("finals-submit").addEventListener("click", async () => {
+  if (selectedChoice === null) return;
+  $("finals-submit").disabled = true;
+  const { ok, data } = await api("POST", "/finals", { choice: selectedChoice });
+  if (!ok) {
+    showError($("finals"), data.error);
+    return renderFinals();
+  }
+  savedChoice = data.choice;
+  selectedChoice = data.choice;
+  renderFinals();
+});
+
+$("finals-home").addEventListener("click", () => showHome());
 
 // ---------- Start ----------
 

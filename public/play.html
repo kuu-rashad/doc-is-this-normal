@@ -905,6 +905,28 @@
       overflow-wrap: anywhere;
     }
 
+    .finals-done {
+      margin-top: 14px;
+      padding: 12px 14px;
+      font-size: 16px;
+      line-height: 1.35;
+      background: #74e3b5;
+      border: 4px solid var(--navy);
+      border-radius: 18px;
+    }
+
+    .finals-done[hidden] {
+      display: none;
+    }
+
+    .finals-done p {
+      margin: 0;
+    }
+
+    .finals-done button {
+      margin-top: 10px;
+    }
+
     .finalist img {
       flex: none;
       width: 48px;
@@ -1030,8 +1052,13 @@
     <section id="finals" class="screen" hidden>
       <h1>Pick your favorite</h1>
       <div id="finalists"></div>
+      <button type="button" id="finals-submit" disabled>Cast my vote</button>
+      <div class="finals-done" id="finals-done" hidden>
+        <p><strong>Your vote is in!</strong> The winner is revealed on the big screen when the Finals end. Until then you can still change your vote.</p>
+        <button type="button" class="secondary" id="finals-home">Back to home</button>
+      </div>
       <p class="error" hidden></p>
-      <button type="button" class="link-button" data-back>Back</button>
+      <button type="button" class="link-button" id="finals-back" data-back>Back</button>
     </section>
   </main>
 </body>
