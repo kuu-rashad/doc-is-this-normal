@@ -532,6 +532,12 @@ export class DocGame extends DurableObject {
         `SELECT p.nickname, p.avatar, s.points FROM points s JOIN players p ON p.id = s.player_id
          WHERE s.points > 0 ORDER BY s.points DESC, p.rowid LIMIT 7`,
       ).toArray(),
+      // Every player with their points and stars, for the leaderboard popup; same order as above.
+      standings: this.sql.exec(
+        `SELECT p.nickname, p.avatar, COALESCE(s.points, 0) AS points, COALESCE(s.stars, 0) AS stars
+         FROM players p LEFT JOIN points s ON s.player_id = p.id
+         ORDER BY points DESC, p.rowid`,
+      ).toArray(),
       scoring: config.points,
     };
   }

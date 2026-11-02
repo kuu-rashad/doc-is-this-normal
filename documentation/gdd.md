@@ -115,7 +115,7 @@ Walk-in symptoms have no patient to score. Points add up across rounds; "Reset g
 ## Big screen
 
 - **Top left:** the game logo.
-- **Top right:** buttons for all votes, scoring info, mute, and settings. Under them, the TOP 7 leaderboard: the top three in full size with gold, silver and bronze ranks, places 4–7 in smaller rows ("Earn your place in the top 7" until anyone scores).
+- **Top right:** buttons for the leaderboard popup, scoring info, mute, and settings. Under them, the TOP 7 leaderboard: the top three in full size with gold, silver and bronze ranks, places 4–7 in smaller rows ("Earn your place in the top 7" until anyone scores).
 - **Top centre:** the phase card (round number, phase name with its colour and icon, countdown "until <next phase>"), between the logo and the corner buttons. Hidden during the Finals, which show their own countdown there.
 - **This round's leaders:** the current finals candidates as clipboard cards (the patient's note with avatar, name and symptom; "Doctor's notes:" with the prescription and the doctor; a badge with how often the pair was picked). Three at a time, cycling every 10 seconds; text shrinks or grows to fit each card.
 - **Hall of Fame:** past winners as speech-bubble + clipboard cards above the players bar, a few at a time with a countdown ring before the next set. An outlined placeholder when there are no winners yet.
@@ -140,7 +140,7 @@ Walk-in symptoms have no patient to score. Points add up across rounds; "Reset g
   - reset game (clears all rounds, votes, points and the Hall of Fame; keeps players);
   - delete all players and data.
 - The ⓘ button shows the scoring rules (no password).
-- The leaderboard button lists every pair from all rounds of the game that was picked as funnier at least once, most picks first, with the round it came from (no password). "Reset game" clears it.
+- The leaderboard button opens a popup with two tabs: **Votes** lists every pair from all rounds of the game that was picked as funnier at least once, most picks first, with the round it came from; **Players** lists every player with their points and stars received, best first, in one scrollable list (no password). "Reset game" clears the votes and points.
 
 ## Content and configuration
 
