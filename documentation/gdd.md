@@ -41,7 +41,7 @@ The game repeats this cycle for the whole party.
 
 ## Highlighted fills
 
-Wherever a symptom or prescription is shown (big screen and phones), the words the player filled into the blank are highlighted like a highlighter stroke, so it's clear what to pay attention to. Prescriptions written with "Write my own" have no blank, so nothing is highlighted in them.
+Wherever a symptom or prescription is shown (big screen and phones), the words the player filled into the blank are highlighted like a highlighter stroke, so it's clear what to pay attention to. A prescription written with "Write my own" is all the doctor's own writing, so the whole sentence is highlighted.
 
 ## Patient mode (writing a symptom)
 

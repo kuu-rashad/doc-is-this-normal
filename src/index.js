@@ -670,6 +670,8 @@ export class DocGame extends DurableObject {
       if (!text || text.length > LIMITS.prescription_characters) {
         throw new HttpError(400, `Prescriptions can be 1–${LIMITS.prescription_characters} characters`);
       }
+      // All of it is the doctor's own writing, so all of it is highlighted.
+      text = MARK_START + text + MARK_END;
     }
     const symptom = this.one("SELECT id, author_id FROM symptoms WHERE id = ?", body?.symptomId);
     if (!symptom || symptom.author_id === playerId) throw new HttpError(400, "Unknown symptom");
